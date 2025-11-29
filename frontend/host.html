@@ -1,0 +1,110 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/host.css" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin="" />
+{% endblock %} {% block content %}
+<div class="all">
+  <div class="hoster_container">
+    <h1>Host a house</h1>
+    <!--error handeling-->
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+    <!-- LEFT – IMAGE UPLOAD -->
+    <section class="upload-section">
+      <form
+        id="uploadForm"
+        action="/host"
+        method="POST"
+        enctype="multipart/form-data">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">
+            <span style="font-size: 50px">&#8593;</span>
+          </div>
+          <div class="upload-text">Click to upload or drag and drop</div>
+          <div class="upload-subtext">PNG, JPG, GIF up to 10 MB</div>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            required />
+        </div>
+
+        <div class="preview-container" id="previewContainer">
+          <img id="previewImage" class="preview-image" alt="Preview" />
+          <div
+            class="success-message"
+            id="successMessage"
+            style="display: none">
+            <svg class="checkmark" viewBox="0 0 24 24">
+              <polyline
+                points="20 6 9 17 4 12"
+                stroke-dasharray="22"
+                stroke-dashoffset="22" />
+            </svg>
+            Image uploaded successfully!
+          </div>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn" disabled>
+          Upload content
+        </button>
+      </form>
+    </section>
+
+    <!-- RIGHT – PROPERTY INFO -->
+    <section class="info-section">
+      <label for="category">Category</label>
+      <select id="category" name="category" required>
+        <option value="" disabled selected>Select...</option>
+        <option value="hotel">Hotel</option>
+        <option value="house">House</option>
+        <option value="hostel">Hostel</option>
+      </select>
+
+      <label for="price">Price (per night)</label>
+      <input
+        type="number"
+        id="price"
+        name="price"
+        min="0"
+        placeholder="e.g. 89"
+        required />
+
+      <label for="locationText">Location (address)</label>
+      <input
+        type="text"
+        id="locationText"
+        name="locationText"
+        placeholder="Type address..."
+        required />
+
+      <label for="details">details about the house</label>
+      <input
+        type="text"
+        id="details"
+        name="details"
+        placeholder="details..."
+        required />
+
+      <label>Location on map</label>
+      <div id="map"></div>
+      <p class="map-instruction">Click the map to set the exact coordinates.</p>
+
+      <!-- hidden inputs for lat/lng -->
+      <input type="hidden" id="lat" name="lat" />
+      <input type="hidden" id="lng" name="lng" />
+    </section>
+  </div>
+</div>
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""></script>
+<script src="/frontend/script/host.js"></script>
+{% endblock %}

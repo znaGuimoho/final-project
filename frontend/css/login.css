@@ -1,0 +1,230 @@
+/* ===================================================== */
+/*  LOGIN PAGE –                                         */
+/* ===================================================== */
+
+/* ----- Palette ------------------------------------------------ */
+:root {
+  --green-primary:   #2ecc71;   
+  --green-light:     #a2f2c2; 
+  --blue-primary:    #4ecdc4;
+  --blue-light:      #d6f5f3; 
+  --bg:              #f5fffa;
+  --card-bg:         #ffffff;
+  --shadow:          rgba(46, 204, 113, 0.12);
+}
+
+/* ----- Global ------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--blue-light) 100%);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin: 0;
+}
+
+/* ----- Login Container ---------------------------------------- */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 20px;
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* ----- Card --------------------------------------------------- */
+.form-card {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px var(--shadow);
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: relative;
+  overflow: hidden;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideUp 0.7s 0.2s ease-out forwards;
+}
+
+/* Subtle moving background stripe */
+.form-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 4px;
+  background: linear-gradient(90deg, transparent, var(--green-primary), transparent);
+  animation: stripeMove 2.5s infinite linear;
+}
+
+/* Title */
+.form-card h3 {
+  font-size: 1.65rem;
+  background: linear-gradient(90deg, var(--green-primary), var(--blue-primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  margin: 0;
+  animation: titleGlow 2s infinite alternate;
+}
+
+/* ----- Error Message ------------------------------------------ */
+.error-message {
+  background: #ffe6e6;
+  color: #c0392b;
+  font-size: 0.9rem;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  border-left: 4px solid #e74c3c;
+  animation: shake 0.4s ease-in-out;
+}
+
+/* ----- Form Layout -------------------------------------------- */
+.space-y-5 {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Input Group */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+/* Floating label effect */
+.input-group label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  color: #777;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  background: var(--card-bg);
+  padding: 0 4px;
+}
+.input-field:focus ~ label,
+.input-field:not(:placeholder-shown) ~ label {
+  top: 0;
+  font-size: 0.75rem;
+  color: var(--green-primary);
+}
+
+/* Input Field */
+.input-field {
+  width: 100%;
+  padding: 14px 12px;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+.input-field:focus {
+  border-color: var(--green-primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.15);
+  transform: scale(1.02);
+}
+
+/* ----- Submit Button ------------------------------------------ */
+.submit-button {
+  padding: 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  background: var(--green-primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.submit-button::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: rgba(255,255,255,.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+.submit-button:active::after {
+  width: 300px;
+  height: 300px;
+}
+.submit-button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+}
+
+/* ----- Register Link ------------------------------------------ */
+.form-card p {
+  font-size: 0.95rem;
+  color: #444;
+  text-align: center;
+  margin: 0;
+}
+.form-card p a {
+  color: var(--blue-primary);
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+}
+.form-card p a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--blue-primary);
+  transition: width 0.3s ease;
+}
+.form-card p a:hover::after { width: 100%; }
+.form-card p a:hover { color: #3ba199; }
+
+/* ----- Responsive --------------------------------------------- */
+@media (max-width: 600px) {
+  .login-container { padding: 15px; min-height: calc(100vh - 250px); }
+  .form-card { padding: 20px; border-radius: 12px; }
+  .form-card h3 { font-size: 1.5rem; }
+}
+
+/* ===================================================== */
+/*  ANIMATIONS & KEYFRAMES                               */
+/* ===================================================== */
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes stripeMove {
+  to { left: 100%; }
+}
+@keyframes titleGlow {
+  from { text-shadow: 0 0 8px rgba(46,204,113,.4); }
+  to   { text-shadow: 0 0 20px rgba(46,204,113,.7); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}

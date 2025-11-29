@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-socketio
+fastapi-socketio
+jinja2
+sqlalchemy
+sqlalchemy[asyncio]
+asyncpg
+python-dotenv

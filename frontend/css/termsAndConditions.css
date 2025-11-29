@@ -1,0 +1,151 @@
+/* termsAndConditions.css */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+.terms {
+  padding: 120px 0 100px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  line-height: 1.8;
+  color: #334155;
+}
+
+.terms .container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.terms h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.terms > .container > p:first-of-type {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #64748b;
+  margin-bottom: 4rem;
+  font-weight: 500;
+}
+
+.terms h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 2.5rem 0 1rem;
+  position: relative;
+  padding-left: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.terms h3::before {
+  content: attr(data-number);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+.terms p {
+  font-size: 1.05rem;
+  color: #475569;
+  margin-bottom: 1.2rem;
+  text-align: justify;
+}
+
+.terms p strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.terms a {
+  color: #4f46e5;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.terms a:hover {
+  color: #7c3aed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .terms {
+    padding: 100px 0 80px;
+  }
+
+  .terms h2 {
+    font-size: 2.4rem;
+  }
+
+  .terms h3 {
+    font-size: 1.35rem;
+    padding-left: 54px;
+  }
+
+  .terms h3::before {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  .terms p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .terms .container {
+    padding: 0 15px;
+  }
+
+  .terms h3 {
+    padding-left: 50px;
+  }
+
+  .terms h3::before {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Optional: Add smooth fade-in animation on scroll */
+.terms h3,
+.terms p {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.terms h3 {
+  animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

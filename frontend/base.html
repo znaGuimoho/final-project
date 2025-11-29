@@ -1,0 +1,103 @@
+<!--
+-----------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------this is the base of my pages so I don't write the m again evry time--------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/frontend/css/base.css" />
+    <link
+      rel="icon"
+      href="/frontend/imgs/house.png
+    "
+      type="image/x-icon" />
+    <title>MoRBMB</title>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="#" class="logo">
+        <img
+          src="/frontend/imgs/logo-home-png-7429.png"
+          alt="Houses to rent logo" />
+        <span class="logo-text">Houses to rent</span>
+      </a>
+      <div class="nav-container">
+        <i class="fas fa-bars hamburger"></i>
+        <div class="nav-links">
+          <a href="/home">Home</a>
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+          <a href="/host">Host</a>
+        </div>
+
+        <div class="search-wrapper">
+          <div class="search-bar" id="searchBar">
+            <div class="search-icon" id="searchIcon">
+              <svg viewBox="0 0 0 24 24">
+                <path
+                  d="M15.5 14h-.79l-0.28-0.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search anything..."
+              id="searchInput"
+              autocomplete="off" />
+          </div>
+
+          <!-- Results dropdown positioned absolutely under the search bar -->
+          <ul class="results" id="resultsList">
+            {% if results %} {% for result in results %}
+            <li><a href="/house/{{ result.id }}">{{ result.details }}</a></li>
+            {% endfor %} {% else %}
+            <li class="no-results">No results found</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      <button class="more">
+        <img src="/frontend/imgs/menu.png" alt="More menu" />
+      </button>
+    </nav>
+
+    <div class="more-things">
+      <button class="close-more">
+        <img src="/frontend/imgs/menu.png" alt="Close menu" />
+      </button>
+      <ul>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/renting-tips">Renting Tips</a></li>
+        <li><a href="/favorites">My Favorites</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+        <li><a href="/faq">FAQs</a></li>
+        <li><a href="/terms">Terms & Conditions</a></li>
+      </ul>
+    </div>
+    <!--this is the content that will be added in the other pages-->
+    <div class="content">{% block content %}{% endblock %}</div>
+
+    <footer data-aos="fade-up">
+      <div class="container">
+        <p>&copy; 2024 Mohammed Dahhaoui. All rights reserved.</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com/moha_fg" target="_blank">
+            <i class="fab fa-instagram"></i> Instagram
+          </a>
+          <a
+            href="https://www.facebook.com/profile.php?id=61555319122882"
+            target="_blank">
+            <i class="fab fa-facebook"></i> Facebook
+          </a>
+          <a href="https://github.com/znaGuimoho" target="_blank">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+        </div>
+      </div>
+    </footer>
+    <script src="/frontend/script/base.js"></script>
+  </body>
+</html>

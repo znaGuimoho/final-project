@@ -1,0 +1,95 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/aboutUs.css" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+{% endblock %} {% block content %}
+<header>
+  <div class="hero" data-aos="fade-up">
+    <h1>We Are MoRBMB</h1>
+    <p>
+      Building the future with passion, innovation, and unwavering commitment to
+      excellence.
+    </p>
+  </div>
+</header>
+
+<section class="story">
+  <div class="container">
+    <h2 data-aos="fade-up">Our Story</h2>
+    <p
+      data-aos="fade-up"
+      data-aos-delay="200"
+      style="
+        font-size: 1.2rem;
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+        color: var(--gray);
+      ">
+      Our story began with a simple idea: finding a home should feel comforting,
+      not complicated. What started as a small project between friends quickly
+      grew into a mission — to connect people with places where they can feel
+      safe, inspired, and truly at home. Today, we bring together carefully
+      selected houses, honest guidance, and a passion for helping every person
+      find the right space. Your next chapter begins with a single key — and
+      we’re here to hand it to you.
+    </p>
+  </div>
+</section>
+
+<section class="values" style="background: var(--light)">
+  <div class="container">
+    <h2 data-aos="fade-up">Our Values</h2>
+    <div class="grid">
+      <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <i>🚀</i>
+        <h3>Innovation</h3>
+        <p>
+          We push boundaries and embrace the latest technologies to stay ahead
+          of the curve.
+        </p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="200">
+        <i>🤝</i>
+        <h3>Integrity</h3>
+        <p>
+          Trust is everything. We believe in transparency, honesty, and doing
+          what’s right.
+        </p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="300">
+        <i>⭐</i>
+        <h3>Excellence</h3>
+        <p>
+          Good enough isn’t enough. We strive for extraordinary in everything we
+          do.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="team">
+  <div class="container">
+    <h2 data-aos="fade-up">Meet Our Team</h2>
+    <div class="grid">
+      <div class="team-member" data-aos="zoom-in" data-aos-delay="100">
+        <a href="/frontend/imgs/Me.jpg"
+          ><img src="/frontend/imgs/Me.jpg" alt="Mohammed Dahhaoui"
+        /></a>
+        <h3>Mohammed Dahhaoui</h3>
+        <p>
+          CEO & Founder — Full-Stack Developer, Backend Engineer, Database
+          Designer
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="/frontend/script/aboutUs.js"></script>
+{% endblock %}

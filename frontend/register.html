@@ -1,0 +1,58 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/register.css"/>
+{% endblock %} {% block content %}
+<div class="signup-container">
+  <form method="post" class="form-card">
+    <h3>Registration</h3>
+
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+
+    <div class="input-group">
+      <div class="input-row">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value="{{ name }}"
+          placeholder="Pick a name" />
+      </div>
+      <div class="input-row">
+        <label for="gmail">Email</label>
+        <input
+          type="email"
+          id="gmail"
+          name="gmail"
+          value="{{ gmail }}"
+          placeholder="Enter your Gmail" />
+      </div>
+      <div class="input-row">
+        <label for="passw">Password</label>
+        <input
+          type="password"
+          id="passw"
+          name="passw"
+          value="{{ passw }}"
+          placeholder="Enter a password" />
+      </div>
+      <div class="input-row">
+        <label for="pass1">Confirm</label>
+        <input
+          type="password"
+          id="pass1"
+          name="pass1"
+          value="{{ pass1 }}"
+          placeholder="Confirm password" />
+      </div>
+    </div>
+
+    <div>
+      <button type="submit" name="join" value="1" class="submit-button">
+        Join
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

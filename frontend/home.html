@@ -1,0 +1,61 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/home.css" />
+{% endblock %} {% block content %}
+<!-- ======================  CONTAINER  ====================== -->
+<div class="houses-container">
+  <h2 style="margin-bottom: 16px; text-align: center">Available Rentals</h2>
+  <div class="categorys">
+    <a href="#" class="active" data-filter="all">All</a>
+    <a href="#" data-filter="hotel">Hotels</a>
+    <a href="#" data-filter="hostel">Hostels</a>
+    <a href="#" data-filter="house">Houses</a>
+  </div>
+
+  <div class="houses">
+    {% for house in houses %}
+    <article class="house-card" data-category="{{ house.category }}">
+      <img
+        src="{{ house.img_url or 'https://via.placeholder.com/400x200?text=No+Image' }}"
+        alt="{{ house.title or 'House for rent' }}"
+        class="house-image"
+        loading="lazy" />
+      <div class="house-info">
+        <h3>{{ house.title or house.category }}</h3>
+        <p class="price">
+          {% if house.price %}
+            ${{ house.price }}
+            {% if house.category == "house" %}
+              /month
+            {% else %}
+              /night
+            {% endif %}
+          {% else %}
+            Price on request
+          {% endif %}
+        </p>
+        <p class="meta">
+          {% if house.location_url %}
+          <a href="{{ house.location_url }}" target="_blank" rel="noopener">
+            {{ house.location or 'View on map' }}
+          </a>
+          {% else %} {{ house.location or 'Location not specified' }} {% endif
+          %}
+        </p>
+        <p class="description">
+          {% if house.details.host_name %} Hosted by
+          <strong>{{ house.details.host_name }}</strong>. {% endif %} {% if
+          house.details.house_details %} {{ house.details.house_details }} {%
+          else %} Comfortable and well-located rental. {% endif %}
+        </p>
+      </div>
+
+      <div class="house-actions">
+        <a href="/house/{{ house.id }}" class="btn-primary">View Details</a>
+        <a href="/contact/{{ house.id }}" class="btn-secondary">Contact</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</div>
+<script src="/frontend/script/home.js"></script>
+{% endblock %}

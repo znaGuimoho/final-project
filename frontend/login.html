@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/login.css"/>
+{% endblock %} {% block content %}
+<div class="login-container">
+  <div class="form-card">
+    <h3>Welcome Back 👋</h3>
+
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/login" class="space-y-5">
+      <div class="input-group">
+        <input
+          type="email"
+          id="gmail"
+          name="gmail"
+          value="{{ gmail }}"
+          placeholder="Email Address"
+          class="input-field" />
+        <input
+          type="password"
+          id="passw"
+          name="passw"
+          value="{{ passw }}"
+          placeholder="Password"
+          class="input-field" />
+      </div>
+
+      <button type="submit" name="login" value="1" class="submit-button">
+        Join Now
+      </button>
+    </form>
+
+    <p>
+      <span style="color: #23fa07; font-weight: bold">•</span> I dont have an
+      acount <a href="/login">register</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
