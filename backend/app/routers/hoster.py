@@ -12,8 +12,8 @@ from fastapi import FastAPI, Request, Form, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
-from services.Hash_password import hash_password, verify_password
-from services.user_service import get_user_data
+from app.services.Hash_password import hash_password, verify_password
+from app.services.user_service import get_user_data
 import base64
 from sqlalchemy.exc import IntegrityError
 from fastapi.responses import RedirectResponse

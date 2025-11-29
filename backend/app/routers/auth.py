@@ -12,13 +12,13 @@ from fastapi import FastAPI, Request, Form, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
-from services.Hash_password import hash_password, verify_password
+from app.services.Hash_password import hash_password, verify_password
 import base64
 from sqlalchemy.exc import IntegrityError
 from fastapi.responses import RedirectResponse
 from datetime import datetime, timedelta
 from uuid import uuid4
-from services.user_service import set_user_data
+from app.services.user_service import set_user_data
 
 def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/register", response_class=HTMLResponse)

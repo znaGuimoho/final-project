@@ -20,13 +20,12 @@ from dotenv import load_dotenv
 ##########################################################################
 load_dotenv()
 
-
 #############################################################
 ################## this is socketio set up ##################
 #############################################################
-sio = socketio.AsyncServer (
-    async_mode = "asgi",
-    cors_allowed_origins = "*"
+sio = socketio.AsyncServer(
+    async_mode="asgi",
+    cors_allowed_origins="*"
 )
 
 #############################################################
@@ -34,25 +33,43 @@ sio = socketio.AsyncServer (
 #############################################################
 app = FastAPI()
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Use absolute paths that work in both local and Docker environments
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
-UPLOADS_DIR = os.path.join(BASE_DIR, "backend", "app", "static", "uploads")
+UPLOADS_DIR = os.path.join(BASE_DIR, "static", "uploads")
 
-app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
-app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
-app.mount("/script", StaticFiles(directory=os.path.join(FRONTEND_DIR, "script")), name="script")
-app.mount("/imgs", StaticFiles(directory=os.path.join(FRONTEND_DIR, "imgs")), name="imgs")
-app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+# Create directories if they don't exist
+os.makedirs(FRONTEND_DIR, exist_ok=True)
+os.makedirs(UPLOADS_DIR, exist_ok=True)
+
+# Only mount static files if directories exist
+if os.path.exists(FRONTEND_DIR):
+    app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
+    
+    # Mount subdirectories only if they exist
+    css_dir = os.path.join(FRONTEND_DIR, "css")
+    script_dir = os.path.join(FRONTEND_DIR, "script") 
+    imgs_dir = os.path.join(FRONTEND_DIR, "imgs")
+    
+    if os.path.exists(css_dir):
+        app.mount("/css", StaticFiles(directory=css_dir), name="css")
+    if os.path.exists(script_dir):
+        app.mount("/script", StaticFiles(directory=script_dir), name="script")
+    if os.path.exists(imgs_dir):
+        app.mount("/imgs", StaticFiles(directory=imgs_dir), name="imgs")
+
+if os.path.exists(UPLOADS_DIR):
+    app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 app_sio = socketio.ASGIApp(sio, app)
-templates = Jinja2Templates(directory=FRONTEND_DIR)
+templates = Jinja2Templates(directory=FRONTEND_DIR if os.path.exists(FRONTEND_DIR) else BASE_DIR)
 
 #######################################################################
 ################## Database setup (Async PostgreSQL) ##################
 #######################################################################
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://postgres:M123%40moha_fg@localhost:5432/houserent_db"
+    "postgresql+asyncpg://postgres:postgres@db:5432/houserent_db"  # Use Docker service name
 )
 
 engine = create_async_engine(DATABASE_URL, echo=True)
@@ -67,10 +84,9 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
 
-
-#################################################################################################################################################
-############################## this is the fuction that retuns the varibles that I'LL weork with in the other files ##############################
-#################################################################################################################################################
+#######################################################################
+################## Function that returns variables ####################
+#######################################################################
 
 def create_app():
     """
