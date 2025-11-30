@@ -26,10 +26,8 @@ A full-stack house renting platform built with **FastAPI** (Python) and **Postgr
 | File Storage      | Local filesystem (uploaded images)  |
 | Deployment        | Docker + Docker Compose             |
 
-```markdown
 ## 📦 Project Structure
 
-```
 finalProject/
 ├── backend/                  # FastAPI backend
 │   ├── requirements.txt      # Python dependencies
@@ -92,7 +90,6 @@ finalProject/
 ├── docker-compose.yml        # Docker Compose configuration
 ├── Dockerfile                # Backend container build
 └── README.md
-```
 
 ## 🚀 Setup & Running the Project
 
