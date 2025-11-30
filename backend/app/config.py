@@ -33,9 +33,15 @@ sio = socketio.AsyncServer(
 #############################################################
 app = FastAPI()
 
-# Use absolute paths that work in both local and Docker environments
+# Use absolute paths that work in Docker environments
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+
+#without docker
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
+# FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
+
+
 UPLOADS_DIR = os.path.join(BASE_DIR, "static", "uploads")
 
 # Create directories if they don't exist
@@ -67,10 +73,13 @@ templates = Jinja2Templates(directory=FRONTEND_DIR if os.path.exists(FRONTEND_DI
 #######################################################################
 ################## Database setup (Async PostgreSQL) ##################
 #######################################################################
+
+#for docker
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+asyncpg://postgres:postgres@db:5432/houserent_db"  # Use Docker service name
 )
+
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 

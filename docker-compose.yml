@@ -1,11 +1,12 @@
+version: "3.9"
+
 services:
   api:
     build: .
     container_name: fastapi_app
-    ports:
-      - "8000:8000"
+    network_mode: "host"
     volumes:
       - ./backend:/app
       - ./frontend:/app/frontend
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:M123%40moha_fg@172.17.0.1:5432/houserent_db
+    env_file:
+      - ./backend/.env
