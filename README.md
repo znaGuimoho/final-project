@@ -220,10 +220,13 @@ Once the server is running, visit:
 ![Home Page](docs/screenshots/home.png)
 
 ### Property Listing
-![Property Details](docs/screenshots/property.png)
+![login](docs/screenshots/login.png)
+
+### Property Listing
+![register](docs/screenshots/register.png)
 
 ### Host Dashboard
-![Host Dashboard](docs/screenshots/dashboard.png)
+![Host Dashboard](docs/screenshots/host.png)
 ```
 
 ---
