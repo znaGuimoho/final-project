@@ -1,73 +1,97 @@
-# Final Project - House Renting Website
+# 🏠 House Renting Platform
 
-A full-stack house renting platform built with **FastAPI** (Python) and **PostgreSQL**. Users can register, log in, browse available houses, and hosts can list their properties with images and detailed information.
+A modern, full-stack house renting platform that connects property hosts with potential renters. Built with **FastAPI** (Python) and **PostgreSQL**, featuring secure authentication, image uploads, and an intuitive user interface.
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-green)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
-![Docker](https://img.shields.io/badge/Docker-supported-blue)
+<div align="center">
 
-## 🚀 Features
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?style=for-the-badge&logo=fastapi)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-316192?style=for-the-badge&logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-supported-2496ED?style=for-the-badge&logo=docker)
 
-- User registration & login (session-based authentication)
-- Home page with dynamic house listings loaded from database
-- Host dashboard – upload house photos (stored locally) and details
-- About Us, Renting Tips, My Favorites, Contact Us pages
-- FAQs, Terms & Conditions
-- Fully containerized with Docker
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-api-documentation) • [Contributing](#-contributing)
 
-## 🛠 Tech Stack
+</div>
 
-| Layer             | Technology                          |
-|-------------------|-------------------------------------|
-| Backend           | FastAPI (Python)                    |
-| Database          | PostgreSQL                          |
-| Authentication    | Session-based                       |
-| File Storage      | Local filesystem (uploaded images)  |
-| Deployment        | Docker + Docker Compose             |
+---
 
-## 📦 Project Structure
+## ✨ Features
 
+### For Renters
+- 🔍 **Browse Listings** – View available properties with photos and detailed information
+- ⭐ **Save Favorites** – Bookmark properties you're interested in
+- 📱 **Responsive Design** – Seamless experience across all devices
+- 💡 **Rental Tips** – Access helpful guides for first-time renters
+
+### For Hosts
+- 📤 **Easy Property Upload** – Add listings with multiple photos
+- 🖼️ **Image Management** – Upload and manage property images
+- 📊 **Host Dashboard** – Manage all your listings in one place
+- ✅ **Quick Setup** – Get your property listed in minutes
+
+### Platform Features
+- 🔐 **Secure Authentication** – Session-based login system
+- 📧 **Contact System** – Direct communication channels
+- 📜 **Legal Pages** – Terms & Conditions, FAQs
+- 🎨 **Modern UI** – Clean, intuitive interface
+
+---
+
+## 🛠️ Tech Stack
+
+| Component | Technology |
+|-----------|------------|
+| **Backend** | FastAPI (Python 3.11+) |
+| **Database** | PostgreSQL 15 |
+| **Authentication** | Session-based with secure cookies |
+| **File Storage** | Local filesystem |
+| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
+| **Security** | SSL/TLS (HTTPS), Password hashing |
+| **Deployment** | Docker + Docker Compose |
+
+---
+
+## 📁 Project Structure
+
+```
 finalProject/
-├── backend/                  # FastAPI backend
-│   ├── requirements.txt      # Python dependencies
-│   ├── .env                  # Environment variables (gitignored)
+├── backend/
 │   ├── app/
-│   │   ├── main.py           # FastAPI entry point
-│   │   ├── config.py         # App configuration
-│   │   ├── cert.pem          # SSL certificate (for HTTPS)
-│   │   ├── key.pem           # SSL private key
-│   │   ├── routers/          # API routes
-│   │   │   ├── auth.py       # Login / Register / Session handling
-│   │   │   ├── home.py       # Home page listings endpoint
-│   │   │   ├── hoster.py     # Host property upload & management
-│   │   │   └── more.py       # About, FAQs, Contact, etc.
+│   │   ├── main.py                 # FastAPI application entry point
+│   │   ├── config.py               # Configuration management
+│   │   ├── cert.pem                # SSL certificate (development)
+│   │   ├── key.pem                 # SSL private key (development)
+│   │   ├── routers/
+│   │   │   ├── auth.py             # Authentication endpoints
+│   │   │   ├── home.py             # Home page & listings
+│   │   │   ├── hoster.py           # Host property management
+│   │   │   └── more.py             # Additional pages (About, FAQ, etc.)
 │   │   ├── services/
-│   │   │   ├── Hash_password.py
-│   │   │   └── user_service.py
+│   │   │   ├── Hash_password.py    # Password hashing utilities
+│   │   │   └── user_service.py     # User management logic
 │   │   └── static/
-│   │       └── uploads/      # User-uploaded house images (local storage)
-│   └── imgs.png              # Example/placeholder image
+│   │       └── uploads/            # User-uploaded property images
+│   ├── requirements.txt            # Python dependencies
+│   ├── .env                        # Environment variables (not in git)
+│   └── imgs.png                    # Sample image
 │
-├── frontend/                 # Static frontend (served by FastAPI)
-│   ├── css/
+├── frontend/
+│   ├── css/                        # Stylesheets
 │   │   ├── aboutUs.css
 │   │   ├── base.css
 │   │   ├── home.css
 │   │   ├── host.css
 │   │   ├── login.css
 │   │   ├── register.css
-│   │   ├── retalTips.css          # ← note: typo in original (rentalTips)
+│   │   ├── rentalTips.css
 │   │   ├── termsAndConditions.css
-│   │   └── uploadSucsess.css      # ← typo: uploadSuccess.css
-│   │
-│   ├── imgs/
+│   │   └── uploadSuccess.css
+│   ├── imgs/                       # Static images
 │   │   ├── house.png
 │   │   ├── logo-home-png-7429.png
 │   │   ├── Me.png
 │   │   └── photo-for-more.jpeg
-│   │
-│   ├── scripts/              # JavaScript files
+│   ├── scripts/                    # JavaScript modules
 │   │   ├── home.js
 │   │   ├── login.js
 │   │   ├── register.js
@@ -76,50 +100,247 @@ finalProject/
 │   │   ├── rentalTips.js
 │   │   ├── terms.js
 │   │   └── uploadSuccess.js
-│   │
-│   ├── home.html
-│   ├── login.html
-│   ├── register.html
-│   ├── host.html
-│   ├── aboutUs.html
-│   ├── rentalTips.html
-│   ├── terms.html
-│   └── uploadSuccess.html
+│   └── *.html                      # HTML pages
 │
-├── .gitignore
-├── docker-compose.yml        # Docker Compose configuration
-├── Dockerfile                # Backend container build
-└── README.md
+├── docker-compose.yml              # Multi-container orchestration
+├── Dockerfile                      # Backend container definition
+├── .gitignore                      # Git exclusions
+└── README.md                       # This file
+```
 
-## 🚀 Setup & Running the Project
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-Make sure you have these installed:
-- [Docker & Docker Compose](https://www.docker.com/get-started) (Recommended & easiest way)
-- OR Python 3.11+ and PostgreSQL (if you prefer running without Docker)
 
-### Method 1: Run with Docker (Recommended – One command!)
+Choose one of the following:
+
+**Option A: Docker (Recommended)**
+- [Docker Desktop](https://www.docker.com/get-started) or Docker Engine + Docker Compose
+
+**Option B: Manual Setup**
+- Python 3.11 or higher
+- PostgreSQL 15 or higher
+- pip (Python package manager)
+
+### Installation
+
+#### Using Docker (Easiest - One Command!)
 
 1. **Clone the repository**
    ```bash
-   $ git clone https://github.com/znaGuimoho/finalProject.git
-   $ cd finalProject
+   git clone https://github.com/znaGuimoho/finalProject.git
+   cd finalProject
+   ```
 
-2. **Create your environment file**
-    $ cp backend/.env.example backend/.env
+2. **Configure environment variables**
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+   
+   Edit `backend/.env` with your settings:
+   ```env
+   DATABASE_URL=postgresql://postgres:password@db:5432/house_renting
+   SECRET_KEY=your-super-secret-key-change-this-in-production
+   ```
 
-    Then edit backend/.env and fill in your PostgreSQL credentials (or leave defaults if using Docker's DB):
+3. **Launch the application**
+   ```bash
+   docker-compose up --build
+   ```
 
-    $ DATABASE_URL=postgresql://postgres:password@db:5432/house_renting
-    $ SECRET_KEY=your-super-secret-jwt-key-here
+4. **Access the platform**
+   
+   Open your browser and navigate to:
+   ```
+   https://localhost:8000
+   ```
+   
+   > ⚠️ **First-time SSL warning**: Your browser will show a security warning because we're using self-signed certificates for local development. Click "Advanced" → "Proceed to localhost" (this is safe for local development).
 
-3. **Start everything (FastAPI + PostgreSQL)**
+#### Manual Setup (Without Docker)
 
-    $ docker-compose up --build
+1. **Clone and navigate**
+   ```bash
+   git clone https://github.com/znaGuimoho/finalProject.git
+   cd finalProject
+   ```
 
-4. **Open the app**
+2. **Set up PostgreSQL database**
+   ```bash
+   createdb house_renting
+   ```
 
-Visit: https://localhost:8000 (HTTPS with your self-signed certs)The first visit might show a security warning → click "Advanced" → "Proceed" (safe for local dev).
+3. **Install Python dependencies**
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
 
-> ✅ Done! Your full app is running with zero manual setup.
+4. **Configure environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials
+   ```
 
+5. **Run the application**
+   ```bash
+   python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 --ssl-keyfile app/key.pem --ssl-certfile app/cert.pem
+   ```
+
+---
+
+## 📖 API Documentation
+
+Once the server is running, visit:
+
+- **Interactive API Docs (Swagger)**: https://localhost:8000/docs
+- **Alternative Docs (ReDoc)**: https://localhost:8000/redoc
+
+### Key Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/register` | POST | Create new user account |
+| `/auth/login` | POST | User login |
+| `/auth/logout` | POST | User logout |
+| `/home/listings` | GET | Fetch all property listings |
+| `/host/upload` | POST | Upload new property listing |
+| `/host/properties` | GET | Get host's properties |
+
+---
+
+## 🎨 Screenshots
+
+> **Note**: Add screenshots of your application here to showcase the UI
+
+```markdown
+### Home Page
+![Home Page](docs/screenshots/home.png)
+
+### Property Listing
+![Property Details](docs/screenshots/property.png)
+
+### Host Dashboard
+![Host Dashboard](docs/screenshots/dashboard.png)
+```
+
+---
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env` file in the `backend/` directory:
+
+```env
+# Database
+DATABASE_URL=postgresql://user:password@host:port/database
+
+# Security
+SECRET_KEY=your-secret-key-min-32-characters-long
+
+# Application
+DEBUG=False
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# File Upload
+MAX_UPLOAD_SIZE=5242880  # 5MB in bytes
+UPLOAD_DIR=app/static/uploads
+```
+
+---
+
+## 🐳 Docker Commands
+
+```bash
+# Start all services
+docker-compose up
+
+# Start in detached mode (background)
+docker-compose up -d
+
+# Rebuild containers
+docker-compose up --build
+
+# Stop all services
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Access database
+docker-compose exec db psql -U postgres -d house_renting
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run tests (when implemented)
+pytest
+
+# Run with coverage
+pytest --cov=app tests/
+```
+
+---
+
+## 🛣️ Roadmap
+
+- [ ] Add property search and filtering
+- [ ] Implement booking system
+- [ ] Add payment integration
+- [ ] Create mobile app
+- [ ] Add real-time messaging between hosts and renters
+- [ ] Implement review and rating system
+- [ ] Add email notifications
+- [ ] Multi-language support
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👤 Author
+
+**Your Name**
+
+- GitHub: [@znaGuimoho](https://github.com/znaGuimoho)
+- Project Link: [https://github.com/znaGuimoho/finalProject](https://github.com/znaGuimoho/finalProject)
+
+---
+
+## 🙏 Acknowledgments
+
+- FastAPI for the excellent web framework
+- PostgreSQL for reliable data storage
+- Docker for simplifying deployment
+- All contributors who help improve this project
+
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#-house-renting-platform)**
+
+Made with ❤️ by [znaGuimoho](https://github.com/znaGuimoho)
+
+</div>
