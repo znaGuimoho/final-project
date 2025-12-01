@@ -97,7 +97,6 @@ const resultsList = document.getElementById("resultsList");
 searchInput.addEventListener("input", function () {
   const hasValue = this.value.trim().length > 0;
   const hasResults = resultsList.querySelector("li:not(.no-results)") !== null;
-  const searchWrapper = document.querySelector(".search-wrapper");
 
   if (hasValue && hasResults) {
     resultsList.classList.add("show");
@@ -107,6 +106,7 @@ searchInput.addEventListener("input", function () {
 });
 
 // Optional: hide when clicking outside
+const searchWrapper = document.querySelector(".search-wrapper");
 document.addEventListener("click", function (e) {
   if (!searchWrapper.contains(e.target)) {
     resultsList.classList.remove("show");

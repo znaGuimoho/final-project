@@ -1,3 +1,9 @@
+.navbar {
+  margin: 0;
+  border-radius: 0;
+}
+
+
 .app-container {
   display: flex;
   height: 100vh;

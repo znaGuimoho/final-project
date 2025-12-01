@@ -1,27 +1,28 @@
 /* ===================================================== */
-/* BASE.CSS – RESPONSIVE, CLEAN, NO COLLISIONS          */
-/* Mobile-first | Original colors | Sticky navbar       */
-/* Logo scales safely | Nav links hidden on mobile     */
+/* BASE.CSS – REFACTORED & OPTIMIZED                    */
 /* ===================================================== */
 
 /* -------------------------------------------------
-   1. ROOT & FLUID VARIABLES
+   1. CSS VARIABLES
    ------------------------------------------------- */
 :root {
+  /* Typography */
   --font-base: clamp(1rem, 0.95rem + 0.35vw, 1.125rem);
   --font-sm: clamp(0.875rem, 0.82rem + 0.25vw, 1rem);
   --font-lg: clamp(1.1rem, 1.8vw, 1.3rem);
 
+  /* Spacing */
   --space-xs: clamp(0.5rem, 0.45rem + 0.25vw, 0.75rem);
   --space-sm: clamp(0.75rem, 0.65rem + 0.5vw, 1rem);
   --space-md: clamp(1rem, 0.85rem + 0.75vw, 1.5rem);
   --space-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
 
+  /* Layout */
   --max-width: 1000px;
   --container-padding: clamp(1rem, 3vw, 1.5rem);
   --navbar-height: clamp(68px, 12vw, 84px);
 
-  /* Original colors */
+  /* Colors */
   --nav-start: #2c7a7b;
   --nav-end: #205e5f;
   --nav-dark: #205e5f;
@@ -30,17 +31,16 @@
   --text: #333;
   --text-light: #e9ecef;
 
+  /* Effects */
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.16);
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* -------------------------------------------------
-   2. GLOBAL RESET
+   2. RESET & BASE STYLES
    ------------------------------------------------- */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -52,7 +52,6 @@ html {
 }
 
 body {
-  margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: var(--bg);
   color: var(--text);
@@ -63,15 +62,16 @@ body {
   min-height: 100vh;
 }
 
-img,
-svg {
+img, svg {
   max-width: 100%;
   height: auto;
   display: block;
 }
+
 a {
   text-decoration: none;
 }
+
 button {
   cursor: pointer;
   border: none;
@@ -80,52 +80,32 @@ button {
 }
 
 /* -------------------------------------------------
-   3. NAVBAR – TRULY STICKY, NO BREAKS
+   3. NAVBAR
    ------------------------------------------------- */
 .navbar {
   position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 1000;
-
   background: linear-gradient(90deg, var(--nav-start), var(--nav-end));
   height: var(--navbar-height);
   display: flex;
   align-items: center;
   padding: 0 var(--container-padding);
-
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.3s ease, margin 0.3s ease, border-radius 0.3s ease,
-    padding 0.3s ease;
-
+  margin: 10px 20px 0;
+  border-radius: 10px;
   opacity: 0;
   transform: translateY(-12px);
   animation: navbarDrop 0.6s 0.1s ease-out forwards;
-
-  /* Top look */
-  margin: 10px 20px 0 20px;
-  border-radius: 10px;
-}
-.navbar.scrolled {
-  margin: 0; /* goes full width */
-  border-radius: 0; /* sharp edges */
-  box-shadow: var(--shadow-sm);
-}
-.navbar.scrolled {
-  background: linear-gradient(
-    90deg,
-    var(--nav-start-dark),
-    var(--nav-end-dark)
-  );
+  transition: box-shadow 0.3s ease, margin 0.3s ease, border-radius 0.3s ease;
 }
 
-/* Scrolled state */
 .navbar.scrolled {
+  margin: 0;
+  border-radius: 0;
   box-shadow: var(--shadow-md);
 }
 
-/* Container */
 .navbar .nav-container {
   width: 100%;
   max-width: var(--max-width);
@@ -133,11 +113,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
   height: 100%;
 }
 
-/* LOGO – RESPONSIVE, NO COLLISION */
+/* Logo */
 .navbar .logo {
   display: flex;
   align-items: center;
@@ -145,28 +124,20 @@ button {
   color: white;
   font-weight: 700;
   z-index: 1001;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 45%;
 }
 
 .navbar .logo img {
   height: clamp(32px, 6vw, 40px);
-  width: auto;
   flex-shrink: 0;
   transition: transform var(--transition);
 }
 
 .navbar .logo .logo-text {
   font-size: clamp(0.95rem, 2.2vw, 1.15rem);
-  font-weight: 700;
-  opacity: 1;
   transition: opacity 0.3s ease, transform 0.3s ease;
-  transform: translateX(0);
 }
 
-/* Hide logo text on very small screens */
 @media (max-width: 380px) {
   .navbar .logo .logo-text {
     opacity: 0;
@@ -180,7 +151,7 @@ button {
   transform: rotate(8deg) scale(1.1);
 }
 
-/* NAV LINKS – HIDDEN ON MOBILE */
+/* Nav Links */
 .navbar .nav-links {
   display: flex;
   align-items: center;
@@ -192,7 +163,6 @@ button {
   flex: 1;
   justify-content: center;
   max-width: 60%;
-  overflow: hidden;
 }
 
 .navbar .nav-links a {
@@ -227,7 +197,7 @@ button {
   transform: translateY(-2px);
 }
 
-/* MORE BUTTON */
+/* More Button */
 .navbar .more {
   background: transparent;
   color: #fff;
@@ -235,7 +205,6 @@ button {
   border-radius: 8px;
   display: flex;
   align-items: center;
-  justify-content: center;
   transition: var(--transition);
   position: relative;
   overflow: hidden;
@@ -246,12 +215,7 @@ button {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transform: translateX(-100%);
   transition: transform 0.6s ease;
 }
@@ -273,19 +237,45 @@ button {
 .navbar .more:hover img {
   filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
 }
+
+/* Hamburger Menu */
+.hamburger {
+  display: none;
+  color: #fff;
+  font-size: clamp(1.3rem, 4vw, 1.6rem);
+  padding: var(--space-xs);
+  border-radius: 6px;
+  transition: var(--transition);
+  z-index: 1001;
+}
+
+.hamburger:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* -------------------------------------------------
+   4. SEARCH BAR
+   ------------------------------------------------- */
+.search-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 400px;
+}
+
 .search-bar {
   position: relative;
   width: 60px;
   height: 60px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
   border-radius: 60px;
   padding: 10px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   border: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .search-bar input {
@@ -297,11 +287,11 @@ button {
   width: 0;
   padding: 0;
   opacity: 0;
-  transition: all 0.6s ease;
   position: absolute;
   top: 50%;
   left: 70px;
   transform: translateY(-50%);
+  transition: all 0.6s ease;
 }
 
 .search-bar input::placeholder {
@@ -320,8 +310,8 @@ button {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .search-icon svg {
@@ -331,7 +321,6 @@ button {
   transition: all 0.4s ease;
 }
 
-/* Active State */
 .search-bar.active {
   width: 340px;
   background: rgba(255, 255, 255, 0.25);
@@ -341,7 +330,6 @@ button {
   width: 240px;
   padding: 0 10px;
   opacity: 1;
-  left: 70px;
 }
 
 .search-bar.active .search-icon {
@@ -354,78 +342,69 @@ button {
   transform: rotate(360deg) scale(0.9);
 }
 
-/* Pulse animation on load */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(102, 126, 234, Falls0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
-  }
-  100% {
-    box-shadow: 0 0 ，什么 0 rgba(102, 126, 234, 0);
-  }
-}
-
-.search-bar:hover {
-  animation: pulse 2s infinite;
-}
-
-/* HAMBURGER – VISIBLE ONLY ON MOBILE */
-.hamburger {
+/* Search Results */
+.results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  list-style: none;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
   display: none;
-  color: #fff;
-  font-size: clamp(1.3rem, 4vw, 1.6rem);
-  padding: var(--space-xs);
-  border-radius: 6px;
-  transition: var(--transition);
-  z-index: 1001;
 }
 
-.hamburger:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+.results.show {
+  display: block;
 }
 
-/* -------------------------------------------------
-   4. MOBILE BREAKPOINT (≤600px)
-   ------------------------------------------------- */
-@media (max-width: 600px) {
-  .navbar {
-    padding: 0 var(--space-sm);
-  }
+.results li {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
 
-  .navbar .nav-links {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--nav-dark);
-    flex-direction: column;
-    padding: var(--space-md) 0;
-    border-radius: 0 0 12px 12px;
-    box-shadow: var(--shadow-md);
-    animation: mobileMenuSlide 0.4s ease-out forwards;
-    z-index: 999;
-  }
+.results li:last-child {
+  border-bottom: none;
+}
 
-  .navbar .nav-links.active {
-    display: flex;
-  }
+.results li a {
+  color: #333;
+  display: block;
+}
 
-  .hamburger {
-    display: block;
-  }
+.results li:hover {
+  background-color: #f8f9fa;
+}
 
-  /* Prevent logo from pushing hamburger */
-  .navbar .logo {
-    max-width: 60%;
-  }
+.no-results {
+  padding: 16px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
 
-  .navbar .more {
-    margin-left: 0;
-  }
+.results::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  border: 8px solid transparent;
+  border-bottom-color: #ddd;
+}
+
+.results::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 20px;
+  border: 7px solid transparent;
+  border-bottom-color: white;
 }
 
 /* -------------------------------------------------
@@ -452,7 +431,7 @@ button {
 }
 
 .more-things ul {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-lg);
   list-style: none;
 }
 
@@ -461,9 +440,9 @@ button {
   padding: var(--space-xs) var(--space-sm);
   border-radius: 8px;
   cursor: pointer;
-  transition: var(--transition);
   position: relative;
   overflow: hidden;
+  transition: var(--transition);
 }
 
 .more-things li::before {
@@ -536,21 +515,16 @@ footer::before {
   left: -100%;
   width: 100%;
   height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--nav-start),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, var(--nav-start), transparent);
   animation: footerGlow 3s infinite linear;
 }
 
 footer .container {
   max-width: var(--max-width);
   margin: 0 auto;
+  padding: 0 var(--container-padding);
   position: relative;
   z-index: 1;
-  padding: 0 var(--container-padding);
 }
 
 footer p {
@@ -573,11 +547,11 @@ footer .social-links a {
   color: var(--text-light);
   padding: var(--space-xs);
   border-radius: 50%;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 footer .social-links a i {
@@ -619,7 +593,47 @@ footer .social-links a:hover i {
 }
 
 /* -------------------------------------------------
-   8. ANIMATIONS
+   8. MOBILE BREAKPOINT
+   ------------------------------------------------- */
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0 var(--space-sm);
+  }
+
+  .navbar .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--nav-dark);
+    flex-direction: column;
+    padding: var(--space-md) 0;
+    border-radius: 0 0 12px 12px;
+    box-shadow: var(--shadow-md);
+    animation: mobileMenuSlide 0.4s ease-out forwards;
+    z-index: 999;
+  }
+
+  .navbar .nav-links.active {
+    display: flex;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .navbar .logo {
+    max-width: 60%;
+  }
+
+  .navbar .more {
+    margin-left: 0;
+  }
+}
+
+/* -------------------------------------------------
+   9. ANIMATIONS
    ------------------------------------------------- */
 @keyframes navbarDrop {
   to {
@@ -627,6 +641,7 @@ footer .social-links a:hover i {
     transform: translateY(0);
   }
 }
+
 @keyframes mobileMenuSlide {
   from {
     opacity: 0;
@@ -649,78 +664,4 @@ footer .social-links a:hover i {
     opacity: 1;
     transform: translateY(0);
   }
-}
-.search-wrapper {
-  position: relative;           /* This makes the results position relative to the search bar */
-  display: inline-block;        /* Keeps it in the flow but allows absolute children */
-  width: 100%;
-  max-width: 400px;             /* adjust to match your design */
-}
-
-
-.results {
-  position: absolute;
-  top: 100%;                     /* directly below the search bar */
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 300px;
-  overflow-y: auto;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  z-index: 1000;
-  display: none;                 /* hidden by default */
-}
-
-.results.show {
-  display: block;                /* JS will toggle this class */
-}
-
-.results li {
-  padding: 12px 16px;
-  border-bottom: 1px solid #eee;
-}
-
-.results li:last-child {
-  border-bottom: none;
-}
-
-.results li a {
-  text-decoration: none;
-  color: #333;
-  display: block;
-}
-
-.results li:hover {
-  background-color: #f8f9fa;
-}
-
-.no-results {
-  padding: 16px;
-  text-align: center;
-  color: #666;
-  font-style: italic;
-}
-
-/* Optional: nice little arrow pointer */
-.results::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 20px;
-  border: 8px solid transparent;
-  border-bottom-color: #ddd;
-}
-.results::after {
-  content: '';
-  position: absolute;
-  top: -7px;
-  left: 20px;
-  border: 7px solid transparent;
-  border-bottom-color: white;
 }

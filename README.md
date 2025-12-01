@@ -211,24 +211,6 @@ Once the server is running, visit:
 
 ---
 
-## 🎨 Screenshots
-
-> **Note**: Add screenshots of your application here to showcase the UI
-
-```markdown
-### Home Page
-![Home Page](docs/screenshots/home.png)
-
-### Property Listing
-![login](docs/screenshots/login.png)
-
-### Property Listing
-![register](docs/screenshots/register.png)
-
-### Host Dashboard
-![Host Dashboard](docs/screenshots/host.png)
-```
-
 ---
 
 ## 🔧 Configuration
