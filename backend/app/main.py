@@ -3,6 +3,7 @@ from app.routers.auth import auth_rout
 from app.routers.hoster import hosting
 from app.routers.home import home
 from app.routers.more import more
+from app.routers.contact import contuct
 
 #---------------------------------------------------
 #----------GET THE VARIBLES FROM config.py----------
@@ -28,6 +29,11 @@ home(app, templates, get_db, sio)
 #----------TTHE ROUTED FOR more options---------------------------
 #-----------------------------------------------------------------
 more(app, templates, get_db, sio)
+
+#-----------------------------------------------------------------
+#----------TTHE ROUTED FOR contact the hoster --------------------
+#-----------------------------------------------------------------
+contuct(app, templates, get_db, sio)
 
 if __name__ == "__main__":
     import uvicorn
