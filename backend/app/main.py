@@ -8,7 +8,7 @@ from app.routers.contact import contuct
 #---------------------------------------------------
 #----------GET THE VARIBLES FROM config.py----------
 #---------------------------------------------------
-app_sio, sio, app, get_db, templates = create_app()
+app_sio, sio, app, get_db, templates, redis = create_app()
 
 #-----------------------------------------------------------------
 #----------THE ROUTED FOR THE login and register auth.py----------

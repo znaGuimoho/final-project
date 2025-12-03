@@ -125,6 +125,7 @@ button {
   font-weight: 700;
   z-index: 1001;
   max-width: 45%;
+  margin-right: 50px;
 }
 
 .navbar .logo img {

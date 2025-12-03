@@ -14,6 +14,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+import redis.asyncio as aioredis
 
 ##########################################################################
 ################## Load environment variables from .env ##################
@@ -93,6 +94,14 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
 
+# ------------------------
+# Redis connection
+# ------------------------
+redis = aioredis.from_url(
+    os.getenv("REDIS_URL", "redis://localhost:6379/0"),
+    decode_responses=True
+)
+
 #######################################################################
 ################## Function that returns variables ####################
 #######################################################################
@@ -102,4 +111,4 @@ def create_app():
     Returns the FastAPI + Socket.IO application instance.
     """
     app_sio = socketio.ASGIApp(sio, app)
-    return app_sio, sio, app, get_db, templates
+    return app_sio, sio, app, get_db, templates, redis

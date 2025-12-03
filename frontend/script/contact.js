@@ -36,3 +36,5 @@ document.querySelectorAll(".conversation-item").forEach((item) => {
     item.classList.add("active");
   });
 });
+
+console.log(ROOM_CODE)
