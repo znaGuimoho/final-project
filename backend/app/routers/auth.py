@@ -99,6 +99,7 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         passw: str = Form(...),
         db: AsyncSession = Depends(get_db)
     ):
+
         result = await db.execute(
             text("SELECT user_id, user_name, hashed_password, salt, banned FROM users WHERE email = :email"),
             {"email": gmail}
@@ -110,14 +111,13 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                 "login.html",
                 {"request": request, "error": "Invalid email or password"}
             )
-        
+
         if user.banned:
             return templates.TemplateResponse(
                 "login.html",
                 {"request": request, "error": "This account is banned"}
             )
 
-        # Try verifying
         ok = verify_password(passw, user.salt, user.hashed_password)
 
         if not ok:
@@ -125,11 +125,24 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                 "login.html",
                 {"request": request, "error": "Invalid email or password"}
             )
-        
-        result = await set_user_data(request, response, gmail, db)
 
-        return RedirectResponse(
-            url=f"/home",
-            status_code=303,
-            headers=response.headers
-        )
+        # Create redirect FIRST
+        redirect = RedirectResponse(url="/home", status_code=303)
+
+        # Set cookie on THAT redirect response
+        await set_user_data(request, redirect, gmail, db)
+
+        return redirect
+
+    
+    @app.post("/logout")
+    async def logout(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+        session_id = request.cookies.get("session_id")
+
+        query = "DELETE FROM sessions WHERE session_id = :session_id"
+        result = await db.execute(text(query), {"session_id": session_id})
+        await db.commit()
+
+        redirect_response = RedirectResponse(url="/home", status_code=303)
+        redirect_response.delete_cookie("session_id")
+        return redirect_response

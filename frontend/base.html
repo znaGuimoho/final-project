@@ -19,20 +19,27 @@
   </head>
   <body>
     <nav class="navbar">
-      <a href="/home" class="logo">
-        <img
-          src="/frontend/imgs/logo-home-png-7429.png"
-          alt="Houses to rent logo" />
-      </a>
       <div class="nav-container">
-        <i class="fas fa-bars hamburger"></i>
-        <div class="nav-links">
+        <!-- Logo -->
+        <a href="/home" class="logo">
+          <img
+            src="/frontend/imgs/logo-home-png-7429.png"
+            alt="Houses to rent logo" />
+          <span class="logo-text">HouseRent</span>
+        </a>
+
+        <!-- Hamburger for mobile -->
+        <i class="fas fa-bars hamburger" id="hamburger"></i>
+
+        <!-- Nav Links -->
+        <div class="nav-links" id="navLinks">
           <a href="/home">Home</a>
           <a href="/login">Login</a>
           <a href="/register">Register</a>
           <a href="/host">Host</a>
         </div>
 
+        <!-- Search Bar -->
         <div class="search-wrapper">
           <div class="search-bar" id="searchBar">
             <div class="search-icon" id="searchIcon">
@@ -48,7 +55,7 @@
               autocomplete="off" />
           </div>
 
-          <!-- Results dropdown positioned absolutely under the search bar -->
+          <!-- Results dropdown -->
           <ul class="results" id="resultsList">
             {% if results %} {% for result in results %}
             <li><a href="/house/{{ result.id }}">{{ result.details }}</a></li>
@@ -57,10 +64,63 @@
             {% endif %}
           </ul>
         </div>
+
+        <!-- Profile Dropdown (only show if user is logged in) -->
+        {% if user_info %}
+        <div class="profile-dropdown">
+          <button class="profile-btn" id="profileBtn">
+            <img
+              src="/frontend/imgs/profile.png"
+              alt="Profile"
+              class="profile-avatar" />
+            <span class="profile-name">{{ user_info.user_name }}</span>
+            <i class="fas fa-chevron-down profile-arrow"></i>
+          </button>
+
+          <div class="profile-menu" id="profileMenu">
+            <div class="profile-header">
+              <img
+                src="/frontend/imgs/profile.png"
+                alt="Profile" />
+              <div class="profile-info">
+                <h4>{{ user_info.user_name }}</h4>
+              </div>
+            </div>
+            <ul>
+              <li>
+                <a href="/profile"><i class="fas fa-user"></i> My Profile</a>
+              </li>
+              <li>
+                <a href="/my-bookings"
+                  ><i class="fas fa-calendar-check"></i> My Bookings</a
+                >
+              </li>
+              <li>
+                <a href="/my-listings"
+                  ><i class="fas fa-home"></i> My Listings</a
+                >
+              </li>
+              <li>
+                <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <form action="/logout" method="POST" style="margin: 0">
+                  <button type="submit" class="disconnect-btn">
+                    <i class="fas fa-sign-out-alt"></i> Disconnect
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- More Button -->
+        <button class="more" id="moreBtn">
+          <img src="/frontend/imgs/menu.png" alt="More menu" />
+        </button>
       </div>
-      <button class="more">
-        <img src="/frontend/imgs/menu.png" alt="More menu" />
-      </button>
     </nav>
 
     <div class="more-things">

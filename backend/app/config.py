@@ -11,6 +11,7 @@ import socketio
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
@@ -26,7 +27,10 @@ load_dotenv()
 #############################################################
 sio = socketio.AsyncServer(
     async_mode="asgi",
-    cors_allowed_origins="*"
+    cors_allowed_origins=['http://127.0.0.1:8000', 'http://localhost:8000', 'http://127.0.0.1', 'http://localhost'],
+    cors_credentials=True,
+    logger=True,  # Enable logging to see what's happening
+    engineio_logger=True
 )
 
 #############################################################
@@ -34,14 +38,22 @@ sio = socketio.AsyncServer(
 #############################################################
 app = FastAPI()
 
+# Add CORS middleware BEFORE mounting Socket.IO
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:8000", "http://localhost:8000", "http://127.0.0.1", "http://localhost"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Use absolute paths that work in Docker environments
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 #without docker
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
-# FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
 
 UPLOADS_DIR = os.path.join(BASE_DIR, "static", "uploads")
 
@@ -68,7 +80,13 @@ if os.path.exists(FRONTEND_DIR):
 if os.path.exists(UPLOADS_DIR):
     app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
-app_sio = socketio.ASGIApp(sio, app)
+# Create ASGI app with Socket.IO - SINGLE DEFINITION
+app_sio = socketio.ASGIApp(
+    socketio_server=sio,
+    other_asgi_app=app,
+    socketio_path="socket.io"  # No leading slash
+)
+
 templates = Jinja2Templates(directory=FRONTEND_DIR if os.path.exists(FRONTEND_DIR) else BASE_DIR)
 
 #######################################################################
@@ -80,7 +98,6 @@ DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+asyncpg://postgres:postgres@db:5432/houserent_db"  # Use Docker service name
 )
-
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 
@@ -110,5 +127,5 @@ def create_app():
     """
     Returns the FastAPI + Socket.IO application instance.
     """
-    app_sio = socketio.ASGIApp(sio, app)
+    # Return the already-created app_sio instead of creating a new one
     return app_sio, sio, app, get_db, templates, redis

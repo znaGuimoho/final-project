@@ -155,3 +155,29 @@ function updateResultsList(results) {
 
   resultsList.classList.add("show");
 }
+
+// profile-dropdown.js
+document.addEventListener("DOMContentLoaded", function () {
+  const profileBtn = document.getElementById("profileBtn");
+  const profileMenu = document.getElementById("profileMenu");
+
+  if (profileBtn && profileMenu) {
+    // Toggle dropdown
+    profileBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      profileMenu.classList.toggle("active");
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (e) {
+      if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
+        profileMenu.classList.remove("active");
+      }
+    });
+
+    // Prevent dropdown from closing when clicking inside
+    profileMenu.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+  }
+});

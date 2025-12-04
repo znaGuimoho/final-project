@@ -5,6 +5,7 @@ from socketio import AsyncServer
 from app.config import AsyncSessionLocal
 from app.services.user_service import get_user_id_from_cookie
 from app.services.redis_db import get_messages, save_message
+from colorama import Fore, Style
 import json
 
 def register_socketio_handelers(app, templates, get_db, app_sio, sio: AsyncServer):
@@ -63,12 +64,12 @@ def register_socketio_handelers(app, templates, get_db, app_sio, sio: AsyncServe
                 
                 if current_user_id not in [user_id, hoster_id]:
                     await sio.emit('error_message', {'message': 'Unauthorized'}, to=sid)
-                    print(f"User {current_user_id} unauthorized for room {room}")
+                    print(f"{Fore.RED}User {current_user_id} unauthorized for room {room}{Style.RESET_ALL}")
                     return
                 
                 await sio.enter_room(sid, room)
                 await sio.emit('joined_room', {'room': room}, to=sid)
-                print(f"User {current_user_id} joined room {room}")
+                print(f"{Fore.GREEN}User {current_user_id} joined room {room}{Style.RESET_ALL}")
                 
                 # Notify others
                 role = "hoster" if current_user_id == hoster_id else "client"
@@ -77,7 +78,7 @@ def register_socketio_handelers(app, templates, get_db, app_sio, sio: AsyncServe
                 }, room=room, skip_sid=sid)
                 
             except Exception as e:
-                print(f"Error in join_room: {e}")
+                print(f"{Fore.RED}Error in join_room: {e}{Style.RESET_ALL}")
                 await sio.emit('error_message', {'message': 'Server error'}, to=sid)
     
     @sio.event
@@ -112,6 +113,7 @@ def register_socketio_handelers(app, templates, get_db, app_sio, sio: AsyncServe
         row = QUERY.fetchone()
         name = row[0] if row else "Unknown"
 
+        print(f"{Fore.GREEN}Message sent in room {room} by {name} ({sender_role}){Style.RESET_ALL}")
 
         await sio.emit('receive_message', {
             "message": message,
@@ -124,6 +126,5 @@ def register_socketio_handelers(app, templates, get_db, app_sio, sio: AsyncServe
     
     @sio.event
     async def disconnect(sid):
-        """Handle disconnection"""
         user_id = user_sessions.pop(sid, None)
-        print(f"Client {sid} (user: {user_id}) disconnected")
+        print(f"{Fore.GREEN}Client {sid} (user: {user_id}) disconnected{Style.RESET_ALL}")

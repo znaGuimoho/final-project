@@ -27,10 +27,7 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     
     BASE_DIR = Path(__file__).resolve().parents[2]   # finalProject/
     UPLOAD_DIR = BASE_DIR / "static" / "uploads"
-
-    print(BASE_DIR)
-    print(UPLOAD_DIR)
-
+    
     os.makedirs(UPLOAD_DIR, exist_ok=True)
 
     @app.get("/host", response_class=HTMLResponse)

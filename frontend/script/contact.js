@@ -1,6 +1,15 @@
-const socket = io("http://127.0.0.1:8000", {
-  transports: ["websocket"],
+// Debug: Check all cookies
+console.log("Room code:", ROOM_CODE);
+console.log("Current cookies:", document.cookie);
+
+// Socket.IO connection with proper settings for HttpOnly cookies
+const socket = io({
+  path: "/socket.io/",
+  transports: ["polling", "websocket"],
   withCredentials: true,
+  reconnection: true,
+  reconnectionDelay: 1000,
+  reconnectionAttempts: 5
 });
 
 const messageInput = document.getElementById("messageInput");
@@ -63,8 +72,6 @@ document.querySelectorAll(".conversation-item").forEach((item) => {
   });
 });
 
-console.log(ROOM_CODE);
-
 socket.on("connect", () => {
   console.log("socket connected:", socket.id);
   socket.emit("join_room", { room: ROOM_CODE });
@@ -82,5 +89,4 @@ socket.on("receive_message", (data) => {
   const senderInitial = data.sender_name ? data.sender_name[0].toUpperCase() : "?";
   receiveMessage(data.message, data.timestamp, data.sender_role, senderInitial);
 });
-
 

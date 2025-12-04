@@ -9,3 +9,4 @@ asyncpg
 python-dotenv
 python-multipart
 redis
+colorama

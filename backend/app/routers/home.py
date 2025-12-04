@@ -12,7 +12,7 @@ from fastapi import FastAPI, Request, Form, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
-from app.services.user_service import search_in_database
+from app.services.user_service import search_in_database, get_user_data
 
 def home(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/")
@@ -24,9 +24,14 @@ def home(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         # Fetch ALL rows as list of dictionaries
         houses = [dict(row._mapping) for row in result.fetchall()]  # ← FIXED
 
+        try:
+            user_info = await get_user_data(request, db)
+        except HTTPException:
+            user_info = None
+
         return templates.TemplateResponse(
             "home.html",
-            {"request": request, "houses": houses}
+            {"request": request, "houses": houses, "user_info": user_info}
         )
     
     @app.get("/house/{house_id}")

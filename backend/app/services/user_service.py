@@ -3,6 +3,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import AsyncSessionLocal
 import uuid
+from colorama import Fore, Style
+
 
 async def set_user_data(request: Request, response: Response, email: str, db: AsyncSession):
     # 1. Generate session_id
@@ -99,21 +101,29 @@ async def search_in_database(user_inp: str, db: AsyncSession):
 
 async def get_user_id_from_cookie(environ):
     cookie_header = environ.get("HTTP_COOKIE")
-
+    
     if not cookie_header:
+        print(f"{Fore.RED}No cookie header found in request{Style.RESET_ALL}")
         return None
-
+    
+    print(f"{Fore.GREEN}✓ Cookie header found: {cookie_header}{Style.RESET_ALL}")
+    
     cookies = dict(
         cookie.strip().split("=", 1)
         for cookie in cookie_header.split(";")
         if "=" in cookie
     )
-
+    
+    print(f"{Fore.GREEN}Parsed cookies: {list(cookies.keys())}{Style.RESET_ALL}")
+    
     session_id = cookies.get("session_id")
-
+    
     if not session_id:
+        print(f"{Fore.RED}No 'session_id' cookie found. Available cookies: {list(cookies.keys())}{Style.RESET_ALL}")
         return None
-
+    
+    print(f"{Fore.GREEN}✓ Session ID found: {session_id}{Style.RESET_ALL}")
+    
     async with AsyncSessionLocal() as db:
         query = text("""
             SELECT user_id
@@ -121,12 +131,13 @@ async def get_user_id_from_cookie(environ):
             WHERE session_id = :session_id
             AND expires_at > NOW()
         """)
-
         result = await db.execute(query, {"session_id": session_id})
         row = result.fetchone()
-
+        
         if row:
+            print(f"{Fore.GREEN}✓ User authenticated: user_id={row[0]}{Style.RESET_ALL}")
             return row[0]
-
-    return None
+        else:
+            print(f"{Fore.RED}Session not found or expired for session_id: {session_id}{Style.RESET_ALL}")
+            return None
 
