@@ -16,6 +16,7 @@ from app.services.user_service import get_user_data
 from app.services.contact_services import generate_unique_code
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import text
+from app.services.redis_db import get_messages
 
 def contuct(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/contact")
@@ -73,5 +74,14 @@ def contuct(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                 raise HTTPException(status_code=400, detail="Database error")
         else:
             code = row[0]
+
+        messages = await get_messages(code)
+
+        hoster_result = await db.execute(
+            text("SELECT user_name FROM users WHERE user_id = :hoster_id"),
+            {"hoster_id": hoster_id}
+        )
+        hoster_row = hoster_result.fetchone()
+        hoster_name = hoster_row[0] if hoster_row else "Unknown"
         
-        return templates.TemplateResponse("contact.html", {"request": request, "code": code})
+        return templates.TemplateResponse("contact.html", {"request": request, "code": code, "messages": messages, "hoster_name": hoster_name})

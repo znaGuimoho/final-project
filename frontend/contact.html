@@ -28,30 +28,30 @@
 
   <div class="chat-container">
     <div class="chat-header">
-      <div class="avatar">JD</div>
+      <div class="avatar">{{ hoster_name[0]|upper }}</div>
       <div class="chat-header-info">
-        <h3>John Doe</h3>
+        <h3>{{ hoster_name }}</h3>
         <p>Active now</p>
       </div>
     </div>
 
     <div class="messages-area" id="messagesArea">
+      {% for msg in messages %} {% if msg.sender_role == "hoster" %}
       <div class="message received">
-        <div class="message-avatar">JD</div>
+        <div class="message-avatar">{{ msg.hoster[0]|upper }}</div>
         <div class="message-content">
-          <div class="message-bubble">Hey! How are you doing?</div>
-          <div class="message-time">2:28 PM</div>
+          <div class="message-bubble">{{ msg.message }}</div>
+          <div class="message-time">{{ msg.timestamp }}</div>
         </div>
       </div>
-
+      {% else %}
       <div class="message sent">
         <div class="message-content">
-          <div class="message-bubble">
-            I'm doing great, thanks! How about you?
-          </div>
-          <div class="message-time">2:29 PM</div>
+          <div class="message-bubble">{{ msg.message }}</div>
+          <div class="message-time">{{ msg.timestamp }}</div>
         </div>
       </div>
+      {% endif %} {% endfor %}
     </div>
 
     <div class="message-input-container">
@@ -64,8 +64,9 @@
     </div>
   </div>
 </div>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-    const ROOM_CODE = "{{ code }}";
+  const ROOM_CODE = "{{ code }}";
 </script>
 <script src="/frontend/script/contact.js"></script>
 {%endblock %}

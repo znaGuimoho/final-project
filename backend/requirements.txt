@@ -8,3 +8,4 @@ sqlalchemy[asyncio]
 asyncpg
 python-dotenv
 python-multipart
+redis

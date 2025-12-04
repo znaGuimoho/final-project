@@ -1,6 +1,7 @@
 from fastapi import Request, Response, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.config import AsyncSessionLocal
 import uuid
 
 async def set_user_data(request: Request, response: Response, email: str, db: AsyncSession):
@@ -95,3 +96,37 @@ async def search_in_database(user_inp: str, db: AsyncSession):
         {"id": row.id, "details": row.house_details}
         for row in rows
     ]
+
+async def get_user_id_from_cookie(environ):
+    cookie_header = environ.get("HTTP_COOKIE")
+
+    if not cookie_header:
+        return None
+
+    cookies = dict(
+        cookie.strip().split("=", 1)
+        for cookie in cookie_header.split(";")
+        if "=" in cookie
+    )
+
+    session_id = cookies.get("session_id")
+
+    if not session_id:
+        return None
+
+    async with AsyncSessionLocal() as db:
+        query = text("""
+            SELECT user_id
+            FROM sessions
+            WHERE session_id = :session_id
+            AND expires_at > NOW()
+        """)
+
+        result = await db.execute(query, {"session_id": session_id})
+        row = result.fetchone()
+
+        if row:
+            return row[0]
+
+    return None
+
