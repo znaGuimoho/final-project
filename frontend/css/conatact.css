@@ -274,3 +274,61 @@
     bottom: 0;
   }
 }
+
+.no-messages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+}
+
+.no-messages h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #64748b;
+}
+
+/* Optional: Add an icon or illustration */
+.no-messages::before {
+  content: "💬";
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}
+
+/* Alternative with SVG icon */
+.no-messages-with-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 2rem;
+}
+
+.no-messages-with-icon svg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1.5rem;
+  opacity: 0.2;
+  stroke: #94a3b8;
+}
+
+.no-messages-with-icon h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.no-messages-with-icon p {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  max-width: 300px;
+}

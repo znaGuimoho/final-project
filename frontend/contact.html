@@ -1,32 +1,35 @@
-{% extends 'base.html' %}{% block head %}
+{% extends 'base.html' %} {% block head %}
 <link rel="stylesheet" href="/frontend/css/conatact.css" />
-{% endblock %}{% block content %}
+{% endblock %} {% block content %}
 <div class="app-container">
   <div class="sidebar">
     <div class="sidebar-header">
       <h2>Messages</h2>
       <button class="new-message-btn">+ New</button>
     </div>
-
     <div class="search-bar-for-contact">
       <input type="text" placeholder="Search messages..." />
     </div>
 
     <div class="conversations-list">
-      <div class="conversation-item active">
-        <div class="avatar">JD</div>
+      {% if history %} {% for room in history %}
+      <div class="conversation-item" data-room="{{ room.house_id }}">
+        <div class="avatar">{{ room.hoster_name[0]|upper }}</div>
         <div class="conversation-info">
           <div class="conversation-header">
-            <span class="conversation-name">John Doe</span>
+            <span class="conversation-name">{{ room.hoster_name }}</span>
             <span class="conversation-time">2:30 PM</span>
           </div>
-          <div class="conversation-preview">Hey, how are you doing?</div>
         </div>
       </div>
+      {% endfor %} {% else %}
+      <div class="no-conversations">No conversations yet</div>
+      {% endif %}
     </div>
   </div>
 
   <div class="chat-container">
+    {% if hoster_name %}
     <div class="chat-header">
       <div class="avatar">{{ hoster_name[0]|upper }}</div>
       <div class="chat-header-info">
@@ -34,7 +37,7 @@
         <p>Active now</p>
       </div>
     </div>
-
+    {% endif %} {% if messages %}
     <div class="messages-area" id="messagesArea">
       {% for msg in messages %} {% if msg.sender_role == "hoster" %}
       <div class="message received">
@@ -53,6 +56,25 @@
       </div>
       {% endif %} {% endfor %}
     </div>
+    {% else %}
+    <div class="no-messages">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="80"
+        height="80"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <h1>Select a conversation</h1>
+      <p>Choose a contact from the list to start chatting</p>
+    </div>
+    {% endif %}
 
     <div class="message-input-container">
       <input
@@ -64,9 +86,10 @@
     </div>
   </div>
 </div>
+
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
   const ROOM_CODE = "{{ code }}";
 </script>
 <script src="/frontend/script/contact.js"></script>
-{%endblock %}
+{% endblock %}

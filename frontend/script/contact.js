@@ -18,38 +18,43 @@ const messagesArea = document.getElementById("messagesArea");
 
 function sendMessage() {
   const text = messageInput.value.trim();
-  if (!text) return;
-
-  const messageDiv = document.createElement("div");
-  messageDiv.className = "message sent";
-  messageDiv.innerHTML = `
-    <div class="message-content">
-      <div class="message-time">${text}</div>
-      <div class="message-time">${new Date().toLocaleTimeString()}</div>
-    </div>
-  `;
-
-  messagesArea.appendChild(messageDiv);
-  messageInput.value = "";
-  messagesArea.scrollTop = messagesArea.scrollHeight;
-
+  if (!text || !ROOM_CODE) {
+    console.log('No message or room code');
+    return;
+  }
+  
+  console.log('Sending message:', text, 'to room:', ROOM_CODE);
+  
+  // Send via socket - the receive_message event will handle displaying it
   socket.emit("send_message", { room: ROOM_CODE, message: text });
+  
+  messageInput.value = "";
 }
 
 function receiveMessage(text, timeNow, senderRole, senderInitial) {
   if (!text) return;
-
+  
   const messageDiv = document.createElement("div");
   messageDiv.className = senderRole === "hoster" ? "message received" : "message sent";
-
-  messageDiv.innerHTML = `
-    <div class="message-avatar">${senderInitial}</div>
-    <div class="message-content">
-      <div class="message-bubble">${text}</div>
-      <div class="message-time">${timeNow}</div>
-    </div>
-  `;
-
+  
+  // Only show avatar for received messages
+  if (senderRole === "hoster") {
+    messageDiv.innerHTML = `
+      <div class="message-avatar">${senderInitial}</div>
+      <div class="message-content">
+        <div class="message-bubble">${text}</div>
+        <div class="message-time">${timeNow}</div>
+      </div>
+    `;
+  } else {
+    messageDiv.innerHTML = `
+      <div class="message-content">
+        <div class="message-bubble">${text}</div>
+        <div class="message-time">${timeNow}</div>
+      </div>
+    `;
+  }
+  
   messagesArea.appendChild(messageDiv);
   messagesArea.scrollTop = messagesArea.scrollHeight;
 }
@@ -88,5 +93,21 @@ socket.on("error_message", (data) => {
 socket.on("receive_message", (data) => {
   const senderInitial = data.sender_name ? data.sender_name[0].toUpperCase() : "?";
   receiveMessage(data.message, data.timestamp, data.sender_role, senderInitial);
+});
+
+document.querySelectorAll('.conversation-item').forEach(item => {
+  item.addEventListener('click', function() {
+
+    document.querySelectorAll('.conversation-item').forEach(i => 
+      i.classList.remove('active')
+    );
+    
+    this.classList.add('active');
+    
+    const roomCode = this.dataset.room;
+    console.log('Switching to room:', roomCode);
+    
+    window.location.href = `/contact/${roomCode}`;
+  });
 });
 
