@@ -48,12 +48,12 @@ app.add_middleware(
 )
 
 # Use absolute paths that work in Docker environments
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 #without docker
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
-FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
+# FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
 
 UPLOADS_DIR = os.path.join(BASE_DIR, "static", "uploads")
 

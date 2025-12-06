@@ -85,43 +85,75 @@ def register_socketio_handelers(app, templates, get_db, app_sio, sio: AsyncServe
     async def send_message(sid, data):
         room = data.get('room')
         message = data.get('message')
-
+        
         if not room or not message:
+            await sio.emit('error_message', {'message': 'Missing room or message'}, to=sid)
             return
-
+        
         current_user_id = user_sessions.get(sid)
-
+        if not current_user_id:
+            await sio.emit('error_message', {'message': 'Not authenticated'}, to=sid)
+            return
+        
         async with AsyncSessionLocal() as db:
-            query = """SELECT user_id, hoster_id 
+            try:
+                # Get room data
+                query = text("""
+                    SELECT user_id, hoster_id 
                     FROM contact_history 
-                    WHERE room_name = :room"""
-            result = await db.execute(text(query), {"room": room})
-            user_id, hoster_id = result.fetchone()
-
-        await save_message(
-            room=room,
-            sender_id=str(current_user_id),
-            hoster=str(hoster_id),
-            client=str(user_id),
-            message=message,
-            timestamp=datetime.now().isoformat()
-        )
-
-        sender_role = "hoster" if current_user_id == hoster_id else "client"
-
-        QUERY = await db.execute(text("SELECT user_name FROM users WHERE user_id = :id"), {"id": current_user_id})
-        row = QUERY.fetchone()
-        name = row[0] if row else "Unknown"
-
-        print(f"{Fore.GREEN}Message sent in room {room} by {name} ({sender_role}){Style.RESET_ALL}")
-
-        await sio.emit('receive_message', {
-            "message": message,
-            "sender_id": current_user_id,
-            "sender_role": sender_role,
-            "sender_name": name,
-            "timestamp": datetime.now().isoformat()
-        }, room=room)
+                    WHERE room_name = :room
+                """)
+                result = await db.execute(query, {"room": room})
+                room_data = result.fetchone()
+                
+                if not room_data:
+                    await sio.emit('error_message', {'message': 'Room not found'}, to=sid)
+                    return
+                
+                user_id, hoster_id = room_data[0], room_data[1]
+                
+                # Verify user has access
+                if current_user_id not in [user_id, hoster_id]:
+                    await sio.emit('error_message', {'message': 'Unauthorized'}, to=sid)
+                    print(f"{Fore.RED}User {current_user_id} unauthorized for room {room}{Style.RESET_ALL}")
+                    return
+                
+                # Determine sender role
+                sender_role = "hoster" if current_user_id == hoster_id else "client"
+                
+                # Get sender name
+                name_query = text("SELECT user_name FROM users WHERE user_id = :id")
+                name_result = await db.execute(name_query, {"id": current_user_id})
+                name_row = name_result.fetchone()
+                name = name_row[0] if name_row else "Unknown"
+                
+                # Get current timestamp
+                timestamp = datetime.now()
+                
+                # Save message to database
+                await save_message(
+                    room=room,
+                    sender_id=str(current_user_id),
+                    hoster=str(hoster_id),
+                    client=str(user_id),
+                    message=message,
+                    timestamp=timestamp.isoformat()
+                )
+                
+                print(f"{Fore.GREEN}Message sent in room {room} by {name} ({sender_role}){Style.RESET_ALL}")
+                
+                # Broadcast to everyone in the room
+                await sio.emit('receive_message', {
+                    "message": message,
+                    "sender_id": current_user_id,
+                    "sender_role": sender_role,
+                    "sender_name": name,
+                    "timestamp": timestamp.strftime('%I:%M %p')  # Format: "02:30 PM"
+                }, room=room)
+                
+            except Exception as e:
+                print(f"{Fore.RED}Error in send_message: {e}{Style.RESET_ALL}")
+                await sio.emit('error_message', {'message': 'Failed to send message'}, to=sid)
 
     
     @sio.event
