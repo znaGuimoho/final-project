@@ -1,14 +1,11 @@
-# Ignore Python virtual environment
 myvenv/
 venv/
 
-# Ignore Python cache files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Ignore IDE/editor files (optional but useful)
 *.idea/
 *.vscode/
 

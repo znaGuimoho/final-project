@@ -4,6 +4,7 @@ from app.routers.hoster import hosting
 from app.routers.home import home
 from app.routers.more import more
 from app.routers.contact import contuct
+from app.routers.favorites import favorite
 from app.events.contact_events import register_socketio_handelers
 
 #---------------------------------------------------
@@ -35,6 +36,11 @@ more(app, templates, get_db, sio)
 #----------TTHE ROUTED FOR contact the hoster --------------------
 #-----------------------------------------------------------------
 contuct(app, templates, get_db, sio)
+
+#-----------------------------------------------------------------
+#----------TTHE ROUTED FOR vavorite           --------------------
+#-----------------------------------------------------------------
+favorite(app, templates, get_db, sio)
 
 register_socketio_handelers(app, templates, get_db, app_sio, sio)
 

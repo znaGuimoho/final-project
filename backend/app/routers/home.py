@@ -6,7 +6,7 @@
 ##########################################||                                                                       ||##########################################
 ###############################################################################################################################################################
 ###############################################################################################################################################################
-from fastapi import Request, HTTPException
+from fastapi import Request, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from fastapi import FastAPI, Request, Form, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,17 +17,29 @@ from app.services.user_service import search_in_database, get_user_data
 def home(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/")
     @app.get("/home")
-    async def get_home(request: Request, db: AsyncSession = Depends(get_db)):
+    async def get_home(request: Request, responce: Response, db: AsyncSession = Depends(get_db)):
         # Execute query
         result = await db.execute(text("SELECT * FROM houses"))
-        
-        # Fetch ALL rows as list of dictionaries
-        houses = [dict(row._mapping) for row in result.fetchall()]  # ← FIXED
+
+        houses = [dict(row._mapping) for row in result.fetchall()]
 
         try:
             user_info = await get_user_data(request, db)
         except HTTPException:
             user_info = None
+
+        if user_info:
+            user_id = user_info["user_id"]
+
+            query = "SELECT * from myfavorite where user_id = :user_id"
+            result1 = await db.execute(text(query), {"user_id": user_id})
+            favorite_ids = {row.house_id for row in result1.fetchall()}
+
+            for house in houses:
+                house["is_favorite"] = house["id"] in favorite_ids
+        else:
+            for house in houses:
+                house["is_favorite"] = False
 
         return templates.TemplateResponse(
             "home.html",

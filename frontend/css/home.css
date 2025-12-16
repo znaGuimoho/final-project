@@ -386,3 +386,26 @@
   background: #5d5fef;
   color: white !important;
 }
+.image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.star-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease;
+}
+
+.star-icon:hover {
+  transform: scale(1.1);
+}
+
+.star-icon img {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}

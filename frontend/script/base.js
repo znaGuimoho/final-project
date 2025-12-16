@@ -181,3 +181,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+async function checkLogin() {
+    const res = await fetch("/auth/status", {
+        credentials: "include"
+    });
+
+    const data = await res.json();
+
+    if (!data.logged_in) {
+        return null;
+    }
+
+    return data.user_info;
+}
+

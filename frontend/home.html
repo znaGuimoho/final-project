@@ -14,24 +14,26 @@
   <div class="houses">
     {% for house in houses %}
     <article class="house-card" data-category="{{ house.category }}">
-      <img
-        src="{{ house.img_url or 'https://via.placeholder.com/400x200?text=No+Image' }}"
-        alt="{{ house.title or 'House for rent' }}"
-        class="house-image"
-        loading="lazy" />
+      <div class="image-wrapper">
+        <img
+          src="{{ house.img_url or 'https://via.placeholder.com/400x200?text=No+Image' }}"
+          alt="{{ house.title or 'House for rent' }}"
+          class="house-image"
+          loading="lazy" />
+        <i class="star-icon">
+          <img
+            class="favorite-star {{ 'selected' if house.is_favorite else 'not-selected' }}"
+            src="{{ '/frontend/imgs/selectedStar.png' if house.is_favorite else '/frontend/imgs/star.png' }}"
+            data-house-id="{{ house.id }}"
+            alt="star" />
+        </i>
+      </div>
       <div class="house-info">
         <h3>{{ house.title or house.category }}</h3>
         <p class="price">
-          {% if house.price %}
-            ${{ house.price }}
-            {% if house.category == "house" %}
-              /month
-            {% else %}
-              /night
-            {% endif %}
-          {% else %}
-            Price on request
-          {% endif %}
+          {% if house.price %} ${{ house.price }} {% if house.category ==
+          "house" %} /month {% else %} /night {% endif %} {% else %} Price on
+          request {% endif %}
         </p>
         <p class="meta">
           {% if house.location_url %}

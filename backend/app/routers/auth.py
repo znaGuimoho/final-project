@@ -8,7 +8,7 @@
 ###############################################################################################################################################################
 from fastapi import Request
 from fastapi.responses import HTMLResponse
-from fastapi import FastAPI, Request, Form, Depends, Response
+from fastapi import FastAPI, Request, Form, Depends, Response, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
@@ -18,7 +18,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi.responses import RedirectResponse
 from datetime import datetime, timedelta
 from uuid import uuid4
-from app.services.user_service import set_user_data
+from app.services.user_service import set_user_data, get_user_data
 
 def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/register", response_class=HTMLResponse)
@@ -76,7 +76,6 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             )
             await db.commit()
         except IntegrityError:
-            # Email already exists or constraint violation
             return templates.TemplateResponse(
                 "register.html",
                 {"request": request, "error": "This email is already registered."}
@@ -146,3 +145,14 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         redirect_response = RedirectResponse(url="/home", status_code=303)
         redirect_response.delete_cookie("session_id")
         return redirect_response
+
+    @app.get("/auth/status")
+    async def auth_status(request: Request, db: AsyncSession = Depends(get_db)):
+        try:
+            user_info = await get_user_data(request, db)
+        except HTTPException as e:
+            if e.status_code == 401:
+                return {"logged_in": False}
+            raise
+
+        return {"logged_in": True, "user_info": user_info}
