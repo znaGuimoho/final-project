@@ -1,0 +1,750 @@
+/* ============================================================
+   ROOT & RESET
+   ============================================================ */
+:root {
+  /* Profile page */
+  --primary:       #3366ff;
+  --primary-dark:  #2540d6;
+  --light-bg:      #f8f9fc;
+  --gray:          #6b7280;
+  --dark:          #1f2937;
+  --border:        #e2e8f0;
+
+  /* Password modal */
+  --pw-bg:         #0d0d0f;
+  --pw-surface:    #141417;
+  --pw-border:     #2a2a30;
+  --pw-accent:     #c9a96e;
+  --pw-accent-dim: #8a6f43;
+  --pw-text:       #e8e6e0;
+  --pw-muted:      #5a5a65;
+  --pw-error:      #c0574a;
+  --pw-success:    #5a9e7a;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--light-bg);
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+header.profile-header {
+  background: white;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.profile-main {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  gap: 2rem;
+}
+
+
+/* ============================================================
+   PROFILE HEADER
+   ============================================================ */
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.edit-avatar-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: var(--primary);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.edit-avatar-btn:hover {
+  background: var(--primary-dark);
+}
+
+.profile-info h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.profile-info .status {
+  color: #10b981;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.profile-info .joined {
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-title {
+  margin-bottom: 1.2rem;
+  color: var(--dark);
+  font-size: 1.15rem;
+}
+
+.nav-list {
+  list-style: none;
+}
+
+.nav-list li {
+  margin-bottom: 0.6rem;
+}
+
+.nav-list a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  color: var(--gray);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.nav-list a:hover,
+.nav-list a.active {
+  background: #eef2ff;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   CONTENT CARD (profile page)
+   ============================================================ */
+.content-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 1.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.section-description {
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+
+/* ============================================================
+   INFO GRID (display mode)
+   ============================================================ */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem 2rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.info-label {
+  color: var(--gray);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.info-value {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+
+/* ============================================================
+   EDIT FORM
+   ============================================================ */
+.edit-form {
+  display: none;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  color: var(--gray);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--dark);
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(51, 102, 255, 0.1);
+}
+
+.form-hint {
+  color: var(--gray);
+  font-size: 0.8rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+
+/* ============================================================
+   ACTION BUTTONS (profile page)
+   ============================================================ */
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Profile page buttons — scoped so they don't bleed into the modal */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: #eef2ff;
+}
+
+.btn-danger-outline {
+  background: transparent;
+  border: 1.5px solid #ef4444;
+  color: #ef4444;
+}
+
+.btn-danger-outline:hover {
+  background: #fef2f2;
+}
+
+
+/* ============================================================
+   VERIFICATION BADGES
+   ============================================================ */
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.verification-badge.verified {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.verification-badge.unverified {
+  background: #fff7ed;
+  color: #f97316;
+}
+
+.verify-link {
+  color: var(--primary);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+/* ============================================================
+   PASSWORD MODAL — OVERLAY
+   ============================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+
+/* ============================================================
+   PASSWORD MODAL — CARD
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Mono:wght@300;400&display=swap');
+
+.pw-card {
+  position: relative;
+  width: 420px;
+  max-width: calc(100vw - 40px);
+  background: var(--pw-surface);
+  border: 1px solid var(--pw-border);
+  border-radius: 4px;
+  padding: 48px 44px 44px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(201, 169, 110, 0.05);
+  animation: pw-fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pw-fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Gold accent line at top */
+.pw-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 44px;
+  right: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pw-accent), transparent);
+}
+
+/* Close button */
+.pw-card .pw-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: var(--pw-muted);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+  padding: 4px;
+}
+
+.pw-card .pw-close-btn:hover {
+  color: var(--pw-text);
+}
+
+/* Header area */
+.pw-header {
+  margin-bottom: 32px;
+}
+
+.pw-step-indicator {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.pw-step-dot {
+  width: 24px;
+  height: 2px;
+  background: var(--pw-border);
+  border-radius: 2px;
+  transition: background 0.4s ease;
+}
+
+.pw-step-dot.active { background: var(--pw-accent); }
+.pw-step-dot.done   { background: var(--pw-accent-dim); }
+
+.pw-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--pw-text);
+  line-height: 1.15;
+}
+
+.pw-header p {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--pw-muted);
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+}
+
+
+/* ============================================================
+   PASSWORD MODAL — STEPS
+   ============================================================ */
+.pw-steps-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.pw-step {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  animation: pw-slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pw-step.active {
+  display: flex;
+}
+
+@keyframes pw-slideIn {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Field */
+.pw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pw-field label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pw-muted);
+  font-family: 'DM Mono', monospace;
+  font-weight: 400;
+}
+
+/* Input wrap */
+.pw-input-wrap {
+  position: relative;
+}
+
+.pw-input-wrap input[type="password"],
+.pw-input-wrap input[type="text"] {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--pw-border);
+  border-radius: 2px;
+  padding: 13px 50px 13px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--pw-text);
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  letter-spacing: 0.04em;
+}
+
+.pw-input-wrap input:focus {
+  border-color: var(--pw-accent);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.08);
+}
+
+.pw-input-wrap input.pw-error   { border-color: var(--pw-error) !important; }
+.pw-input-wrap input.pw-success { border-color: var(--pw-success) !important; }
+
+/* Show/hide toggle */
+.pw-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--pw-muted);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.pw-toggle:hover {
+  color: var(--pw-accent);
+}
+
+/* Error message */
+.pw-error-msg {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--pw-error);
+  font-family: 'DM Mono', monospace;
+  display: none;
+  margin-top: -4px;
+}
+
+/* Strength bar */
+.pw-strength-bar {
+  height: 2px;
+  background: var(--pw-border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: -4px;
+}
+
+.pw-strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+.pw-strength-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+  color: var(--pw-muted);
+  text-align: right;
+}
+
+
+/* ============================================================
+   PASSWORD MODAL — BUTTONS
+   ============================================================ */
+.pw-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.pw-btn-primary {
+  background: var(--pw-accent);
+  color: #0d0d0f;
+}
+
+.pw-btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.2s;
+}
+
+.pw-btn-primary:hover::after { background: rgba(255, 255, 255, 0.08); }
+.pw-btn-primary:active        { transform: scale(0.99); }
+
+.pw-btn-ghost {
+  background: transparent;
+  color: var(--pw-muted);
+  border: 1px solid var(--pw-border);
+}
+
+.pw-btn-ghost:hover {
+  border-color: var(--pw-muted);
+  color: var(--pw-text);
+}
+
+/* Loading shimmer */
+.pw-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.pw-btn.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: pw-shimmer 1.2s infinite;
+}
+
+@keyframes pw-shimmer {
+  to { left: 100%; }
+}
+
+
+/* ============================================================
+   PASSWORD MODAL — SUCCESS STATE
+   ============================================================ */
+.pw-success-view {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 24px 0 8px;
+  animation: pw-slideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pw-success-view.active {
+  display: flex;
+}
+
+.pw-checkmark {
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--pw-success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pw-success);
+  font-size: 20px;
+}
+
+.pw-success-view h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--pw-text);
+}
+
+.pw-success-view p {
+  font-size: 11px;
+  color: var(--pw-muted);
+  letter-spacing: 0.06em;
+  font-family: 'DM Mono', monospace;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 992px) {
+  .profile-main {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: -1;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pw-card {
+    padding: 40px 28px 36px;
+  }
+}

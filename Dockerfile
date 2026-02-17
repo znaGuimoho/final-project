@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 
+# Use Chinese mirrors for faster downloads
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
+    sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources
 # System deps
 RUN apt update && apt install -y build-essential
 

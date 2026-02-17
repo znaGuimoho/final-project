@@ -6,41 +6,55 @@
 ##########################################||                                                                       ||##########################################
 ###############################################################################################################################################################
 ###############################################################################################################################################################
-from fastapi import Request, HTTPException
-from fastapi.responses import HTMLResponse
-from fastapi import FastAPI, Request, Form, Depends, File, UploadFile
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.templating import Jinja2Templates
-from sqlalchemy import text
-from app.services.Hash_password import hash_password, verify_password
-from app.services.user_service import get_user_data
-import base64
-from sqlalchemy.exc import IntegrityError
-from fastapi.responses import RedirectResponse
-from datetime import datetime, timedelta
-from uuid import uuid4
-import os
 import json
+import os
+from datetime import datetime
 from pathlib import Path
 
+from app.services.user_service import get_user_data
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
 def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
-    
-    BASE_DIR = Path(__file__).resolve().parents[2]   # finalProject/
+    BASE_DIR = Path(__file__).resolve().parents[2]  # finalProject/
     UPLOAD_DIR = BASE_DIR / "static" / "uploads"
-    
+
     os.makedirs(UPLOAD_DIR, exist_ok=True)
 
     @app.get("/host", response_class=HTMLResponse)
     async def get_host(request: Request, db: AsyncSession = Depends(get_db)):
         try:
             user_info = await get_user_data(request, db)
+
+            verif_query = text("SELECT is_host FROM users WHERE user_id = :user_id")
+            result = await db.execute(verif_query, {"user_id": user_info["user_id"]})
+
+            user = result.fetchone()
+
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+
+            is_host = user.is_host
+
+            if not is_host:
+                raise HTTPException(
+                    status_code=403,
+                    detail="User is not registered as host",
+                )
+
         except HTTPException as e:
             if e.status_code == 401:
                 return RedirectResponse("/login", status_code=303)
+            elif e.status_code == 403:
+                return RedirectResponse("/become-host", status_code=303)
             raise
 
         return templates.TemplateResponse("host.html", {"request": request})
-    
+
     @app.post("/host")
     async def upload_with_data(
         request: Request,
@@ -72,7 +86,7 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             JSdetails = {
                 "hoster_id": user_info["user_id"],
                 "hoster_name": user_info["user_name"],
-                "house_details": details
+                "house_details": details,
             }
 
             query = text("""
@@ -80,14 +94,17 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                 VALUES (:category, :price, :location_name, :location_url, :details, :img_url)
             """)
 
-            result = await db.execute(query, {
-                "category": category,
-                "price": price,
-                "location_name": locationText,
-                "location_url": location_url,
-                "details": json.dumps(JSdetails),
-                "img_url": img_url
-            })
+            result = await db.execute(
+                query,
+                {
+                    "category": category,
+                    "price": price,
+                    "location_name": locationText,
+                    "location_url": location_url,
+                    "details": json.dumps(JSdetails),
+                    "img_url": img_url,
+                },
+            )
             await db.commit()
 
             return RedirectResponse(url="/sucsessUp")
@@ -95,10 +112,10 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             print("Error while uploading:", e)
             return templates.TemplateResponse(
                 "host.html",
-                {"request": request, "error": "An error occurred while uploading."}
+                {"request": request, "error": "An error occurred while uploading."},
             )
-    
 
     @app.get("/sucsessUp")
     async def get_sucsess(request: Request):
         return templates.TemplateResponse("uploadSucsess.html", {"request": request})
+

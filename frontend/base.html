@@ -9,6 +9,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/frontend/css/base.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link
       rel="icon"
       href="/frontend/imgs/house.png
@@ -139,24 +140,77 @@
     <!--this is the content that will be added in the other pages-->
     <div class="content">{% block content %}{% endblock %}</div>
 
-    <footer data-aos="fade-up">
-      <div class="container">
-        <p>&copy; 2025 Mohammed Dahhaoui. All rights reserved.</p>
-        <div class="social-links">
-          <a href="https://www.instagram.com/moha_fg" target="_blank">
-            <i class="fab fa-instagram"></i> Instagram
-          </a>
-          <a
-            href="https://www.facebook.com/profile.php?id=61555319122882"
-            target="_blank">
-            <i class="fab fa-facebook"></i> Facebook
-          </a>
-          <a href="https://github.com/znaGuimoho" target="_blank">
-            <i class="fab fa-github"></i> GitHub
-          </a>
+    <footer>
+    <!-- Floating particles -->
+    <div class="particle" style="width: 4px; height: 4px; left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 6px; height: 6px; left: 25%; animation-delay: 2s;"></div>
+    <div class="particle" style="width: 3px; height: 3px; left: 40%; animation-delay: 4s;"></div>
+    <div class="particle" style="width: 5px; height: 5px; left: 60%; animation-delay: 1s;"></div>
+    <div class="particle" style="width: 4px; height: 4px; left: 75%; animation-delay: 3s;"></div>
+    <div class="particle" style="width: 6px; height: 6px; left: 90%; animation-delay: 5s;"></div>
+
+    <div class="footer-container">
+      <div class="footer-top">
+        <!-- About Section -->
+        <div class="footer-section footer-about">
+          <h3>Mohammed Dahhaoui</h3>
+          <p>Full-stack developer passionate about creating beautiful and functional web experiences.</p>
+          <div class="footer-skills">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">FastAPI</span>
+            <span class="skill-tag">UI/UX</span>
+            <span class="skill-tag">JavaScript</span>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul class="quick-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="aboutme" target="_blank">About Me</a></li> 
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <!-- Social Section -->
+        <div class="footer-section social-section">
+          <h3>Let's Connect</h3>
+          <p style="color: #cbd5e1; margin: 10px 0;">Follow me on social media</p>
+          <div class="social-icons">
+            <a href="https://www.instagram.com/moha_fg" target="_blank" class="social-btn instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61555319122882" target="_blank" class="social-btn facebook">
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a href="https://github.com/znaGuimoho" target="_blank" class="social-btn github">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/mohammed-dahhaoui-750345214/" target="_blank" class="social-btn linkedin">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </div>
         </div>
       </div>
-    </footer>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <div class="copyright">
+          <span>&copy; 2026 Mohammed Dahhaoui</span>
+          <span>•</span>
+          <span>Made with <span class="heart">♥</span></span>
+        </div>
+        <div class="footer-links">
+          <a href="#privacy">Privacy Policy</a>
+          <a href="#terms">Terms of Service</a>
+          <a href="#sitemap">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer> 
     <script src="/frontend/script/base.js"></script>
   </body>
 </html>

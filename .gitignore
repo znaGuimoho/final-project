@@ -1,15 +1,33 @@
-myvenv/
-venv/
 
+# Byte-compiled / cache
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
 
-*.idea/
-*.vscode/
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
 
-cert.pem
-key.pem
+# Python build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
 
-.env
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# IDE / editor folders
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

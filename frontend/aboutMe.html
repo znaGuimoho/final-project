@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/frontend/css/aboutMe.css" />
+    <link rel="icon" href="/frontend/imgs/house.png" type="image/x-icon" />
+    <title>About Me</title>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="profile-image">
+                <!-- <i class="fas fa-user"></i> -->
+                <img src="/frontend/imgs/Me.jpg" />
+            </div>
+            <h1>Mohammed Dahhaoui</h1>
+            <p>Full-Stack Developer • Linux Enthusiast • Tech Educator</p>
+            <div class="header-tags">
+                <span class="header-tag"><i class="fas fa-code"></i> Developer</span>
+                <span class="header-tag"><i class="fab fa-linux"></i> Linux Expert</span>
+                <span class="header-tag"><i class="fas fa-graduation-cap"></i> Educator</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- About Section -->
+        <section class="reveal">
+            <h2><i class="fas fa-user-circle"></i> About Me</h2>
+            <p>
+                I am a passionate developer who thrives on working with Linux systems,
+                backend development, and modern web technologies. I believe in
+                learning by doing—building real-world projects, solving complex
+                problems, and constantly improving through experience.
+            </p>
+            <p>
+                Beyond coding, I'm deeply interested in education, robotics, and
+                language learning. I enjoy creating structured learning materials,
+                interactive projects, and sharing knowledge with others. My goal is to
+                build tools that make a difference and help people learn and grow.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">5+</div>
+                    <div class="stat-label">Years Coding</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Projects Built</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Learning Never Stops</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="reveal">
+            <h2><i class="fas fa-tools"></i> Skills & Technologies</h2>
+            <div class="skills-grid">
+                <div class="tag"><i class="fab fa-python"></i> Python</div>
+                <div class="tag"><i class="fas fa-rocket"></i> FastAPI</div>
+                <div class="tag"><i class="fas fa-database"></i> MySQL</div>
+                <div class="tag"><i class="fab fa-linux"></i> Linux</div>
+                <div class="tag"><i class="fas fa-terminal"></i> Neovim</div>
+                <div class="tag"><i class="fab fa-docker"></i> Docker</div>
+                <div class="tag"><i class="fab fa-html5"></i> HTML/CSS/JS</div>
+                <div class="tag">
+                    <i class="fas fa-sync-alt"></i> Async Programming
+                </div>
+                <div class="tag"><i class="fab fa-git-alt"></i> Git & GitHub</div>
+                <div class="tag"><i class="fas fa-server"></i> Backend Dev</div>
+                <div class="tag"><i class="fas fa-robot"></i> Automation</div>
+                <div class="tag"><i class="fas fa-cogs"></i> System Design</div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="reveal">
+            <h2><i class="fas fa-project-diagram"></i> Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3><i class="fas fa-comments"></i> Real-Time Chatroom</h3>
+                    <p>
+                        A full-featured web application with real-time messaging
+                        capabilities, user authentication, and modern UI/UX design built
+                        with WebSockets and FastAPI.
+                    </p>
+                </div>
+                <div class="project-card">
+                    <h3><i class="fas fa-robot"></i> Robotics & Education Platform</h3>
+                    <p>
+                        Interactive educational activities and robotics projects designed
+                        to teach programming concepts through hands-on learning
+                        experiences.
+                    </p>
+                </div>
+                <div class="project-card">
+                    <h3>
+                        <i class="fas fa-terminal"></i> Linux Development Environment
+                    </h3>
+                    <p>
+                        Highly customized development setup with Neovim, tmux, and
+                        automation scripts for maximum productivity and efficiency.
+                    </p>
+                </div>
+                <div class="project-card">
+                    <h3>
+                        <i class="fas fa-code-branch"></i> Open Source Contributions
+                    </h3>
+                    <p>
+                        Active contributor to various open-source projects, focusing on
+                        improving documentation, fixing bugs, and adding new features.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interests Section -->
+        <section class="reveal">
+            <h2><i class="fas fa-heart"></i> Interests & Passions</h2>
+            <ul>
+                <li>
+                    <strong>Open-Source Software:</strong> Contributing to and learning
+                    from the global developer community
+                </li>
+                <li>
+                    <strong>System Design:</strong> Architecting scalable and efficient
+                    backend systems
+                </li>
+                <li>
+                    <strong>Automation & Productivity:</strong> Building tools that save
+                    time and eliminate repetitive tasks
+                </li>
+                <li>
+                    <strong>Continuous Learning:</strong> Always exploring new
+                    technologies, frameworks, and best practices
+                </li>
+                <li>
+                    <strong>Teaching & Mentoring:</strong> Helping others grow their
+                    technical skills
+                </li>
+                <li>
+                    <strong>Problem Solving:</strong> Tackling challenging algorithms
+                    and real-world engineering problems
+                </li>
+            </ul>
+
+            <div class="interactive-section">
+                <button onclick="toggleMessage()">
+                    <i class="fas fa-code"></i> Why I Love Coding
+                </button>
+                <div id="message">
+                    <strong>💡 My Coding Philosophy:</strong><br />
+                    I love coding because it empowers me to transform ideas into
+                    reality. Every line of code is an opportunity to solve problems,
+                    create value, and make someone's life easier. Whether it's building
+                    a useful tool, automating a tedious task, or learning a new
+                    technology, programming gives me the freedom to constantly grow and
+                    innovate. It's not just about writing code—it's about building
+                    solutions that matter.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <!-- Particles -->
+        <div class="footer-particle" style="width: 4px; height: 4px; left: 10%; animation-delay: 0s"></div>
+        <div class="footer-particle" style="width: 6px; height: 6px; left: 30%; animation-delay: 2s"></div>
+        <div class="footer-particle" style="width: 5px; height: 5px; left: 50%; animation-delay: 4s"></div>
+        <div class="footer-particle" style="width: 4px; height: 4px; left: 70%; animation-delay: 1s"></div>
+        <div class="footer-particle" style="width: 6px; height: 6px; left: 90%; animation-delay: 3s"></div>
+
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Mohammed Dahhaoui</h3>
+                    <p style="color: var(--text-muted)">
+                        Building the future, one line of code at a time.
+                    </p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Connect With Me</h3>
+                    <div class="social-links">
+                        <a href="https://github.com/znaGuimoho" target="_blank" class="social-btn" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.instagram.com/moha_fg" target="_blank" class="social-btn"
+                            title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/profile.php?id=61555319122882" target="_blank"
+                            class="social-btn" title="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="mailto:mohammeddahhaoui5@gmail.com" class="social-btn" title="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Stats</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary)"></i>
+                        Based in Morocco<br />
+                        <i class="fas fa-coffee" style="color: var(--primary)"></i> Fueled
+                        by coffee & curiosity<br />
+                        <i class="fas fa-laptop-code" style="color: var(--primary)"></i>
+                        Always coding something
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <p>
+                    © <span id="year"></span> Mohammed Dahhaoui • Made with
+                    <span class="heart">♥</span> and lots of coffee
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle message
+        function toggleMessage() {
+            const message = document.getElementById("message");
+            message.classList.toggle("show");
+        }
+
+        // Set current year
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        // Scroll reveal animation
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+
+            reveals.forEach((element) => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add("active");
+                }
+            });
+        }
+
+        window.addEventListener("scroll", reveal);
+
+        // Initial reveal check
+        reveal();
+
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+            anchor.addEventListener("click", function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute("href"));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

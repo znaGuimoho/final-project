@@ -727,93 +727,308 @@ button {
    7. FOOTER - PROPER BOTTOM PLACEMENT
    ------------------------------------------------- */
 footer {
-  background: #1a202c;
-  color: var(--text-light);
-  padding: var(--space-lg) 0;
-  text-align: center;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #e2e8f0;
+  padding: 60px 0 30px;
   margin-top: auto;
-  border-top: 3px solid var(--nav-start);
   position: relative;
   overflow: hidden;
-  width: 100%;
 }
 
+/* Animated background gradient */
 footer::before {
   content: "";
   position: absolute;
   top: 0;
   left: -100%;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--nav-start), transparent);
-  animation: footerGlow 3s infinite linear;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.1),
+    transparent
+  );
+  animation: shimmer 8s infinite;
 }
 
-footer .container {
-  max-width: var(--max-width);
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Floating particles effect */
+.particle {
+  position: absolute;
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 15s infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-800px) translateX(100px);
+    opacity: 0;
+  }
+}
+
+.footer-container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--container-padding);
+  padding: 0 20px;
   position: relative;
   z-index: 1;
 }
 
-footer p {
-  font-size: clamp(0.85rem, 2vw, 0.95rem);
-  font-weight: 300;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.6s 0.3s ease-out forwards;
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 50px;
+  text-align: left;
 }
 
-footer .social-links {
-  margin-top: var(--space-sm);
-  display: flex;
-  justify-content: center;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
-}
-
-footer .social-links a {
-  color: var(--text-light);
-  padding: var(--space-xs);
-  border-radius: 50%;
+.footer-section h3 {
+  color: #3b82f6;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
   position: relative;
-  overflow: hidden;
+  display: inline-block;
+}
+
+.footer-section h3::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, transparent);
+}
+
+.footer-about p {
+  line-height: 1.8;
+  color: #cbd5e1;
+  margin-bottom: 15px;
+}
+
+.footer-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.skill-tag {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.quick-links {
+  list-style: none;
+}
+
+.quick-links li {
+  margin-bottom: 12px;
+}
+
+.quick-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.quick-links a::before {
+  content: "→";
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.quick-links a:hover {
+  color: #3b82f6;
+  padding-left: 10px;
+}
+
+.quick-links a:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.social-section {
+  text-align: center;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.social-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.3rem;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-footer .social-links a i {
-  margin-right: 6px;
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-  transition: transform var(--transition);
-}
-
-footer .social-links a::before {
+.social-btn::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--accent);
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 0.4s ease;
-  z-index: -1;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-footer .social-links a:hover::before {
-  transform: scale(1);
+.social-btn i {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
 }
 
-footer .social-links a:hover {
-  color: #1a202c;
-  transform: translateY(-4px) scale(1.1);
+.social-btn:hover {
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
 }
 
-footer .social-links a:hover i {
-  transform: rotate(360deg);
+.social-btn:hover::before {
+  opacity: 1;
 }
 
+.social-btn:hover i {
+  transform: scale(1.2);
+}
+
+/* Individual social colors */
+.social-btn.instagram:hover::before {
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.social-btn.facebook:hover::before {
+  background: #1877f2;
+}
+.social-btn.linkedin:hover::before {
+  background: #1877f2;
+}
+.social-btn.github:hover::before {
+  background: #333;
+}
+
+.footer-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.5),
+    transparent
+  );
+  margin: 40px 0 30px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.copyright {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heart {
+  color: #ef4444;
+  animation: heartbeat 1.5s infinite;
+  display: inline-block;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(1); }
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-section h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .quick-links a:hover {
+    padding-left: 0;
+  }
+}
 /* -------------------------------------------------
    8. CONTENT - PROPER SPACING
    ------------------------------------------------- */

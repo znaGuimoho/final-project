@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>My Profile - RentEasy</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="/frontend/css/myprofile.css" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Profile Header -->
+    <header class="profile-header">
+        <div class="profile-top">
+            <div class="avatar-wrapper">
+                <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=150&h=150&fit=crop"
+                    class="avatar" alt="Profile picture" />
+                <button class="edit-avatar-btn" type="button" aria-label="Change profile picture">
+                    <i class="fa-solid fa-camera" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="profile-info">
+                <h1>{{ user_data.user_name }}</h1>
+                <div class="status">
+                    <i class="fa-solid fa-shield-check" aria-hidden="true"></i>
+                    Verified Tenant
+                </div>
+                <div class="joined">
+                    <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                    Member since {{ user_data.join_date|default('March 2023') }}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="profile-main">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <nav aria-label="Profile navigation">
+                <h2 class="sidebar-title">Account</h2>
+                <ul class="nav-list">
+                    <li>
+                        <a href="#personal-info" class="active">
+                            <i class="fa-solid fa-user" aria-hidden="true"></i>
+                            <span>Personal Info</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#security">
+                            <i class="fa-solid fa-key" aria-hidden="true"></i>
+                            <span>Password &amp; Security</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#payment">
+                            <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+                            <span>Payment Methods</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#notifications">
+                            <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                            <span>Notifications</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#saved">
+                            <i class="fa-solid fa-heart" aria-hidden="true"></i>
+                            <span>Saved Listings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#rentals">
+                            <i class="fa-solid fa-house" aria-hidden="true"></i>
+                            <span>My Rentals</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#reviews">
+                            <i class="fa-solid fa-star" aria-hidden="true"></i>
+                            <span>Reviews</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <section class="content-card" id="personal-info">
+            <div class="section-header">
+                <h2 class="section-title">Personal Information</h2>
+                <p class="section-description">Manage your personal details and verification status</p>
+            </div>
+
+            <!-- Display Mode -->
+            <div id="display-mode" class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Full Name</span>
+                    <div class="info-value">{{ user_data.user_name }}</div>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <div class="info-value">
+                        {{ user_data.email }}
+                        {% if user_data.email_verified %}
+                        <span class="verification-badge verified">
+                            <i class="fa-solid fa-check" aria-hidden="true"></i>
+                            Verified
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user_data.phone_number %}
+                <div class="info-item">
+                    <span class="info-label">Phone Number</span>
+                    <div class="info-value">
+                        {{ user_data.phone_number }}
+                        {% if user_data.phone_verified %}
+                        <span class="verification-badge verified">
+                            <i class="fa-solid fa-check" aria-hidden="true"></i>
+                            Verified
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if user_data.nationality %}
+                <div class="info-item">
+                    <span class="info-label">Nationality</span>
+                    <div class="info-value">{{ user_data.nationality }}</div>
+                </div>
+                {% endif %}
+
+                {% if user_data.date_of_birth %}
+                <div class="info-item">
+                    <span class="info-label">Date of Birth</span>
+                    <div class="info-value">{{ user_data.date_of_birth }}</div>
+                </div>
+                {% endif %}
+
+                <div class="info-item">
+                    <span class="info-label">ID Verification</span>
+                    <div class="info-value">
+                        {% if user_data.id_verified %}
+                        <span class="verification-badge verified">
+                            <i class="fa-solid fa-shield-check" aria-hidden="true"></i>
+                            Verified
+                        </span>
+                        {% else %}
+                        <span class="verification-badge unverified">
+                            <i class="fa-solid fa-exclamation-circle" aria-hidden="true"></i>
+                            Not Verified
+                        </span>
+                        <a href="#verify-id" class="verify-link">Verify Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Mode -->
+            <form id="edit-mode" method="POST" action="/profile" class="edit-form" style="display: none;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            class="form-input"
+                            value="{{ user_data.user_name }}"
+                            required
+                            aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-input"
+                            value="{{ user_data.email }}"
+                            required
+                            aria-required="true">
+                        <small class="form-hint">Changing your email will require verification</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="form-input"
+                            value="{{ user_data.phone_number }}"
+                            placeholder="+966 5X XXX XXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nationality" class="form-label">Nationality</label>
+                        <input
+                            type="text"
+                            id="nationality"
+                            name="nationality"
+                            class="form-input"
+                            value="{{ user_data.nationality }}"
+                            placeholder="e.g., Saudi Arabian">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_of_birth" class="form-label">Date of Birth</label>
+                        <input
+                            type="date"
+                            id="date_of_birth"
+                            name="date_of_birth"
+                            class="form-input"
+                            value="{{ user_data.date_of_birth }}">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                        Save Changes
+                    </button>
+                    <button type="button" id="cancel-edit" class="btn btn-outline">
+                        <i class="fa-solid fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+
+            <!-- Action Buttons (Display Mode) -->
+            <div id="action-buttons" class="action-buttons">
+                <button type="button" id="edit-profile-btn" class="btn btn-primary">
+                    <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+                    Edit Profile
+                </button>
+                <button type="button" id="change-password-btn" class="btn btn-outline">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                    Change Password
+                </button>
+                <button type="button" id="delete-account-btn" class="btn btn-danger-outline">
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                    Delete Account
+                </button>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+
+<!-- ============================================================
+     PASSWORD MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="password-modal" role="dialog" aria-modal="true" aria-labelledby="pw-card-title">
+
+    <div class="pw-card">
+
+        <!-- Close button -->
+        <button class="pw-close-btn" onclick="closePasswordModal()" aria-label="Close password modal">
+            <i class="fa-solid fa-times" aria-hidden="true"></i>
+        </button>
+
+        <!-- Header -->
+        <div class="pw-header">
+            <div class="pw-step-indicator">
+                <div class="pw-step-dot active" id="dot-1"></div>
+                <div class="pw-step-dot" id="dot-2"></div>
+            </div>
+            <h2 id="pw-card-title">Verify Identity</h2>
+            <p id="pw-card-sub">Enter your current password to continue</p>
+        </div>
+
+        <!-- Form -->
+        <form id="change-password-form" method="POST" action="/change_password" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="current_password" id="current-password-hidden">
+
+            <div class="pw-steps-wrapper">
+
+                <!-- Step 1: Confirm current password -->
+                <div class="pw-step active" id="pw-step-1">
+                    <div class="pw-field">
+                        <label for="current-password">Current Password</label>
+                        <div class="pw-input-wrap">
+                            <input
+                                type="password"
+                                id="current-password"
+                                name="_current_password"
+                                placeholder="••••••••••••"
+                                autocomplete="current-password">
+                            <span class="pw-toggle" onclick="pwToggleVis('current-password', this)">show</span>
+                        </div>
+                        <span class="pw-error-msg" id="err-current">Please enter your current password</span>
+                    </div>
+                    <button type="button" class="pw-btn pw-btn-primary" onclick="pwGoToStep2()">Continue</button>
+                </div>
+
+                <!-- Step 2: New password -->
+                <div class="pw-step" id="pw-step-2">
+                    <div class="pw-field">
+                        <label for="new-password">New Password</label>
+                        <div class="pw-input-wrap">
+                            <input
+                                type="password"
+                                id="new-password"
+                                name="new_password"
+                                placeholder="••••••••••••"
+                                autocomplete="new-password"
+                                oninput="pwCheckStrength(this.value)">
+                            <span class="pw-toggle" onclick="pwToggleVis('new-password', this)">show</span>
+                        </div>
+                        <div class="pw-strength-bar">
+                            <div class="pw-strength-fill" id="pw-strength-fill"></div>
+                        </div>
+                        <span class="pw-strength-label" id="pw-strength-label"></span>
+                    </div>
+
+                    <div class="pw-field">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <div class="pw-input-wrap">
+                            <input
+                                type="password"
+                                id="confirm-password"
+                                name="confirm_password"
+                                placeholder="••••••••••••"
+                                autocomplete="new-password">
+                            <span class="pw-toggle" onclick="pwToggleVis('confirm-password', this)">show</span>
+                        </div>
+                        <span class="pw-error-msg" id="err-confirm">Passwords do not match</span>
+                    </div>
+
+                    <button type="button" class="pw-btn pw-btn-primary" onclick="pwSubmitForm()">Update Password</button>
+                    <button type="button" class="pw-btn pw-btn-ghost" onclick="pwGoBack()">← Back</button>
+                </div>
+
+                <!-- Success state -->
+                <div class="pw-success-view" id="pw-success-view">
+                    <div class="pw-checkmark">✓</div>
+                    <h3>Password Updated</h3>
+                    <p>Your password has been changed successfully.</p>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+<script src="/frontend/script/myProfile.js"></script>
+{% endblock %}
