@@ -1,284 +1,204 @@
 /* ===================================================== */
-/*  SIGNUP PAGE – GREEN & LIGHT-BLUE + ANIMATIONS         */
+/* REGISTER PAGE                                          */
 /* ===================================================== */
-
-/* ----- Color Palette (same as login) ------------------ */
 :root {
-  --green-primary:   #2ecc71;   /* Vibrant emerald */
-  --green-light:     #a2f2c2;   /* Soft mint */
-  --blue-primary:    #4ecdc4;   /* Light teal */
-  --blue-light:      #d6f5f3;   /* Pale cyan */
-  --bg:              #f5fffa;   /* Off-white mint tint */
-  --card-bg:         #ffffff;
-  --shadow:          rgba(46, 204, 113, 0.14);
-  --text:            #2d3436;
-  --text-light:      #636e72;
+  --emerald: #1a9e5c;
+  --emerald-light: #2ecc71;
+  --teal: #0d9488;
+  --teal-glow: rgba(13,148,136,.18);
+  --emerald-glow: rgba(26,158,92,.15);
+  --bg-0: #0a0f0d;
+  --card: rgba(255,255,255,.035);
+  --card-border: rgba(46,204,113,.13);
+  --text-primary: #e8f5ee;
+  --text-muted: #7a9e8a;
+  --input-bg: rgba(255,255,255,.04);
+  --input-border: rgba(46,204,113,.2);
+  --error: #ff6b6b;
 }
 
-/* ----- Global Reset & Base ----------------------------- */
-*,
-*::before,
-*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: linear-gradient(135deg, var(--bg) 0%, var(--blue-light) 100%);
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  color: var(--text);
   min-height: 100vh;
+  background-color: var(--bg-0);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
-}
-
-/* ----- Signup Container -------------------------------- */
-.signup-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 200px);
-  padding: 24px;
-  flex: 1;
-  animation: fadeIn 0.9s ease-out;
-}
-
-/* ----- Form Card --------------------------------------- */
-.form-card {
-  background: var(--card-bg);
-  padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 14px 36px var(--shadow);
-  max-width: 440px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
   position: relative;
-  overflow: hidden;
-  transform: translateY(30px);
-  opacity: 0;
-  animation: cardSlideUp 0.75s 0.15s ease-out forwards;
+  overflow-x: hidden;
 }
 
-/* Moving accent stripe */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 80%, rgba(26,158,92,.22) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 85% 20%, rgba(13,148,136,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 50% 50%, rgba(46,204,113,.04) 0%, transparent 80%);
+  pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed; inset: -50%; width: 200%; height: 200%;
+  background-image:
+    linear-gradient(rgba(46,204,113,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,204,113,.04) 1px, transparent 1px);
+  background-size: 52px 52px;
+  animation: gridDrift 20s linear infinite;
+  transform: perspective(600px) rotateX(30deg);
+  z-index: 0; pointer-events: none;
+}
+
+.orb { position: fixed; border-radius: 50%; filter: blur(80px); animation: orbFloat 12s ease-in-out infinite; pointer-events: none; z-index: 0; }
+.orb-1 { width: 380px; height: 380px; background: rgba(26,158,92,.15);  top: -10%; left: -8%;  animation-delay: 0s; }
+.orb-2 { width: 300px; height: 300px; background: rgba(13,148,136,.12); bottom: -5%; right: -5%; animation-delay: -5s; }
+.orb-3 { width: 200px; height: 200px; background: rgba(46,204,113,.08); top: 40%;  right: 20%; animation-delay: -9s; }
+
+.grain {
+  position: fixed; inset: -50%; width: 200%; height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: .025; pointer-events: none; z-index: 1;
+  animation: grainShift 0.5s steps(2) infinite;
+}
+
+.signup-container {
+  position: relative; z-index: 2;
+  display: flex; justify-content: center; align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 28px 24px; flex: 1;
+  animation: pageIn 1s cubic-bezier(.16,1,.3,1) forwards;
+  opacity: 0; transform: translateY(30px);
+}
+
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 44px 40px 40px;
+  max-width: 440px; width: 100%;
+  display: flex; flex-direction: column; gap: 26px;
+  position: relative; overflow: hidden;
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  box-shadow:
+    0 0 0 1px rgba(46,204,113,.05) inset,
+    0 40px 80px rgba(0,0,0,.5),
+    0 0 60px rgba(26,158,92,.06);
+}
 .form-card::before {
   content: "";
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 5px;
-  background: linear-gradient(90deg, transparent, var(--green-primary), transparent);
-  animation: stripeFlow 2.8s infinite linear;
+  position: absolute; top: 0; left: -100%; width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--emerald-light), var(--teal), transparent);
+  animation: shimmer 3s 0.8s ease-in-out infinite;
+}
+.form-card::after {
+  content: "";
+  position: absolute; top: 0; right: 0;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle at top right, rgba(46,204,113,.08), transparent 70%);
+  border-radius: 0 24px 0 0; pointer-events: none;
 }
 
-/* Title */
+.logo-badge {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--emerald), var(--teal));
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(26,158,92,.35), 0 0 0 1px rgba(46,204,113,.3) inset;
+}
+.logo-badge svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
 .form-card h3 {
-  font-size: 1.75rem;
-  background: linear-gradient(90deg, var(--green-primary), var(--blue-primary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-align: center;
-  margin: 0;
-  font-weight: 600;
-  animation: titlePulse 2.2s infinite alternate;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.85rem; font-weight: 600;
+  color: var(--text-primary);
+  text-align: center; letter-spacing: -0.02em; line-height: 1.2;
+  margin: -10px 0 -4px;
+}
+.form-card .subtitle {
+  text-align: center; font-size: 0.875rem;
+  color: var(--text-muted); font-weight: 300; letter-spacing: 0.02em;
+  margin-top: -14px; margin-bottom: -6px;
 }
 
-/* ----- Error Message ----------------------------------- */
 .error-message {
-  background: #ffe6e6;
-  color: #c0392b;
-  font-size: 0.9rem;
-  padding: 12px 16px;
-  border-radius: 8px;
-  text-align: center;
-  border-left: 5px solid #e74c3c;
-  animation: shake 0.5s ease-in-out;
-  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.1);
+  background: rgba(255,107,107,.1); color: var(--error);
+  font-size: 0.875rem; padding: 12px 16px; border-radius: 10px;
+  border: 1px solid rgba(255,107,107,.25);
+  animation: shake 0.45s ease-in-out;
+  display: flex; align-items: center; gap: 8px;
 }
+.error-message::before { content: "⚠"; font-size: 0.9rem; }
 
-/* ----- Input Group & Rows ------------------------------ */
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
+.input-group { display: flex; flex-direction: column; gap: 16px; }
 
-/* Input Row (label + input) */
-.input-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  position: relative;
-}
+.input-row { display: flex; flex-direction: column; gap: 7px; position: relative; }
 
 .input-row label {
-  font-size: 0.95rem;
-  color: var(--text-light);
-  font-weight: 500;
-  padding-left: 4px;
-  transition: color 0.3s ease;
+  font-size: 0.78rem; font-weight: 500; color: var(--text-muted);
+  letter-spacing: 0.06em; text-transform: uppercase; padding-left: 2px;
+  transition: color 0.2s;
+  position: static; transform: none; background: transparent; pointer-events: auto;
 }
+.input-row:focus-within label { color: var(--emerald-light); }
 
-/* Floating label effect */
-.input-row label {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--card-bg);
-  padding: 0 6px;
-  pointer-events: none;
-  transition: all 0.28s ease;
-  font-size: 0.95rem;
-  color: #777;
-}
-
-.input-row input:focus ~ label,
-.input-row input:not(:placeholder-shown) ~ label {
-  top: 0;
-  font-size: 0.75rem;
-  color: var(--green-primary);
-  font-weight: 600;
-}
-
-/* Input Field */
 .input-row input {
-  width: 100%;
-  padding: 14px 16px;
-  font-size: 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  outline: none;
-  background: #fafafa;
-  transition: all 0.3s ease;
+  width: 100%; padding: 13px 16px;
+  font-size: 0.97rem; font-family: inherit; font-weight: 400;
+  color: var(--text-primary); background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px; outline: none;
+  transition: all 0.25s ease; caret-color: var(--emerald-light);
 }
-
+.input-row input::placeholder { color: rgba(122,158,138,.45); }
 .input-row input:focus {
-  border-color: var(--green-primary);
-  background: #fff;
-  box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.18);
-  transform: scale(1.015);
+  background: rgba(255,255,255,.06);
+  border-color: var(--emerald-light);
+  box-shadow: 0 0 0 3px var(--emerald-glow), 0 0 20px rgba(46,204,113,.08);
 }
 
-/* ----- Submit Button ----------------------------------- */
-/* ----- Submit Button – FULL WIDTH ---------------------- */
 .submit-button {
-  width: 100%;                     /* <-- NEW: fills the card */
-  padding: 14px;
-  font-size: 1.05rem;
-  font-weight: 600;
-  background: var(--green-primary);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  margin-top: 8px;
-  display: block;                  /* ensures width works */
+  width: 100%; padding: 14px;
+  font-family: inherit; font-size: 0.97rem; font-weight: 600;
+  letter-spacing: 0.04em; color: #fff;
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--teal) 100%);
+  border: none; border-radius: 12px; cursor: pointer;
+  position: relative; overflow: hidden; display: block;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 20px rgba(26,158,92,.35), 0 1px 0 rgba(255,255,255,.08) inset;
+  margin-top: 4px;
+}
+.submit-button::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+  border-radius: inherit; pointer-events: none;
 }
 .submit-button::after {
-  content: "";
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 0; height: 0;
-  background: rgba(255, 255, 255, 0.35);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
+  content: ""; position: absolute; top: 50%; left: 50%;
+  width: 0; height: 0; background: rgba(255,255,255,.2);
+  border-radius: 50%; transform: translate(-50%,-50%);
+  transition: width 0.55s ease, height 0.55s ease, opacity 0.55s ease; opacity: 0;
 }
-.submit-button:active::after {
-  width: 320px;
-  height: 320px;
-}
-.submit-button:hover {
-  background: #27ae60;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3);
+.submit-button:active::after { width: 400px; height: 400px; opacity: 0; }
+.submit-button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(26,158,92,.45); }
+.submit-button:active { transform: translateY(0); }
+
+.form-card > p { text-align: center; font-size: 0.88rem; color: var(--text-muted); font-weight: 300; margin: 0; }
+.form-card > p a { color: var(--emerald-light); text-decoration: none; font-weight: 500; margin-left: 3px; position: relative; }
+.form-card > p a::after { content: ""; position: absolute; bottom: -1px; left: 0; width: 0; height: 1px; background: var(--emerald-light); transition: width 0.3s ease; }
+.form-card > p a:hover::after { width: 100%; }
+
+@media (max-width: 500px) {
+  .signup-container { padding: 16px; }
+  .form-card { padding: 36px 24px 32px; }
+  .form-card h3 { font-size: 1.6rem; }
+  .input-row input { padding: 12px 14px; }
 }
 
-/* ----- Login Link (bottom) ----------------------------- */
-.form-card > p {
-  text-align: center;
-  font-size: 0.95rem;
-  color: var(--text-light);
-  margin: 0;
-}
-
-.form-card > p a {
-  color: var(--blue-primary);
-  text-decoration: none;
-  font-weight: 600;
-  position: relative;
-  transition: color 0.3s ease;
-}
-
-.form-card > p a::after {
-  content: "";
-  position: absolute;
-  bottom: -3px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--blue-primary);
-  transition: width 0.35s ease;
-}
-
-.form-card > p a:hover::after {
-  width: 100%;
-}
-
-.form-card > p a:hover {
-  color: #3ba199;
-}
-
-/* ----- Responsive -------------------------------------- */
-@media (max-width: 600px) {
-  .signup-container {
-    padding: 16px;
-    min-height: calc(100vh - 250px);
-  }
-  .form-card {
-    padding: 20px;
-    border-radius: 12px;
-  }
-  .form-card h3 {
-    font-size: 1.55rem;
-  }
-  .input-row input {
-    padding: 12px 14px;
-  }
-}
-
-/* ===================================================== */
-/*  ANIMATIONS & KEYFRAMES                               */
-/* ===================================================== */
-
-@keyframes fadeIn {
-  to { opacity: 1; }
-}
-
-@keyframes cardSlideUp {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes stripeFlow {
-  to { left: 100%; }
-}
-
-@keyframes titlePulse {
-  from { text-shadow: 0 0 10px rgba(46, 204, 113, 0.4); }
-  to   { text-shadow: 0 0 22px rgba(46, 204, 113, 0.75); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  15% { transform: translateX(-8px); }
-  30% { transform: translateX(6px); }
-  45% { transform: translateX(-5px); }
-  60% { transform: translateX(4px); }
-  75% { transform: translateX(-2px); }
-  90% { transform: translateX(2px); }
-}
+@keyframes pageIn   { to { opacity: 1; transform: translateY(0); } }
+@keyframes shimmer  { 0% { left: -100%; } 60%, 100% { left: 100%; } }
+@keyframes gridDrift { to { transform: perspective(600px) rotateX(30deg) translateY(52px); } }
+@keyframes orbFloat { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.06); } }
+@keyframes grainShift { 0% { transform: translate(0,0); } 25% { transform: translate(-2%,-1%); } 50% { transform: translate(1%,2%); } 75% { transform: translate(2%,-2%); } 100% { transform: translate(0,0); } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }

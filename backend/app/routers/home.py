@@ -6,18 +6,25 @@
 ##########################################||                                                                       ||##########################################
 ###############################################################################################################################################################
 ###############################################################################################################################################################
-from fastapi import Request, HTTPException, Response
-from fastapi.responses import HTMLResponse
-from fastapi import FastAPI, Request, Form, Depends, File, UploadFile
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.services.user_service import get_user_data, search_in_database
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    Request,
+    Response,
+)
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
-from app.services.user_service import search_in_database, get_user_data
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 def home(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/")
     @app.get("/home")
-    async def get_home(request: Request, responce: Response, db: AsyncSession = Depends(get_db)):
+    async def get_home(
+        request: Request, responce: Response, db: AsyncSession = Depends(get_db)
+    ):
         # Execute query
         result = await db.execute(text("SELECT * FROM houses"))
 
@@ -42,33 +49,35 @@ def home(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                 house["is_favorite"] = False
 
         return templates.TemplateResponse(
-            "home.html",
-            {"request": request, "houses": houses, "user_info": user_info}
+            "home.html", {"request": request, "houses": houses, "user_info": user_info}
         )
-    
+
     @app.get("/house/{house_id}")
     async def get_house(
-        house_id: int,
-        request: Request,
-        db: AsyncSession = Depends(get_db)
+        house_id: int, request: Request, db: AsyncSession = Depends(get_db)
     ):
         result = await db.execute(
-                text("SELECT * FROM houses WHERE id = :id"),
-                {"id": house_id}
-            )
-        
+            text("SELECT * FROM houses WHERE id = :id"), {"id": house_id}
+        )
+
         row = result.fetchone()
 
         if not row:
-            return templates.TemplateResponse("house.html", {"request": request, "error": "couldn't get the house ID"})
-        
+            return templates.TemplateResponse(
+                "house.html", {"request": request, "error": "couldn't get the house ID"}
+            )
+
         house = dict(row._mapping)
 
-        return templates.TemplateResponse("house.html", {"request": request, "house": house})
+        return templates.TemplateResponse(
+            "house.html", {"request": request, "house": house}
+        )
 
     @app.get("/api/search")
-    async def api_search(query: str, request: Request, db: AsyncSession = Depends(get_db)):
-        
+    async def api_search(
+        query: str, request: Request, db: AsyncSession = Depends(get_db)
+    ):
         result = await search_in_database(query, db)
 
         return {"results": result}
+

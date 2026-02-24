@@ -946,7 +946,7 @@ footer::before {
 .social-btn.facebook:hover::before {
   background: #1877f2;
 }
-.social-btn.linkedin:hover::before {
+.social-btn.facebook:hover::before {
   background: #1877f2;
 }
 .social-btn.github:hover::before {

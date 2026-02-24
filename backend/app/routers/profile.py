@@ -1,5 +1,7 @@
+import base64
 import secrets
 
+from app.services.Hash_password import hash_password, verify_password
 from app.services.user_service import get_user_data
 from fastapi import Depends, FastAPI, Form, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -123,3 +125,87 @@ def profile(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                 content={"success": False, "message": "Failed to update profile"},
             )
 
+    @app.post("/change_password")
+    async def post_change_password(
+        request: Request,
+        db: AsyncSession = Depends(get_db),
+        current_password: str = Form(...),
+        new_password: str = Form(...),
+        confirm_password: str = Form(...),
+    ):
+        try:
+            user_data = await get_user_data(request, db)
+            user_id = user_data["user_id"]
+
+            # Fetch stored password and salt
+            get_password_query = text(
+                "SELECT hashed_password, salt FROM users WHERE user_id = :user_id"
+            )
+            result = await db.execute(get_password_query, {"user_id": int(user_id)})
+            stored_password = result.fetchone()
+
+            if stored_password is None:
+                return JSONResponse(
+                    status_code=404,
+                    content={"success": False, "message": "User not found"},
+                )
+
+            # FIX: removed await — verify_password returns a plain bool, not a coroutine
+            ok = verify_password(
+                current_password,
+                stored_password.salt,
+                stored_password.hashed_password,
+            )
+            if not ok:
+                return JSONResponse(
+                    status_code=401,
+                    content={"success": False, "message": "Unauthorized"},
+                )
+
+            # Validate new password match server-side
+            if new_password != confirm_password:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "success": False,
+                        "message": "The password does not match the confirmation",
+                    },
+                )
+
+            # FIX: removed await — hash_password may also be sync; check below
+            new_salt, new_hashed_password = hash_password(new_password)
+            new_hashed_password_str = base64.b64encode(new_hashed_password).decode(
+                "utf-8"
+            )
+            new_salt_str = base64.b64encode(new_salt).decode("utf-8")
+
+            update_query = text("""
+                UPDATE users
+                SET hashed_password = :new_hashed_password,
+                    salt = :new_salt
+                WHERE user_id = :user_id
+            """)
+            await db.execute(
+                update_query,
+                {
+                    "new_hashed_password": new_hashed_password_str,
+                    "new_salt": new_salt_str,
+                    "user_id": user_id,
+                },
+            )
+            await db.commit()
+
+            return JSONResponse(
+                status_code=200,
+                content={"success": True, "message": "Password updated successfully"},
+            )
+
+        except HTTPException:
+            return RedirectResponse(url="/login")
+        except Exception as e:
+            print(f"Error updating password: {e}")
+            await db.rollback()
+            return JSONResponse(
+                status_code=500,
+                content={"success": False, "message": "Failed to update password"},
+            )

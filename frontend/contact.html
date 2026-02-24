@@ -17,7 +17,13 @@
         <div class="avatar">{{ room.hoster_name[0]|upper }}</div>
         <div class="conversation-info">
           <div class="conversation-header">
-            <span class="conversation-name">{{ room.hoster_name }}</span>
+           <span class="conversation-name">
+              {% if room.hoster_name == current_user %}
+                {{ room.user_name }}
+            {% else %}
+                {{ room.hoster_name }}
+            {% endif %}           
+           </span> 
             <span class="conversation-time">2:30 PM</span>
           </div>
         </div>
