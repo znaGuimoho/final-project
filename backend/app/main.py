@@ -1,7 +1,7 @@
 from app.config import create_app
 from app.events.contact_events import register_socketio_handelers
 from app.routers.auth import auth_rout
-from app.routers.contact import contuct
+from app.routers.contact import contact
 from app.routers.favorites import favorite
 from app.routers.home import home
 from app.routers.hoster import hosting
@@ -36,7 +36,7 @@ more(app, templates, get_db, sio)
 # -----------------------------------------------------------------
 # ----------TTHE ROUTED FOR contact the hoster --------------------
 # -----------------------------------------------------------------
-contuct(app, templates, get_db, sio)
+contact(app, templates, get_db, sio)
 
 # -----------------------------------------------------------------
 # ----------TTHE ROUTED FOR vavorite           --------------------

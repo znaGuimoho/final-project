@@ -1,101 +1,142 @@
 {% extends 'base.html' %} {% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/frontend/css/conatact.css" />
+<style>
+  footer { display: none !important; }
+
+  body {
+    height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+</style>
 {% endblock %} {% block content %}
+
 <div class="app-container">
+
+  <!-- ── Sidebar ── -->
   <div class="sidebar">
     <div class="sidebar-header">
       <h2>Messages</h2>
       <button class="new-message-btn">+ New</button>
     </div>
+
     <div class="search-bar-for-contact">
-      <input type="text" placeholder="Search messages..." />
+      <input type="text" id="searchInput" placeholder="Search conversations…" />
     </div>
 
-    <div class="conversations-list">
-      {% if history %} {% for room in history %}
-      <div class="conversation-item" data-room="{{ room.house_id }}">
-        <div class="avatar">{{ room.hoster_name[0]|upper }}</div>
-        <div class="conversation-info">
-          <div class="conversation-header">
-           <span class="conversation-name">
-              {% if room.hoster_name == current_user %}
-                {{ room.user_name }}
-            {% else %}
-                {{ room.hoster_name }}
-            {% endif %}           
-           </span> 
-            <span class="conversation-time">2:30 PM</span>
-          </div>
-        </div>
-      </div>
-      {% endfor %} {% else %}
-      <div class="no-conversations">No conversations yet</div>
+    <div class="conversations-list" id="conversationsList">
+      {% if history %}
+        {% for room in history %}
+          {% set display_name = room.user_name if room.hoster_name == current_user else room.hoster_name %}
+          <a class="conversation-item {% if code is defined and code == room.room_name %}active{% endif %}"
+             href="/contact/{{ room.room_name }}"
+             data-name="{{ display_name | lower }}">
+            <div class="avatar">{{ display_name[0] | upper }}</div>
+            <div class="conversation-info">
+              <div class="conversation-header">
+                <span class="conversation-name">{{ display_name }}</span>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        <div class="no-conversations">No conversations yet</div>
       {% endif %}
     </div>
   </div>
 
+  <!-- ── Chat ── -->
   <div class="chat-container">
-    {% if hoster_name %}
+
+    {% if hoster_name is defined and hoster_name %}
     <div class="chat-header">
-      <div class="avatar">{{ hoster_name[0]|upper }}</div>
+      <div class="avatar">{{ hoster_name[0] | upper }}</div>
       <div class="chat-header-info">
         <h3>{{ hoster_name }}</h3>
         <p>Active now</p>
       </div>
     </div>
-    {% endif %} {% if messages %}
+    {% endif %}
+
+    {% if messages %}
     <div class="messages-area" id="messagesArea">
-      {% for msg in messages %} {% if msg.sender_role == "hoster" %}
-      <div class="message received">
-        <div class="message-avatar">{{ msg.hoster[0]|upper }}</div>
-        <div class="message-content">
-          <div class="message-bubble">{{ msg.message }}</div>
-          <div class="message-time">{{ msg.timestamp }}</div>
+      {% for msg in messages %}
+        {% if msg.sender_role == "hoster" %}
+        <div class="message received">
+          <div class="message-avatar">{{ msg.hoster[0] | upper }}</div>
+          <div class="message-content">
+            <div class="message-bubble">{{ msg.message }}</div>
+            <div class="message-time">{{ msg.timestamp }}</div>
+          </div>
         </div>
-      </div>
-      {% else %}
-      <div class="message sent">
-        <div class="message-content">
-          <div class="message-bubble">{{ msg.message }}</div>
-          <div class="message-time">{{ msg.timestamp }}</div>
+        {% else %}
+        <div class="message sent">
+          <div class="message-content">
+            <div class="message-bubble">{{ msg.message }}</div>
+            <div class="message-time">{{ msg.timestamp }}</div>
+          </div>
         </div>
-      </div>
-      {% endif %} {% endfor %}
+        {% endif %}
+      {% endfor %}
     </div>
+
     {% else %}
-    <div class="no-messages">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="80"
-        height="80"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path
-          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    <div class="no-messages" id="messagesArea">
+      <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="1.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
-      <h1>Select a conversation</h1>
-      <p>Choose a contact from the list to start chatting</p>
+      <h1>{% if hoster_name is defined and hoster_name %}Start the conversation{% else %}Select a conversation{% endif %}</h1>
+      <p>{% if hoster_name is defined and hoster_name %}Say hello to {{ hoster_name }}{% else %}Choose a contact from the list to start chatting{% endif %}</p>
     </div>
     {% endif %}
 
     <div class="message-input-container">
-      <input
-        type="text"
-        class="message-input"
-        id="messageInput"
-        placeholder="Type a message..." />
-      <button class="send-btn" id="sendBtn">➤</button>
+      <input type="text" class="message-input" id="messageInput"
+             placeholder="Type a message…"
+             {% if not (hoster_name is defined and hoster_name) %}disabled{% endif %} />
+      <button class="send-btn" id="sendBtn"
+              {% if not (hoster_name is defined and hoster_name) %}disabled style="opacity:.4;cursor:not-allowed;"{% endif %}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
     </div>
+
   </div>
 </div>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-  const ROOM_CODE = "{{ code }}";
+  const ROOM_CODE = "{{ code if code is defined else '' }}";
+
+  // Scroll to bottom on load
+  const area = document.getElementById('messagesArea');
+  if (area && area.classList.contains('messages-area')) {
+    area.scrollTop = area.scrollHeight;
+  }
+
+  // Sidebar search filter
+  document.getElementById('searchInput').addEventListener('input', function () {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.conversation-item').forEach(el => {
+      el.style.display = el.dataset.name.includes(q) ? 'flex' : 'none';
+    });
+  });
+
+  // Enter key to send
+  document.getElementById('messageInput')?.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('sendBtn').click();
+    }
+  });
 </script>
 <script src="/frontend/script/contact.js"></script>
 {% endblock %}
