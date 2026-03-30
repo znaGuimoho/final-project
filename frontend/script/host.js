@@ -14,6 +14,7 @@ uploadArea.addEventListener('click', () => fileInput.click());
     uploadArea.classList.add('dragover');
   })
 );
+
 ['dragleave', 'drop'].forEach(ev =>
   uploadArea.addEventListener(ev, e => {
     e.preventDefault();
@@ -25,22 +26,48 @@ uploadArea.addEventListener('drop', e => {
   const files = e.dataTransfer.files;
   if (files.length) {
     fileInput.files = files;
-    handleFile(files[0]);
+    handleFiles(files);
   }
 });
+
 fileInput.addEventListener('change', () => {
-  if (fileInput.files.length) handleFile(fileInput.files[0]);
+  if (fileInput.files.length) handleFiles(fileInput.files);
 });
 
-function handleFile(file) {
-  if (!file.type.startsWith('image/')) return alert('Please select an image.');
-  const reader = new FileReader();
-  reader.onload = e => {
-    previewImg.src = e.target.result;
-    previewContainer.style.display = 'flex';
-    submitBtn.disabled = false;
-  };
-  reader.readAsDataURL(file);
+function handleFiles(files) {
+  // clear old previews
+  previewContainer.innerHTML = '';
+
+  let validCount = 0;
+
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    validCount++;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'preview-image';
+      img.alt = file.name;
+      previewContainer.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  if (validCount === 0) return alert('Please select image files only.');
+
+  previewContainer.style.display = 'flex';
+  previewContainer.style.flexWrap = 'wrap';
+  previewContainer.style.gap = '8px';
+  submitBtn.disabled = false;
+
+  if (successMsg) {
+    successMsg.style.display = 'flex';
+    successMsg.querySelector('span') 
+      ? successMsg.querySelector('span').textContent = `${validCount} image${validCount > 1 ? 's' : ''} ready`
+      : null;
+  }
 }
 
 /* ---------- FORM SUBMISSION (real backend) ---------- */

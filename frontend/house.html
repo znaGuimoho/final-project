@@ -35,14 +35,6 @@
     <p class="house-description">{{ house.details.house_details }}</p>
     {% endif %}
 
-    <!-- <ul class="house-features"> -->
-    <!--   <li>👥 {{ house.guests }} Guests</li> -->
-    <!--   <li>🛏️ {{ house.bedrooms }} Bedrooms</li> -->
-    <!--   <li>🛁 {{ house.bathrooms }} Bathrooms</li> -->
-    <!--   <li>🅿️ {% if house.parking %}Parking available{% else %}No parking{% endif %}</li> -->
-    <!--   <li>🌐 WiFi: {% if house.wifi %}Yes{% else %}No{% endif %}</li> -->
-    <!-- </ul> -->
-
     <div class="house-actions">
       <a href="/book/{{ house.id }}" class="btn btn-primary">Book Now</a>
       <a href="/contact/house/{{ house.id }}" class="btn btn-secondary">Contact Host</a>
@@ -50,15 +42,122 @@
 
   </div>
 
-  <!-- ── Image ── -->
+  <!-- ── Image Slider ── -->
   <div class="house-image">
-    <img
-      src="{{ house.img_url or 'https://via.placeholder.com/600x400?text=No+Image' }}"
-      alt="{{ house.category }}"
-      class="main-house-img"
-      loading="lazy" />
+    <div class="slider-wrapper">
+
+      {% if house.img_url and house.img_url | length > 0 %}
+
+      <div class="slider" id="slider">
+        {% for img in house.img_url %}
+        <div class="slide {% if loop.first %}active{% endif %}">
+          <img src="{{ img }}"
+               alt="{{ house.category }} — photo {{ loop.index }}"
+               loading="lazy" />
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if house.img_url | length > 1 %}
+      <button class="slider-btn prev" id="sliderPrev" aria-label="Previous image">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="slider-btn next" id="sliderNext" aria-label="Next image">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+
+      <div class="slider-dots" id="sliderDots">
+        {% for img in house.img_url %}
+        <button class="dot {% if loop.first %}active{% endif %}"
+                data-index="{{ loop.index0 }}"
+                aria-label="Go to image {{ loop.index }}"></button>
+        {% endfor %}
+      </div>
+
+      <div class="slider-counter">
+        <span id="sliderCurrent">1</span> / {{ house.img_url | length }}
+      </div>
+      {% endif %}
+
+      {% else %}
+      <div class="slide active">
+        <img src="https://via.placeholder.com/600x400?text=No+Image"
+             alt="No image available" />
+      </div>
+      {% endif %}
+
+    </div>
   </div>
 
 </div>
+
+<script>
+  (function () {
+    const slides  = document.querySelectorAll('.slide');
+    const dots    = document.querySelectorAll('.dot');
+    const counter = document.getElementById('sliderCurrent');
+    const prev    = document.getElementById('sliderPrev');
+    const next    = document.getElementById('sliderNext');
+
+    if (!slides.length || slides.length === 1) return;
+
+    let current = 0;
+    let autoplayTimer;
+
+    function goTo(index) {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (index + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+      if (counter) counter.textContent = current + 1;
+    }
+
+    function startAutoplay() {
+      autoplayTimer = setInterval(() => goTo(current + 1), 4000);
+    }
+
+    function resetAutoplay() {
+      clearInterval(autoplayTimer);
+      startAutoplay();
+    }
+
+    prev?.addEventListener('click', () => { goTo(current - 1); resetAutoplay(); });
+    next?.addEventListener('click', () => { goTo(current + 1); resetAutoplay(); });
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        goTo(parseInt(dot.dataset.index));
+        resetAutoplay();
+      });
+    });
+
+    // Swipe support for mobile
+    let touchStartX = 0;
+    const sliderEl = document.getElementById('slider');
+
+    sliderEl?.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    sliderEl?.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 40) {
+        goTo(diff > 0 ? current + 1 : current - 1);
+        resetAutoplay();
+      }
+    }, { passive: true });
+
+    startAutoplay();
+  })();
+</script>
 
 {% endblock %}

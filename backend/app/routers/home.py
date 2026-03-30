@@ -80,4 +80,3 @@ def home(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         result = await search_in_database(query, db)
 
         return {"results": result}
-

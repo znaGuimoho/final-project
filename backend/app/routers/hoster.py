@@ -10,6 +10,7 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import List
 
 from app.services.user_service import get_user_data
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
@@ -58,7 +59,7 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.post("/host")
     async def upload_with_data(
         request: Request,
-        image: UploadFile = File(...),
+        image: List[UploadFile] = File(...),
         category: str = Form(...),
         price: float = Form(...),
         locationText: str = Form(...),
@@ -68,21 +69,19 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         db: AsyncSession = Depends(get_db),
     ):
         try:
-            filename = f"{datetime.utcnow().timestamp()}_{image.filename}"
-            file_path = os.path.join(UPLOAD_DIR, filename)
+            img_urls = []
+            for img in image:
+                filename = f"{datetime.utcnow().timestamp()}_{img.filename}"
+                file_path = os.path.join(UPLOAD_DIR, filename)
+                with open(file_path, "wb") as buffer:
+                    buffer.write(await img.read())
+                img_urls.append(f"/uploads/{filename}")
 
-            # Save file to disk
-            with open(file_path, "wb") as buffer:
-                buffer.write(await image.read())
-
-            img_url = f"/uploads/{filename}"
-
-            location_url = None
-            if lat and lng:
-                location_url = f"https://www.google.com/maps?q={lat},{lng}"
+            location_url = (
+                f"https://www.google.com/maps?q={lat},{lng}" if lat and lng else None
+            )
 
             user_info = await get_user_data(request, db)
-
             JSdetails = {
                 "hoster_id": user_info["user_id"],
                 "hoster_name": user_info["user_name"],
@@ -93,8 +92,7 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                 INSERT INTO houses (category, price, location_name, location_url, details, img_url)
                 VALUES (:category, :price, :location_name, :location_url, :details, :img_url)
             """)
-
-            result = await db.execute(
+            await db.execute(
                 query,
                 {
                     "category": category,
@@ -102,12 +100,12 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
                     "location_name": locationText,
                     "location_url": location_url,
                     "details": json.dumps(JSdetails),
-                    "img_url": img_url,
+                    "img_url": img_urls,  # list goes in directly — SQLAlchemy handles text[]
                 },
             )
             await db.commit()
-
             return RedirectResponse(url="/sucsessUp")
+
         except Exception as e:
             print("Error while uploading:", e)
             return templates.TemplateResponse(
@@ -118,4 +116,3 @@ def hosting(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/sucsessUp")
     async def get_sucsess(request: Request):
         return templates.TemplateResponse("uploadSucsess.html", {"request": request})
-

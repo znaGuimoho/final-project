@@ -21,8 +21,10 @@
     <h3>Create account</h3>
     <p class="subtitle">Join us — it only takes a moment</p>
 
-    <!-- Demo error (remove in production) -->
-    <!-- <div class="error-message">This email is already in use.</div> -->
+   {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+ 
 
     <div class="input-group">
       <div class="input-row">
