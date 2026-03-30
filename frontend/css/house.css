@@ -1,123 +1,250 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+
+:root {
+  --bg-base:        #080b11;
+  --bg-surface:     #0e1420;
+  --bg-elevated:    #141b28;
+  --bg-hover:       #1a2235;
+  --border:         #1e2a3d;
+  --border-light:   #253044;
+  --accent:         #4f8ef7;
+  --accent-glow:    rgba(79, 142, 247, 0.18);
+  --accent-dim:     #2a5cbf;
+  --text-primary:   #e8edf5;
+  --text-secondary: #8494ad;
+  --text-muted:     #4a5568;
+  --price:          #34d399;
+  --danger:         #f87171;
+  --font-display:   'Syne', sans-serif;
+  --font-body:      'DM Sans', sans-serif;
+  --transition:     0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius:         16px;
+  --radius-sm:      10px;
+  --shadow-glow:    0 0 40px rgba(79, 142, 247, 0.1);
+}
+
+/* ── Page ──────────────────────────────────────────────────── */
+body {
+  background: var(--bg-base);
+  font-family: var(--font-body);
+  color: var(--text-primary);
+}
+
+/* ── Error ─────────────────────────────────────────────────── */
+.error-message {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 14px 20px;
+  background: rgba(248, 113, 113, 0.08);
+  color: var(--danger);
+  border-left: 3px solid var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ── Layout ────────────────────────────────────────────────── */
 .house-detail-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3rem;
-    align-items: flex-start;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 56px) clamp(16px, 3vw, 32px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: flex-start;
 }
 
+/* ── Info column ───────────────────────────────────────────── */
 .house-info {
-    flex: 1;
-    min-width: 300px;
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideIn 0.5s 0.1s ease-out forwards;
 }
 
-.house-image {
-    flex: 1;
-    min-width: 300px;
-    text-align: center;
-}
-
-.main-house-img {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    object-fit: cover;
+@keyframes slideIn {
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .house-title {
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  text-transform: capitalize;
+  margin: 0;
 }
 
-.house-location,
-.house-price {
-    font-size: 1.2rem;
-    margin: 0.5rem 0;
-    color: #34495e;
+/* subtle accent underline on title */
+.house-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-top: 12px;
 }
 
+.house-location {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.house-location strong {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.house-location a {
+  color: var(--accent);
+  font-weight: 500;
+  transition: color var(--transition);
+}
+
+.house-location a:hover { color: #6ba3ff; }
+
 .house-price {
-    font-size: 1.5rem;
-    color: #e74c3c;
-    font-weight: bold;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--price);
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.house-price strong {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .house-description {
-    margin: 1.5rem 0;
-    line-height: 1.7;
-    color: #555;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  padding: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin: 0;
 }
 
+/* ── Features (ready for when you uncomment) ───────────────── */
 .house-features {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .house-features li {
-    padding: 0.5rem 0;
-    font-size: 1.1rem;
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
+/* ── Actions ───────────────────────────────────────────────── */
 .house-actions {
-    margin-top: 2rem;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .btn {
-    display: inline-block;
-    padding: 0.8rem 1.8rem;
-    margin-right: 1rem;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 28px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  transition: all var(--transition);
+  border: none;
+  cursor: pointer;
 }
 
 .btn-primary {
-    background-color: #e74c3c;
-    color: white;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
 .btn-primary:hover {
-    background-color: #c0392b;
+  background: #6ba3ff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 32px rgba(79, 142, 247, 0.4);
 }
 
 .btn-secondary {
-    background-color: #95a5a6;
-    color: white;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
 }
 
 .btn-secondary:hover {
-    background-color: #7f8c8d;
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-glow);
+  transform: translateY(-2px);
 }
 
-.error-message {
-    background: #e74c3c;
-    color: white;
-    padding: 1rem;
-    border-radius: 8px;
-    max-width: 1200px;
-    margin: 1rem auto;
-    text-align: center;
+/* ── Image column ──────────────────────────────────────────── */
+.house-image {
+  flex: 1;
+  min-width: 300px;
+  opacity: 0;
+  transform: translateX(20px);
+  animation: slideInRight 0.5s 0.2s ease-out forwards;
 }
 
-/* Responsive */
+@keyframes slideInRight {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.main-house-img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  object-fit: cover;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+  display: block;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .house-detail-container {
-        flex-direction: column;
-    }
-    
-    .house-info, .house-image {
-        flex: none;
-        width: 100%;
-    }
-    
-    .house-title {
-        font-size: 1.8rem;
-    }
+  .house-detail-container { flex-direction: column; }
+  .house-info, .house-image { flex: none; width: 100%; }
+  .house-title { font-size: 1.8rem; }
+  .house-actions { flex-direction: column; }
+  .btn { width: 100%; }
 }

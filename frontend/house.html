@@ -1,49 +1,64 @@
 {% extends 'base.html' %} {% block head %}
 <link rel="stylesheet" href="/frontend/css/house.css" />
-{% endblock %} {% block content %} {% if error %}
+{% endblock %}
+
+{% block content %}
+
+{% if error %}
 <div class="error-message">{{ error }}</div>
 {% endif %}
 
 <div class="house-detail-container">
-  <div class="house-info">
-    <h1 class="house-title">{{ house.category }}</h1>
-    <p class="house-location">
-      <strong>Location:</strong>
-      <a href="{{ house.location_url }}">{{ house.location_name }}</a>
-    </p>
-    <p class="house-price">
-      <strong>Price:</strong>{% if house.price %} ${{ house.price }} {% if
-      house.category == "house" %} /month {% else %} /night {% endif %} {% else
-      %} Price on request {% endif %}
-    </p>
-    <p class="house-description">{{ house.details.house_details }}</p>
 
-    <!-- <ul class="house-features">
-            <li>👥 {{ house.guests }} Guests</li>
-            <li>🛏️ {{ house.bedrooms }} Bedrooms</li>
-            <li>🛁 {{ house.bathrooms }} Bathrooms</li>
-            <li>🅿️ {% if house.parking %}Parking available{% else %}No parking{% endif %}</li>
-            <li>🌐 WiFi: {% if house.wifi %}Yes{% else %}No{% endif %}</li>
-        </ul> -->
+  <!-- ── Info ── -->
+  <div class="house-info">
+
+    <h1 class="house-title">{{ house.category }}</h1>
+
+    <p class="house-location">
+      <strong>Location</strong>
+      <a href="{{ house.location_url }}" target="_blank" rel="noopener">
+        {{ house.location_name }}
+      </a>
+    </p>
+
+    <p class="house-price">
+      <strong>Price</strong>
+      {% if house.price %}
+        ${{ house.price }}{% if house.category == "house" %} / month{% else %} / night{% endif %}
+      {% else %}
+        Price on request
+      {% endif %}
+    </p>
+
+    {% if house.details.house_details %}
+    <p class="house-description">{{ house.details.house_details }}</p>
+    {% endif %}
+
+    <!-- <ul class="house-features"> -->
+    <!--   <li>👥 {{ house.guests }} Guests</li> -->
+    <!--   <li>🛏️ {{ house.bedrooms }} Bedrooms</li> -->
+    <!--   <li>🛁 {{ house.bathrooms }} Bathrooms</li> -->
+    <!--   <li>🅿️ {% if house.parking %}Parking available{% else %}No parking{% endif %}</li> -->
+    <!--   <li>🌐 WiFi: {% if house.wifi %}Yes{% else %}No{% endif %}</li> -->
+    <!-- </ul> -->
 
     <div class="house-actions">
       <a href="/book/{{ house.id }}" class="btn btn-primary">Book Now</a>
-      <a href="/contact/{{ house.id }}" class="btn btn-secondary"
-        >Contact Host</a
-      >
+      <a href="/contact/house/{{ house.id }}" class="btn btn-secondary">Contact Host</a>
     </div>
+
   </div>
 
+  <!-- ── Image ── -->
   <div class="house-image">
-    {% if house.img_url %}
     <img
-      src="{{ house.img_url }}"
+      src="{{ house.img_url or 'https://via.placeholder.com/600x400?text=No+Image' }}"
       alt="{{ house.category }}"
-      class="main-house-img" />
-    {% else %}
-    <img src="" alt="House image" class="main-house-img" />
-    {% endif %}
+      class="main-house-img"
+      loading="lazy" />
   </div>
+
 </div>
 
 {% endblock %}
