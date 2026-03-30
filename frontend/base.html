@@ -1,38 +1,30 @@
-<!--
------------------------------------------------------------------------------------------------------------------------------------------------
---------------------------------------this is the base of my pages so I don't write the m again evry time--------------------------------------
------------------------------------------------------------------------------------------------------------------------------------------------
--->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/frontend/css/base.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-      rel="icon"
-      href="/frontend/imgs/house.png
-    "
-      type="image/x-icon" />
-    <title>MoRBMB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" href="/frontend/imgs/house.png" type="image/x-icon" />
+    <title>HouseRent</title>
     {% block head %}{% endblock %}
   </head>
+
   <body>
+    <!-- ── Navbar ── -->
     <nav class="navbar">
       <div class="nav-container">
-        <!-- Logo -->
+
         <a href="/home" class="logo">
-          <img
-            src="/frontend/imgs/logo-home-png-7429.png"
-            alt="Houses to rent logo" />
-          <span class="logo-text">HouseRent</span>
+          <img src="/frontend/imgs/logo-home-png-7429.png" alt="HouseRent logo" />
+          <span class="logo-text">House<span>Rent</span></span>
         </a>
 
-        <!-- Hamburger for mobile -->
         <i class="fas fa-bars hamburger" id="hamburger"></i>
 
-        <!-- Nav Links -->
         <div class="nav-links" id="navLinks">
           <a href="/home">Home</a>
           <a href="/login">Login</a>
@@ -40,73 +32,50 @@
           <a href="/host">Host</a>
         </div>
 
-        <!-- Search Bar -->
         <div class="search-wrapper">
           <div class="search-bar" id="searchBar">
             <div class="search-icon" id="searchIcon">
               <svg viewBox="0 0 24 24">
-                <path
-                  d="M15.5 14h-.79l-0.28-0.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
               </svg>
             </div>
-            <input
-              type="text"
-              placeholder="Search anything..."
-              id="searchInput"
-              autocomplete="off" />
+            <input type="text" placeholder="Search properties…" id="searchInput" autocomplete="off" />
           </div>
 
-          <!-- Results dropdown -->
           <ul class="results" id="resultsList">
-            {% if results %} {% for result in results %}
-            <li><a href="/house/{{ result.id }}">{{ result.details }}</a></li>
-            {% endfor %} {% else %}
-            <li class="no-results">No results found</li>
+            {% if results %}
+              {% for result in results %}
+                <li><a href="/house/{{ result.id }}">{{ result.details }}</a></li>
+              {% endfor %}
+            {% else %}
+              <li class="no-results">No results found</li>
             {% endif %}
           </ul>
         </div>
 
-        <!-- Profile Dropdown (only show if user is logged in) -->
         {% if user_info %}
         <div class="profile-dropdown">
           <button class="profile-btn" id="profileBtn">
-            <img
-              src="/frontend/imgs/profile.png"
-              alt="Profile"
-              class="profile-avatar" />
+            <img src="/frontend/imgs/profile.png" alt="Profile" class="profile-avatar" />
             <span class="profile-name">{{ user_info.user_name }}</span>
             <i class="fas fa-chevron-down profile-arrow"></i>
           </button>
 
           <div class="profile-menu" id="profileMenu">
             <div class="profile-header">
-              <img
-                src="/frontend/imgs/profile.png"
-                alt="Profile" />
+              <img src="/frontend/imgs/profile.png" alt="Profile" />
               <div class="profile-info">
                 <h4>{{ user_info.user_name }}</h4>
               </div>
             </div>
             <ul>
-              <li>
-                <a href="/profile"><i class="fas fa-user"></i> My Profile</a>
-              </li>
-              <li>
-                <a href="/my-bookings"
-                  ><i class="fas fa-calendar-check"></i> My Bookings</a
-                >
-              </li>
-              <li>
-                <a href="/my-listings"
-                  ><i class="fas fa-home"></i> My Listings</a
-                >
-              </li>
-              <li>
-                <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
-              </li>
+              <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+              <li><a href="/my-bookings"><i class="fas fa-calendar-check"></i> My Bookings</a></li>
+              <li><a href="/my-listings"><i class="fas fa-home"></i> My Listings</a></li>
+              <li><a href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
               <li class="divider"></li>
               <li>
-                <form action="/logout" method="POST" style="margin: 0">
+                <form action="/logout" method="POST" style="margin:0">
                   <button type="submit" class="disconnect-btn">
                     <i class="fas fa-sign-out-alt"></i> Disconnect
                   </button>
@@ -117,16 +86,16 @@
         </div>
         {% endif %}
 
-        <!-- More Button -->
         <button class="more" id="moreBtn">
-          <img src="/frontend/imgs/menu.png" alt="More menu" />
+          <img src="/frontend/imgs/menu.png" alt="More" />
         </button>
       </div>
     </nav>
 
-    <div class="more-things">
-      <button class="close-more">
-        <img src="/frontend/imgs/menu.png" alt="Close menu" />
+    <!-- ── Side drawer ── -->
+    <div class="more-things" id="moreThings">
+      <button class="close-more" id="closeMore">
+        <img src="/frontend/imgs/menu.png" alt="Close" />
       </button>
       <ul>
         <li><a href="/about">About Us</a></li>
@@ -134,83 +103,76 @@
         <li><a href="/favorites_page">My Favorites</a></li>
         <li><a href="/contact">Contact</a></li>
         <li><a href="/faq">FAQs</a></li>
-        <li><a href="/terms">Terms & Conditions</a></li>
+        <li><a href="/terms">Terms &amp; Conditions</a></li>
       </ul>
     </div>
-    <!--this is the content that will be added in the other pages-->
+
+    <!-- ── Page content ── -->
     <div class="content">{% block content %}{% endblock %}</div>
 
+    <!-- ── Footer ── -->
+    {% block footer %}
     <footer>
-    <!-- Floating particles -->
-    <div class="particle" style="width: 4px; height: 4px; left: 10%; animation-delay: 0s;"></div>
-    <div class="particle" style="width: 6px; height: 6px; left: 25%; animation-delay: 2s;"></div>
-    <div class="particle" style="width: 3px; height: 3px; left: 40%; animation-delay: 4s;"></div>
-    <div class="particle" style="width: 5px; height: 5px; left: 60%; animation-delay: 1s;"></div>
-    <div class="particle" style="width: 4px; height: 4px; left: 75%; animation-delay: 3s;"></div>
-    <div class="particle" style="width: 6px; height: 6px; left: 90%; animation-delay: 5s;"></div>
+      <div class="particle" style="width:4px;height:4px;left:10%;animation-delay:0s"></div>
+      <div class="particle" style="width:6px;height:6px;left:25%;animation-delay:2s"></div>
+      <div class="particle" style="width:3px;height:3px;left:40%;animation-delay:4s"></div>
+      <div class="particle" style="width:5px;height:5px;left:60%;animation-delay:1s"></div>
+      <div class="particle" style="width:4px;height:4px;left:75%;animation-delay:3s"></div>
+      <div class="particle" style="width:6px;height:6px;left:90%;animation-delay:5s"></div>
 
-    <div class="footer-container">
-      <div class="footer-top">
-        <!-- About Section -->
-        <div class="footer-section footer-about">
-          <h3>Mohammed Dahhaoui</h3>
-          <p>Full-stack developer passionate about creating beautiful and functional web experiences.</p>
-          <div class="footer-skills">
-            <span class="skill-tag">Python</span>
-            <span class="skill-tag">FastAPI</span>
-            <span class="skill-tag">UI/UX</span>
-            <span class="skill-tag">JavaScript</span>
+      <div class="footer-container">
+        <div class="footer-top">
+          <div class="footer-section footer-about">
+            <h3>Mohammed Dahhaoui</h3>
+            <p>Full-stack developer passionate about creating beautiful and functional web experiences.</p>
+            <div class="footer-skills">
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">FastAPI</span>
+              <span class="skill-tag">UI/UX</span>
+              <span class="skill-tag">JavaScript</span>
+            </div>
+          </div>
+
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul class="quick-links">
+              <li><a href="/home">Home</a></li>
+              <li><a href="aboutme" target="_blank">About Me</a></li>
+              <li><a href="#projects">Projects</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section social-section">
+            <h3>Let's Connect</h3>
+            <p>Follow me on social media</p>
+            <div class="social-icons">
+              <a href="https://www.instagram.com/moha_fg" target="_blank" class="social-btn instagram"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.facebook.com/profile.php?id=61555319122882" target="_blank" class="social-btn facebook"><i class="fab fa-facebook"></i></a>
+              <a href="https://github.com/znaGuimoho" target="_blank" class="social-btn github"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/mohammed-dahhaoui-750345214/" target="_blank" class="social-btn linkedin"><i class="fab fa-linkedin"></i></a>
+            </div>
           </div>
         </div>
 
-        <!-- Quick Links -->
-        <div class="footer-section">
-          <h3>Quick Links</h3>
-          <ul class="quick-links">
-            <li><a href="/home">Home</a></li>
-            <li><a href="aboutme" target="_blank">About Me</a></li> 
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
+        <div class="footer-divider"></div>
 
-        <!-- Social Section -->
-        <div class="footer-section social-section">
-          <h3>Let's Connect</h3>
-          <p style="color: #cbd5e1; margin: 10px 0;">Follow me on social media</p>
-          <div class="social-icons">
-            <a href="https://www.instagram.com/moha_fg" target="_blank" class="social-btn instagram">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://www.facebook.com/profile.php?id=61555319122882" target="_blank" class="social-btn facebook">
-              <i class="fab fa-facebook"></i>
-            </a>
-            <a href="https://github.com/znaGuimoho" target="_blank" class="social-btn github">
-              <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/mohammed-dahhaoui-750345214/" target="_blank" class="social-btn linkedin">
-              <i class="fab fa-linkedin"></i>
-            </a>
+        <div class="footer-bottom">
+          <div class="copyright">
+            <span>&copy; 2026 Mohammed Dahhaoui</span>
+            <span>•</span>
+            <span>Made with <span class="heart">♥</span></span>
+          </div>
+          <div class="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+            <a href="#sitemap">Sitemap</a>
           </div>
         </div>
       </div>
+    </footer>
+    {% endblock %}
 
-      <div class="footer-divider"></div>
-
-      <div class="footer-bottom">
-        <div class="copyright">
-          <span>&copy; 2026 Mohammed Dahhaoui</span>
-          <span>•</span>
-          <span>Made with <span class="heart">♥</span></span>
-        </div>
-        <div class="footer-links">
-          <a href="#privacy">Privacy Policy</a>
-          <a href="#terms">Terms of Service</a>
-          <a href="#sitemap">Sitemap</a>
-        </div>
-      </div>
-    </div>
-  </footer> 
     <script src="/frontend/script/base.js"></script>
   </body>
 </html>

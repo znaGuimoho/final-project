@@ -24,7 +24,7 @@ def profile(app: FastAPI, templates: Jinja2Templates, get_db, sio):
 
         result = await db.execute(
             text(
-                "SELECT email, phone_number, nationality FROM users WHERE user_id = :user_id"
+                "SELECT email, phone_number, nationality, id_verified FROM users WHERE user_id = :user_id"
             ),
             {"user_id": user_id},
         )
@@ -39,6 +39,10 @@ def profile(app: FastAPI, templates: Jinja2Templates, get_db, sio):
 
             if user_info.nationality:
                 user_data["nationality"] = user_info.nationality
+
+            if user_info.id_verified:
+                user_data["id_verified"] = user_info.id_verified
+
         else:
             raise HTTPException(status_code=404, detail="User not found")
 

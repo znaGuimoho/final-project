@@ -1,257 +1,328 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
 
 :root {
-  --primary: #6366f1;
-  --primary-light: #818cf8;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-700: #374151;
-  --gray-900: #111827;
-  --success: #10b981;
-  --radius: 12px;
-  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  --bg-base:        #080b11;
+  --bg-surface:     #0e1420;
+  --bg-elevated:    #141b28;
+  --bg-hover:       #1a2235;
+  --border:         #1e2a3d;
+  --border-light:   #253044;
+  --accent:         #4f8ef7;
+  --accent-glow:    rgba(79, 142, 247, 0.18);
+  --accent-dim:     #2a5cbf;
+  --text-primary:   #e8edf5;
+  --text-secondary: #8494ad;
+  --text-muted:     #4a5568;
+  --success:        #34d399;
+  --danger:         #f87171;
+  --radius:         14px;
+  --radius-sm:      10px;
+  --font-display:   'Syne', sans-serif;
+  --font-body:      'DM Sans', sans-serif;
+  --transition:     0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-glow:    0 0 32px rgba(79, 142, 247, 0.1);
 }
+
+/* ── Page wrapper ──────────────────────────────────────────── */
 .all {
-  width: 100vw;
-  min-height: 100vh;
-  margin: 0;
-  padding: 2rem;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  padding: 40px clamp(16px, 4vw, 40px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 2rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  font-family: 'Inter', sans-serif;
-  text-align: center;
-  overflow-y: auto;
-  box-sizing: border-box;
+  justify-content: center;
+  gap: 32px;
+  background: var(--bg-base);
+  font-family: var(--font-body);
 }
 
-/* Optional: Add subtle animation on load */
 .all > * {
   opacity: 0;
-  animation: fadeInUp 0.6s ease-out forwards;
+  animation: fadeUp 0.5s ease-out forwards;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.all > *:nth-child(1) { animation-delay: 0.05s; }
+.all > *:nth-child(2) { animation-delay: 0.15s; }
+.all > *:nth-child(3) { animation-delay: 0.25s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Stagger animation for multiple children */
-.all > *:nth-child(1) { animation-delay: 0.1s; }
-.all > *:nth-child(2) { animation-delay: 0.2s; }
-.all > *:nth-child(3) { animation-delay: 0.3s; }
-/* Add more as needed */
+/* ── Card ──────────────────────────────────────────────────── */
 .hoster_container {
-  background: #fff;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 2rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: clamp(24px, 4vw, 40px);
   width: 100%;
-  max-width: 1100px;
+  max-width: 1080px;
   display: grid;
-  gap: 2rem;
   grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  box-shadow: var(--shadow-glow);
+  position: relative;
+  overflow: hidden;
 }
+
+/* subtle top accent line */
+.hoster_container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
 @media (max-width: 860px) {
-  .hoster_container {
-    grid-template-columns: 1fr;
-  }
+  .hoster_container { grid-template-columns: 1fr; gap: 28px; }
 }
-/* ----- Error Message ------------------------------------------ */
-.error-message {
-  background: #ffe6e6;
-  color: #c0392b;
-  font-size: 0.9rem;
-  padding: 12px;
-  border-radius: 8px;
+
+/* ── Title ─────────────────────────────────────────────────── */
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
   text-align: center;
-  border-left: 4px solid #e74c3c;
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+}
+
+/* ── Error message ─────────────────────────────────────────── */
+.error-message {
+  grid-column: 1 / -1;
+  background: rgba(248, 113, 113, 0.08);
+  color: var(--danger);
+  font-size: 13px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--danger);
   animation: shake 0.4s ease-in-out;
 }
-h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--gray-900);
-  margin-bottom: 1rem;
-  text-align: center;
-  grid-column: 1/-1;
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-6px); }
+  75%       { transform: translateX(6px); }
 }
 
-/* ---------- LEFT – IMAGE UPLOAD ---------- */
+/* ── Upload area ───────────────────────────────────────────── */
 .upload-area {
-  border: 2.5px dashed var(--gray-200);
+  border: 2px dashed var(--border-light);
   border-radius: var(--radius);
-  padding: 2rem;
+  padding: 36px 24px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: var(--gray-100);
+  transition: all var(--transition);
+  background: var(--bg-elevated);
+  position: relative;
 }
-.upload-area.dragover {
-  border-color: var(--primary);
-  background: #eef2ff;
-  transform: scale(1.02);
-}
+
 .upload-area:hover {
-  border-color: var(--primary-light);
+  border-color: var(--accent-dim);
+  background: var(--bg-hover);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
+
+.upload-area.dragover {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  transform: scale(1.01);
+}
+
 .upload-icon {
   width: 64px;
   height: 64px;
-  margin: 0 auto 1rem;
-  background: var(--primary);
-  border-radius: 50%;
+  margin: 0 auto 16px;
+  background: var(--accent-glow);
+  border: 1px solid var(--accent-dim);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 1.5rem;
+  color: var(--accent);
+  font-size: 26px;
   animation: float 3s ease-in-out infinite;
 }
+
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-.upload-text {
-  color: var(--gray-700);
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-}
-.upload-subtext {
-  color: var(--gray-700);
-  font-size: 0.875rem;
-}
-input[type="file"] {
-  display: none;
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
 }
 
+.upload-text {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.upload-subtext {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+input[type="file"] { display: none; }
+
+/* ── Preview ───────────────────────────────────────────────── */
 .preview-container {
-  margin-top: 1.5rem;
+  margin-top: 20px;
   display: none;
   flex-direction: column;
   align-items: center;
-}
-.preview-image {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.6s ease-out;
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.success-message {
-  margin-top: 1rem;
-  color: var(--success);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  animation: slideUp 0.5s ease-out;
-}
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.btn {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  margin-top: 1rem;
-}
-.btn:hover {
-  background: #4f46e5;
-  transform: translateY(-2px);
-}
-.btn:disabled {
-  background: var(--gray-200);
-  cursor: not-allowed;
-  transform: none;
+  gap: 12px;
 }
 
+.preview-image {
+  max-width: 100%;
+  max-height: 260px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  animation: zoomIn 0.4s ease-out;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.success-message {
+  color: var(--success);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Submit button ─────────────────────────────────────────── */
+.btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 13px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn:hover:not(:disabled) {
+  background: #6ba3ff;
+  box-shadow: 0 0 32px rgba(79, 142, 247, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn:active:not(:disabled) { transform: translateY(0); }
+
+.btn:disabled {
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Checkmark SVG ─────────────────────────────────────────── */
 .checkmark {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   stroke: currentColor;
-  stroke-width: 3;
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
-  animation: draw 0.6s ease-out forwards;
-}
-@keyframes draw {
-  to {
-    stroke-dashoffset: 0;
-  }
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  animation: draw 0.5s ease-out forwards;
 }
 
-/* ---------- RIGHT – PROPERTY INFO ---------- */
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Info section (right column) ───────────────────────────── */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .info-section label {
   display: block;
-  margin-top: 1rem;
+  margin-top: 16px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--gray-900);
-}
-.info-section select,
-.info-section input {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  margin-top: 0.4rem;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius);
-  font-size: 0.95rem;
-}
-.info-section select:focus,
-.info-section input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
-#map {
-  height: 250px;
-  margin-top: 0.6rem;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.info-section label:first-child { margin-top: 0; }
+
+.info-section select,
+.info-section input[type="text"],
+.info-section input[type="number"] {
+  width: 100%;
+  padding: 10px 14px;
+  margin-top: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
 }
+
+.info-section select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238494ad' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.info-section select option {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.info-section select:focus,
+.info-section input:focus {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.info-section input::placeholder { color: var(--text-muted); }
+
+/* ── Map ───────────────────────────────────────────────────── */
+#map {
+  height: 220px;
+  margin-top: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
 .map-instruction {
-  font-size: 0.85rem;
-  color: var(--gray-700);
-  margin-top: 0.4rem;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
 }

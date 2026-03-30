@@ -8,48 +8,27 @@ from app.routers.hoster import hosting
 from app.routers.more import more
 from app.routers.profile import profile
 
-# ---------------------------------------------------
-# ----------GET THE VARIBLES FROM config.py----------
-# ---------------------------------------------------
+# ── App setup ──────────────────────────────────────────────────────────────
 app_sio, sio, app, get_db, templates, redis = create_app()
 
-# -----------------------------------------------------------------
-# ----------THE ROUTED FOR THE login and register auth.py----------
-# -----------------------------------------------------------------
-auth_rout(app, templates, get_db, sio)
+# ── Register routers ───────────────────────────────────────────────────────
+routers = [
+    auth_rout,
+    hosting,
+    home,
+    more,
+    contact,
+    favorite,
+    profile,
+]
 
-# -----------------------------------------------------------------
-# ----------TTHE ROUTED FOR hosters and simular tasks -------------
-# -----------------------------------------------------------------
-hosting(app, templates, get_db, sio)
+for router in routers:
+    router(app, templates, get_db, sio)
 
-# -----------------------------------------------------------------
-# ----------TTHE ROUTED FOR home pages-----------------------------
-# -----------------------------------------------------------------
-home(app, templates, get_db, sio)
-
-# -----------------------------------------------------------------
-# ----------TTHE ROUTED FOR more options---------------------------
-# -----------------------------------------------------------------
-more(app, templates, get_db, sio)
-
-# -----------------------------------------------------------------
-# ----------TTHE ROUTED FOR contact the hoster --------------------
-# -----------------------------------------------------------------
-contact(app, templates, get_db, sio)
-
-# -----------------------------------------------------------------
-# ----------TTHE ROUTED FOR vavorite           --------------------
-# -----------------------------------------------------------------
-favorite(app, templates, get_db, sio)
-
-# -----------------------------------------------------------------
-# ----------TTHE ROUTED FOR My Profile           --------------------
-# -----------------------------------------------------------------
-profile(app, templates, get_db, sio)
-
+# ── Socket.IO handlers ─────────────────────────────────────────────────────
 register_socketio_handelers(app, templates, get_db, app_sio, sio)
 
+# ── Entry point ────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
 
