@@ -1,12 +1,17 @@
-from fastapi import Request, Response, HTTPException
+import smtplib
+import uuid
+from email.mime.text import MIMEText
+
+from app.config import AsyncSessionLocal
+from colorama import Fore, Style
+from fastapi import HTTPException, Request, Response
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.config import AsyncSessionLocal
-import uuid
-from colorama import Fore, Style
 
 
-async def set_user_data(request: Request, response: Response, email: str, db: AsyncSession):
+async def set_user_data(
+    request: Request, response: Response, email: str, db: AsyncSession
+):
     # 1. Generate session_id
     session_id = str(uuid.uuid4())
 
@@ -37,7 +42,7 @@ async def set_user_data(request: Request, response: Response, email: str, db: As
         path="/",
         httponly=True,
         samesite="lax",
-        max_age=3600
+        max_age=3600,
     )
 
     return {"session_id": session_id, "user_id": user_id}
@@ -80,8 +85,9 @@ async def get_user_data(request: Request, db: AsyncSession):
     return {
         "session_id": str(user_data["session_id"]),
         "user_id": user_data["user_id"],
-        "user_name": user_data["user_name"]
+        "user_name": user_data["user_name"],
     }
+
 
 async def search_in_database(user_inp: str, db: AsyncSession):
     query = text("""
@@ -94,36 +100,36 @@ async def search_in_database(user_inp: str, db: AsyncSession):
     result = await db.execute(query, {"user_input": user_inp})
     rows = result.fetchall()
 
-    return [
-        {"id": row.id, "details": row.house_details}
-        for row in rows
-    ]
+    return [{"id": row.id, "details": row.house_details} for row in rows]
+
 
 async def get_user_id_from_cookie(environ):
     cookie_header = environ.get("HTTP_COOKIE")
-    
+
     if not cookie_header:
         print(f"{Fore.RED}No cookie header found in request{Style.RESET_ALL}")
         return None
-    
+
     print(f"{Fore.GREEN}✓ Cookie header found: {cookie_header}{Style.RESET_ALL}")
-    
+
     cookies = dict(
         cookie.strip().split("=", 1)
         for cookie in cookie_header.split(";")
         if "=" in cookie
     )
-    
+
     print(f"{Fore.GREEN}Parsed cookies: {list(cookies.keys())}{Style.RESET_ALL}")
-    
+
     session_id = cookies.get("session_id")
-    
+
     if not session_id:
-        print(f"{Fore.RED}No 'session_id' cookie found. Available cookies: {list(cookies.keys())}{Style.RESET_ALL}")
+        print(
+            f"{Fore.RED}No 'session_id' cookie found. Available cookies: {list(cookies.keys())}{Style.RESET_ALL}"
+        )
         return None
-    
+
     print(f"{Fore.GREEN}✓ Session ID found: {session_id}{Style.RESET_ALL}")
-    
+
     async with AsyncSessionLocal() as db:
         query = text("""
             SELECT user_id
@@ -133,11 +139,38 @@ async def get_user_id_from_cookie(environ):
         """)
         result = await db.execute(query, {"session_id": session_id})
         row = result.fetchone()
-        
+
         if row:
-            print(f"{Fore.GREEN}✓ User authenticated: user_id={row[0]}{Style.RESET_ALL}")
+            print(
+                f"{Fore.GREEN}✓ User authenticated: user_id={row[0]}{Style.RESET_ALL}"
+            )
             return row[0]
         else:
-            print(f"{Fore.RED}Session not found or expired for session_id: {session_id}{Style.RESET_ALL}")
+            print(
+                f"{Fore.RED}Session not found or expired for session_id: {session_id}{Style.RESET_ALL}"
+            )
             return None
 
+
+def send_email(to_email: str, verify_link: str):
+    # for debugging
+    print(Fore.RED + "trying to send the email" + Style.RESET_ALL)
+    msg = MIMEText(f"""
+        Hi,
+
+        Click the link below to verify your email address:
+        {verify_link}
+
+        This link expires in 1 hour.
+    """)
+    msg["Subject"] = "Verify your email — HouseRent"
+    msg["From"] = "your@gmail.com"
+    msg["To"] = to_email
+
+    import os
+
+    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login("dahhaouimohammed15@gmail.com", EMAIL_PASSWORD)
+        smtp.send_message(msg)

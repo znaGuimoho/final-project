@@ -1,6 +1,7 @@
 from app.config import create_app
 from app.events.contact_events import register_socketio_handelers
 from app.routers.auth import auth_rout
+from app.routers.become_host import become_host
 from app.routers.contact import contact
 from app.routers.favorites import favorite
 from app.routers.home import home
@@ -20,6 +21,7 @@ routers = [
     contact,
     favorite,
     profile,
+    become_host,
 ]
 
 for router in routers:

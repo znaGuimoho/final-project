@@ -4,6 +4,13 @@ services:
   api:
     build: .
     container_name: fastapi_app
+    environment:
+      - HTTP_PROXY=http://192.168.109.255:7890
+      - HTTPS_PROXY=http://192.168.109.255:7890
+      - NO_PROXY=localhost,127.0.0.1
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     network_mode: "host"
     volumes:
       - ./backend:/app
