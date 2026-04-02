@@ -1,15 +1,17 @@
-# 🏠 House Renting Platform
+# 🏠 HouseRent Platform
 
-A modern, full-stack house renting platform that connects property hosts with potential renters. Built with **FastAPI** (Python) and **PostgreSQL**, featuring secure authentication, image uploads, and an intuitive user interface.
+A modern, full-stack house renting platform that connects property hosts with potential renters. Built with **FastAPI** (Python) and **PostgreSQL**, featuring real-time messaging, secure authentication, multi-step host onboarding, image uploads, and a polished dark UI.
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688?style=for-the-badge&logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109.2-009688?style=for-the-badge&logo=fastapi)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-316192?style=for-the-badge&logo=postgresql)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=for-the-badge&logo=redis)
 ![Docker](https://img.shields.io/badge/Docker-supported-2496ED?style=for-the-badge&logo=docker)
+![SocketIO](https://img.shields.io/badge/Socket.IO-realtime-010101?style=for-the-badge&logo=socket.io)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-api-documentation) • [Contributing](#-contributing)
+[Features](#-features) • [Quick Start](#-quick-start) • [Project Structure](#-project-structure) • [Database Schema](#-database-schema) • [API Docs](#-api-documentation)
 
 </div>
 
@@ -18,290 +20,48 @@ A modern, full-stack house renting platform that connects property hosts with po
 ## ✨ Features
 
 ### For Renters
-- 🔍 **Browse Listings** – View available properties with photos and detailed information
-- ⭐ **Save Favorites** – Bookmark properties you're interested in
-- 📱 **Responsive Design** – Seamless experience across all devices
-- 💡 **Rental Tips** – Access helpful guides for first-time renters
+
+- 🔍 **Browse Listings** — Filter properties by category (Hotel, House, Hostel)
+- ⭐ **Save Favourites** — Bookmark properties you're interested in
+- 💬 **Real-time Messaging** — Chat directly with hosts via Socket.IO
+- 🖼️ **Image Slider** — View multiple property photos with swipe support
+- 📱 **Responsive Design** — Seamless experience across all devices
+- 💡 **Rental Tips** — Helpful guides for first-time renters
 
 ### For Hosts
-- 📤 **Easy Property Upload** – Add listings with multiple photos
-- 🖼️ **Image Management** – Upload and manage property images
-- 📊 **Host Dashboard** – Manage all your listings in one place
-- ✅ **Quick Setup** – Get your property listed in minutes
+
+- 🪜 **6-Step Onboarding** — Guided verification flow (Info → Identity → Property → Listing → Payment → Terms)
+- 📤 **Multi-image Upload** — Add multiple photos per listing with drag & drop
+- 🗺️ **Map Integration** — Pin exact property location with Leaflet.js
+- 📊 **Host Dashboard** — Manage all your listings in one place
+- 🔐 **KYC Verification** — ID + selfie + property document upload
 
 ### Platform Features
-- 🔐 **Secure Authentication** – Session-based login system
-- 📧 **Contact System** – Direct communication channels
-- 📜 **Legal Pages** – Terms & Conditions, FAQs
-- 🎨 **Modern UI** – Clean, intuitive interface
+
+- 🔐 **Secure Auth** — UUID session-based login with cookie management
+- 📧 **Email Verification** — Token-based email confirmation via SMTP
+- 💳 **Payment Info** — Encrypted bank account storage (Fernet)
+- 🔴 **Redis Messaging** — Persistent chat message storage
+- 🎨 **Dark Midnight UI** — Cohesive design system across all pages
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| **Backend** | FastAPI (Python 3.11+) |
-| **Database** | PostgreSQL 15 |
-| **Authentication** | Session-based with secure cookies |
-| **File Storage** | Local filesystem |
-| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
-| **Security** | SSL/TLS (HTTPS), Password hashing |
-| **Deployment** | Docker + Docker Compose |
+| Component             | Technology                       |
+| --------------------- | -------------------------------- |
+| **Backend**           | FastAPI 0.109.2 (Python 3.12)    |
+| **Database**          | PostgreSQL 15                    |
+| **Cache / Messaging** | Redis 7                          |
+| **Real-time**         | Socket.IO (python-socketio)      |
+| **Authentication**    | UUID sessions + secure cookies   |
+| **File Storage**      | Local filesystem (Docker volume) |
+| **Frontend**          | HTML5, CSS3, Vanilla JS, Jinja2  |
+| **Maps**              | Leaflet.js                       |
+| **Encryption**        | Fernet (cryptography library)    |
+| **Deployment**        | Docker + Docker Compose          |
 
 ---
-
-## 📊 Database Schema
-
-### Overview
-The platform uses PostgreSQL to manage user authentication, house listings, favorites, contact history, and session management. Below is the complete database structure.
-
-### Quick Stats
-- **9 Database Objects**: 6 tables + 3 sequences
-- **Foreign Key Relationships**: 8 constraints ensuring data integrity
-- **JSON Fields**: For flexible data storage (house details, user activity)
-
----
-
-## Tables
-
-### 1. users
-Stores user account information with authentication credentials.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| user_id | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Unique user identifier |
-| user_name | VARCHAR(100) | NOT NULL | User's display name |
-| email | VARCHAR(150) | NOT NULL, UNIQUE | User's email address |
-| hashed_password | TEXT | NOT NULL | Hashed password for authentication |
-| salt | TEXT | NOT NULL | Salt used for password hashing |
-| banned | BOOLEAN | DEFAULT false | Account ban status |
-
-**Create Query:**
-```sql
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
-    user_name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    hashed_password TEXT NOT NULL,
-    salt TEXT NOT NULL,
-    banned BOOLEAN DEFAULT false
-);
-```
-
----
-
-### 2. houses
-Contains house rental listings with details and location information.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Unique house identifier |
-| category | VARCHAR(50) | | House category/type |
-| price | NUMERIC(10,2) | | Rental price |
-| location_name | VARCHAR(255) | | Human-readable location |
-| location_url | VARCHAR(255) | | Map/location URL |
-| img_url | TEXT | | House image URL |
-| details | JSON | | Additional house details (JSON format) |
-
-**Create Query:**
-```sql
-CREATE TABLE houses (
-    id SERIAL PRIMARY KEY,
-    category VARCHAR(50),
-    price NUMERIC(10,2),
-    location_name VARCHAR(255),
-    location_url VARCHAR(255),
-    img_url TEXT,
-    details JSON
-);
-```
-
----
-
-### 3. myfavorite
-Junction table linking users to their favorite house listings.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| house_id | INTEGER | FOREIGN KEY → houses(id) | Reference to house |
-| user_id | INTEGER | FOREIGN KEY → users(user_id) | Reference to user |
-
-**Constraints:**
-- Unique constraint on (house_id, user_id) to prevent duplicates
-- CASCADE delete when house or user is deleted
-
-**Create Query:**
-```sql
-CREATE TABLE myfavorite (
-    house_id INTEGER,
-    user_id INTEGER,
-    CONSTRAINT myfavorite_unique_user_house UNIQUE (house_id, user_id),
-    CONSTRAINT fk_house FOREIGN KEY (house_id) REFERENCES houses(id) ON DELETE CASCADE,
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-```
-
----
-
-### 4. contact_history
-Tracks communication between users and house hosts.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| room_name | VARCHAR(255) | NOT NULL | Chat room/conversation identifier |
-| house_id | INTEGER | NOT NULL, FOREIGN KEY → houses(id) | House being inquired about |
-| user_id | INTEGER | NOT NULL, FOREIGN KEY → users(user_id) | User making contact |
-| hoster_id | INTEGER | NOT NULL, FOREIGN KEY → users(user_id) | House owner/host |
-
-**Create Query:**
-```sql
-CREATE TABLE contact_history (
-    room_name VARCHAR(255) NOT NULL,
-    house_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    hoster_id INTEGER NOT NULL,
-    CONSTRAINT contact_history_house_id_fkey FOREIGN KEY (house_id) REFERENCES houses(id),
-    CONSTRAINT contact_history_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id),
-    CONSTRAINT contact_history_hoster_id_fkey FOREIGN KEY (hoster_id) REFERENCES users(user_id)
-);
-```
-
----
-
-### 5. sessions
-Manages user authentication sessions.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| session_id | UUID | PRIMARY KEY | Unique session identifier |
-| user_id | INTEGER | NOT NULL, FOREIGN KEY → users(user_id) | User associated with session |
-| created_at | TIMESTAMP | DEFAULT now() | Session creation time |
-| expires_at | TIMESTAMP | | Session expiration time |
-
-**Create Query:**
-```sql
-CREATE TABLE sessions (
-    session_id UUID PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
-    expires_at TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-```
-
----
-
-### 6. user_data
-Stores user activity data in JSON format.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Unique record identifier |
-| user_id | INTEGER | NOT NULL, FOREIGN KEY → users(user_id) | User reference |
-| visited | JSONB | DEFAULT '[]' | Array of visited houses |
-| history | JSONB | DEFAULT '{}' | User browsing/activity history |
-
-**Create Query:**
-```sql
-CREATE TABLE user_data (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    visited JSONB DEFAULT '[]'::jsonb,
-    history JSONB DEFAULT '{}'::jsonb,
-    CONSTRAINT user_data_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-```
-
----
-
-## Entity Relationships
-
-```
-users (1) ──→ (N) sessions
-users (1) ──→ (N) myfavorite
-users (1) ──→ (N) contact_history [as user]
-users (1) ──→ (N) contact_history [as hoster]
-users (1) ──→ (1) user_data
-
-houses (1) ──→ (N) myfavorite
-houses (1) ──→ (N) contact_history
-```
-
----
-
-## Indexes
-
-- `users_pkey`: PRIMARY KEY on users(user_id)
-- `users_email_key`: UNIQUE on users(email)
-- `houses_pkey`: PRIMARY KEY on houses(id)
-- `myfavorite_unique_user_house`: UNIQUE on myfavorite(house_id, user_id)
-- `sessions_pkey`: PRIMARY KEY on sessions(session_id)
-- `user_data_pkey`: PRIMARY KEY on user_data(id)
-
----
-
-## Complete Database Setup
-
-```sql
--- Create all tables in order (respecting foreign key dependencies)
-
--- 1. Create users table first (no dependencies)
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
-    user_name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    hashed_password TEXT NOT NULL,
-    salt TEXT NOT NULL,
-    banned BOOLEAN DEFAULT false
-);
-
--- 2. Create houses table (no dependencies)
-CREATE TABLE houses (
-    id SERIAL PRIMARY KEY,
-    category VARCHAR(50),
-    price NUMERIC(10,2),
-    location_name VARCHAR(255),
-    location_url VARCHAR(255),
-    img_url TEXT,
-    details JSON
-);
-
--- 3. Create dependent tables
-CREATE TABLE myfavorite (
-    house_id INTEGER,
-    user_id INTEGER,
-    CONSTRAINT myfavorite_unique_user_house UNIQUE (house_id, user_id),
-    CONSTRAINT fk_house FOREIGN KEY (house_id) REFERENCES houses(id) ON DELETE CASCADE,
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
-CREATE TABLE contact_history (
-    room_name VARCHAR(255) NOT NULL,
-    house_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    hoster_id INTEGER NOT NULL,
-    CONSTRAINT contact_history_house_id_fkey FOREIGN KEY (house_id) REFERENCES houses(id),
-    CONSTRAINT contact_history_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id),
-    CONSTRAINT contact_history_hoster_id_fkey FOREIGN KEY (hoster_id) REFERENCES users(user_id)
-);
-
-CREATE TABLE sessions (
-    session_id UUID PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
-    expires_at TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
-CREATE TABLE user_data (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    visited JSONB DEFAULT '[]'::jsonb,
-    history JSONB DEFAULT '{}'::jsonb,
-    CONSTRAINT user_data_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-```
 
 ## 📁 Project Structure
 
@@ -309,69 +69,88 @@ CREATE TABLE user_data (
 finalProject/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                 # FastAPI application entry point
-│   │   ├── config.py               # Configuration management
-│   │   ├── cert.pem                # SSL certificate (development)
-│   │   ├── key.pem                 # SSL private key (development)
+│   │   ├── main.py                     # App entry point — registers all routers
+│   │   ├── config.py                   # FastAPI + Socket.IO + DB + Redis setup
 │   │   ├── routers/
-|   |   |   ├── contact.py          # contact managment
-|   |   |   ├── favorites.py        # favorite managment
-│   │   │   ├── auth.py             # Authentication endpoints
-│   │   │   ├── home.py             # Home page & listings
-│   │   │   ├── hoster.py           # Host property management
-│   │   │   └── more.py             # Additional pages (About, FAQ, etc.)
+│   │   │   ├── auth.py                 # Register, login, logout
+│   │   │   ├── home.py                 # Home page, house detail, search API
+│   │   │   ├── hoster.py               # Property upload & management
+│   │   │   ├── become_host.py          # 6-step host onboarding + email verification
+│   │   │   ├── contact.py              # Chat room creation & messaging
+│   │   │   ├── favorites.py            # Save / remove favourites
+│   │   │   ├── profile.py              # User profile page
+│   │   │   └── more.py                 # About, FAQ, Terms, Rental Tips
 │   │   ├── services/
-|   |   |   ├── conatct_servises.py
-|   |   |   ├── redis_db.py
-│   │   │   ├── Hash_password.py    # Password hashing utilities
-│   │   │   └── user_service.py 
-│   │   ├── events/
-|   |   |   └──contact_events.py 
-│   └── static/
-│       └── uploads/                # User-uploaded property images
-│   ├── requirements.txt            # Python dependencies
-│   ├── .env                        # Environment variables (not in git)
-│   └── imgs.png                    # Sample image
+│   │   │   ├── user_service.py         # get_user_data, send_email, encryption
+│   │   │   ├── contact_services.py     # Unique room code generation
+│   │   │   ├── redis_db.py             # Redis message read/write
+│   │   │   └── Hash_password.py        # Password hashing with salt
+│   │   └── events/
+│   │       └── contact_events.py       # Socket.IO event handlers
+│   ├── static/
+│   │   ├── uploads/                    # House listing images
+│   │   └── hosters-info/               # KYC documents (ID, selfie, proof)
+│   ├── requirements.txt
+│   └── .env                            # Environment variables (not in git)
 │
 ├── frontend/
-│   ├── css/                        # Stylesheets
-│   │   ├── aboutUs.css
-│   │   ├── contact.css
-│   │   ├── favorite.css
-│   │   ├── house.css
-│   │   ├── base.css
-│   │   ├── home.css
-│   │   ├── host.css
-│   │   ├── login.css
-│   │   ├── register.css
-│   │   ├── rentalTips.css
-│   │   ├── termsAndConditions.css
-│   │   └── uploadSuccess.css
-│   ├── imgs/                       # Static images
-│   │   ├── house.png
-│   │   ├── logo-home-png-7429.png
-│   │   ├── Me.png
-│   │   ├── menu.png
-│   │   ├── photo-for-more.png
-│   │   ├── profile.png
-│   │   ├── sekectedStar.png
-│   │   ├── star.png
-│   │   └── photo-for-more.jpeg
-│   ├── scripts/                    # JavaScript modules
-│   │   ├── home.js
-│   │   ├── login.js
-│   │   ├── register.js
-│   │   ├── host.js
-│   │   ├── aboutUs.js
-│   │   ├── rentalTips.js
-│   │   ├── terms.js
-│   │   └── uploadSuccess.js
-│   └── *.html                      # HTML pages
+│   ├── base.html                       # Base template (navbar, footer)
+│   ├── home.html                       # Listings grid with category filter
+│   ├── house.html                      # House detail + image slider
+│   ├── host.html                       # Property upload form + map
+│   ├── contact.html                    # Real-time chat interface
+│   ├── step1.html – step6.html         # Host onboarding steps
+│   ├── login.html / register.html      # Auth pages
+│   ├── myprofile.html                  # User profile
+│   ├── favorites.html                  # Saved properties
+│   ├── pending.html                    # Awaiting host approval
+│   ├── aboutUs.html / aboutMe.html     # Info pages
+│   ├── rentalTips.html                 # Renter guides
+│   ├── termsAndConditions.html         # Legal page
+│   ├── uploadSucsess.html              # Post-upload confirmation
+│   ├── css/                            # Per-page stylesheets
+│   ├── script/                         # Per-page JavaScript
+│   └── imgs/                           # Static assets
 │
-├── docker-compose.yml              # Multi-container orchestration
-├── Dockerfile                      # Backend container definition
-├── .gitignore                      # Git exclusions
-└── README.md                       # This file
+├── docs/
+│   └── screenshots/                    # home.png, host.png, login.png, register.png
+├── database_shema.md                   # Full DB schema documentation
+├── docker-compose.yml
+├── Dockerfile
+└── README.md
+```
+
+---
+
+## 📊 Database Schema
+
+### Tables Overview
+
+| Table                | Purpose                                                  |
+| -------------------- | -------------------------------------------------------- |
+| `users`              | Accounts, auth credentials, verification flags           |
+| `houses`             | Property listings with `img_url TEXT[]` and JSON details |
+| `host_verifications` | KYC documents (ID photos, selfie, proof of ownership)    |
+| `host_payment_info`  | Encrypted bank account details                           |
+| `sessions`           | UUID-based sessions with expiry                          |
+| `myfavorite`         | User ↔ house bookmarks junction table                    |
+| `contact_history`    | Chat rooms between renters and hosts                     |
+| `user_data`          | JSONB browsing history                                   |
+
+> See [`database_shema.md`](database_shema.md) for the complete schema, column definitions, and full setup SQL.
+
+### Entity Relationships
+
+```mermaid
+erDiagram
+    users ||--o| host_verifications : "has KYC"
+    users ||--o| host_payment_info : "receives pay"
+    users ||--o{ houses : "lists"
+    users ||--o{ sessions : "active in"
+    users ||--o{ myfavorite : "likes"
+    houses ||--o{ myfavorite : "is favorited"
+    houses ||--o{ contact_history : "subject of"
+    users ||--o{ contact_history : "participates"
 ```
 
 ---
@@ -380,124 +159,52 @@ finalProject/
 
 ### Prerequisites
 
-Choose one of the following:
-
-**Option A: Docker (Recommended)**
 - [Docker Desktop](https://www.docker.com/get-started) or Docker Engine + Docker Compose
-
-**Option B: Manual Setup**
-- Python 3.11 or higher
-- PostgreSQL 15 or higher
-- pip (Python package manager)
 
 ### Installation
 
-#### Using Docker (Easiest - One Command!)
+**1. Clone the repository**
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/znaGuimoho/finalProject.git
-   cd finalProject
-   ```
+```bash
+git clone https://github.com/znaGuimoho/finalProject.git
+cd finalProject
+```
 
-2. **Configure environment variables**
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
-   
-   Edit `backend/.env` with your settings:
-   ```env
-   DATABASE_URL=postgresql://postgres:password@db:5432/house_renting
-   ```
+**2. Set up environment variables**
 
-3. **Launch the application**
-   ```bash
-   docker-compose up --build
-   ```
+```bash
+cp backend/.env.example backend/.env
+```
 
-4. **Access the platform**
-   
-   Open your browser and navigate to:
-   ```
-   https://localhost:8000
-   ```
-   
-   > ⚠️ **First-time SSL warning**: Your browser will show a security warning because we're using self-signed certificates for local development. Click "Advanced" → "Proceed to localhost" (this is safe for local development).
-
-#### Manual Setup (Without Docker)
-
-1. **Clone and navigate**
-   ```bash
-   git clone https://github.com/znaGuimoho/finalProject.git
-   cd finalProject
-   ```
-
-2. **Set up PostgreSQL database**
-   ```bash
-   createdb house_renting
-   ```
-
-3. **Install Python dependencies**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
-
-4. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database credentials
-   ```
-
-5. **Run the application**
-   ```bash
-   python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 --ssl-keyfile app/key.pem --ssl-certfile app/cert.pem
-   ```
-
----
-
-## 📖 API Documentation
-
-Once the server is running, visit:
-
-- **Interactive API Docs (Swagger)**: https://localhost:8000/docs
-- **Alternative Docs (ReDoc)**: https://localhost:8000/redoc
-
-### Key Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/auth/register` | POST | Create new user account |
-| `/auth/login` | POST | User login |
-| `/auth/logout` | POST | User logout |
-| `/home/listings` | GET | Fetch all property listings |
-| `/host/upload` | POST | Upload new property listing |
-| `/host/properties` | GET | Get host's properties |
-
----
-
----
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file in the `backend/` directory:
+Edit `backend/.env`:
 
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@host:port/database
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/houserent_db
 
-# Security
-SECRET_KEY=your-secret-key-min-32-characters-long
+# Redis
+REDIS_URL=redis://redis:6379/0
 
-# Application
-DEBUG=False
-ALLOWED_HOSTS=localhost,127.0.0.1
+# Email (Gmail App Password)
+EMAIL_PASSWORD=your_gmail_app_password
 
-# File Upload
-MAX_UPLOAD_SIZE=5242880  # 5MB in bytes
-UPLOAD_DIR=app/static/uploads
+# Encryption (generate with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+ENCRYPTION_KEY=your_fernet_key_here
+
+# Resend (optional - alternative to Gmail)
+RESEND_API_KEY=re_your_key_here
+```
+
+**3. Launch**
+
+```bash
+docker-compose up --build
+```
+
+**4. Open in browser**
+
+```
+http://localhost:8000
 ```
 
 ---
@@ -508,89 +215,106 @@ UPLOAD_DIR=app/static/uploads
 # Start all services
 docker-compose up
 
-# Start in detached mode (background)
+# Start in background
 docker-compose up -d
 
-# Rebuild containers
+# Rebuild after code changes
 docker-compose up --build
 
-# Stop all services
+# Stop everything
 docker-compose down
 
-# View logs
-docker-compose logs -f
+# View live logs
+docker-compose logs -f fastapi_app
 
-# Access database
-docker-compose exec db psql -U postgres -d house_renting
+# Access the database
+docker-compose exec db psql -U postgres -d houserent_db
+
+# Run a command inside the app container
+docker exec -it fastapi_app bash
 ```
 
 ---
 
-## 🧪 Testing
+## 📖 API Documentation
 
-```bash
-# Run tests (when implemented)
-pytest
+Once running, visit:
 
-# Run with coverage
-pytest --cov=app tests/
-```
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+### Key Endpoints
+
+| Endpoint                 | Method   | Description             |
+| ------------------------ | -------- | ----------------------- |
+| `/register`              | POST     | Create new account      |
+| `/login`                 | POST     | User login              |
+| `/logout`                | POST     | User logout             |
+| `/home`                  | GET      | Browse all listings     |
+| `/house/{id}`            | GET      | Property detail page    |
+| `/host`                  | POST     | Upload new listing      |
+| `/become-host`           | GET      | Start host onboarding   |
+| `/become-host/step{1-6}` | GET/POST | Onboarding steps        |
+| `/contact/house/{id}`    | GET      | Open/create chat room   |
+| `/contact/{room_code}`   | GET      | View chat room          |
+| `/verify-email/send`     | POST     | Send email verification |
+| `/verify-email/confirm`  | GET      | Confirm email token     |
+| `/api/search`            | GET      | Search listings         |
+
+---
+
+## 🔧 Environment Variables Reference
+
+| Variable         | Description                   | Example                    |
+| ---------------- | ----------------------------- | -------------------------- |
+| `DATABASE_URL`   | PostgreSQL connection string  | `postgresql+asyncpg://...` |
+| `REDIS_URL`      | Redis connection string       | `redis://redis:6379/0`     |
+| `EMAIL_PASSWORD` | Gmail App Password            | `xxxx xxxx xxxx xxxx`      |
+| `ENCRYPTION_KEY` | Fernet key for payment data   | `generated_key=`           |
+| `RESEND_API_KEY` | Resend.com API key (optional) | `re_xxxxxxxx`              |
 
 ---
 
 ## 🛣️ Roadmap
 
-- [ ] Add property search and filtering
-- [ ] Implement booking system
-- [ ] Add payment integration
-- [ ] Create mobile app
-- [ ] Add real-time messaging between hosts and renters
-- [ ] Implement review and rating system
-- [ ] Add email notifications
-- [ ] Multi-language support
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- [x] Secure session-based authentication
+- [x] Property listings with multi-image upload
+- [x] Real-time chat (Socket.IO + Redis)
+- [x] Favourites system
+- [x] 6-step host onboarding with KYC
+- [x] Email verification
+- [x] Encrypted payment info storage
+- [x] Dark midnight UI design system
+- [ ] Booking system
+- [ ] Payment processing (Stripe)
+- [ ] Admin review dashboard
+- [ ] Push notifications
+- [ ] Review & rating system
+- [ ] Mobile app
 
 ---
 
 ## 👤 Author
 
-**Your Name**
+**Mohammed Dahhaoui**
 
 - GitHub: [@znaGuimoho](https://github.com/znaGuimoho)
-- Project Link: [https://github.com/znaGuimoho/finalProject](https://github.com/znaGuimoho/finalProject)
+- LinkedIn: [mohammed-dahhaoui](https://www.linkedin.com/in/mohammed-dahhaoui-750345214/)
+- Instagram: [@moha_fg](https://www.instagram.com/moha_fg)
+- Project: [github.com/znaGuimoho/finalProject](https://github.com/znaGuimoho/finalProject)
 
 ---
 
-## 🙏 Acknowledgments
+## 📝 License
 
-- FastAPI for the excellent web framework
-- PostgreSQL for reliable data storage
-- Docker for simplifying deployment
-- All contributors who help improve this project
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 
 <div align="center">
 
-**[⬆ Back to Top](#-house-renting-platform)**
+**[⬆ Back to Top](#-houserent-platform)**
 
-Made with ❤️ by [znaGuimoho](https://github.com/znaGuimoho)
+Made with ❤️ by [Mohammed Dahhaoui](https://github.com/znaGuimoho)
 
 </div>
