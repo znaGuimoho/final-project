@@ -1,0 +1,111 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/becomeHost.css" />
+{% endblock %} {% block content %}
+<div class="onboarding-wrapper">
+    <div class="progress-bar">
+        <div class="progress-track">
+            <div id="progressFill" class="progress-fill" style="width: 100%"></div>
+        </div>
+        <span id="progressLabel" class="progress-label">
+            Step 6 of 6 — Final Review & Legal
+        </span>
+    </div>
+
+    <div class="onboarding-card">
+        <div class="card-header">
+            <div class="step-badge">06</div>
+            <div>
+                <h1>Finalize your listing</h1>
+                <p>Review the host agreement and confirm your legal rights.</p>
+            </div>
+        </div>
+
+        <form id="agreementForm" action="/become-host/step6" method="POST" class="onboarding-form">
+            <input type="hidden" name="client_timestamp" id="jsTimestamp" />
+            <input type="hidden" name="user_timezone" id="jsTimezone" />
+
+            <div class="field-group">
+                <label>Hosting Agreement</label>
+                <div class="terms-scroll-container">
+                    <h3>1. General Responsibilities</h3>
+                    <p>
+                        As a host, you agree to provide accurate information regarding your
+                        property, maintain safety standards, and comply with local housing
+                        regulations.
+                    </p>
+
+                    <h3>2. Payments & Fees</h3>
+                    <p>
+                        Payouts are processed after guest check-in. Platform fees are
+                        deducted automatically as outlined in our fee schedule.
+                    </p>
+
+                    <h3>3. Liability & Insurance</h3>
+                    <p>
+                        While we provide basic host protection, you are encouraged to
+                        maintain independent homeowners or landlord insurance.
+                    </p>
+
+                    <h3>4. Code of Conduct</h3>
+                    <p>
+                        We maintain a zero-tolerance policy for discrimination or harassment
+                        of any kind.
+                    </p>
+                </div>
+            </div>
+
+            <div class="legal-declaration-box">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="legalRight" name="legal_right_confirmed" required />
+                    <label for="legalRight" class="declaration-label">
+                        I solemnly confirm that <strong>I have the legal right</strong> to
+                        rent this property and have obtained any necessary permissions from
+                        landlords or local authorities.
+                    </label>
+                </div>
+
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="termsAgreed" name="terms_agreed" required />
+                    <label for="termsAgreed" class="declaration-label">
+                        I have read and agree to the Host Agreement and Privacy Policy.
+                    </label>
+                </div>
+            </div>
+
+            <div class="status-banner warning" style="margin-top: 10px; border-style: dashed">
+                <p style="font-size: 11px; color: var(--text-muted)">
+                    Note: Your IP address and a secure timestamp will be logged upon
+                    submission to create a legally binding record of this agreement.
+                </p>
+            </div>
+
+            <div class="form-navigation" style="margin-top: 12px">
+                <button type="button" class="btn-inline" onclick="window.history.back()">
+                    Back
+                </button>
+                <button type="submit" class="btn-submit" style="
+            background: var(--success);
+            box-shadow: 0 0 24px var(--success-glow);
+          ">
+                    Publish Listing
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                </button>
+            </div>
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<script>
+    // Capture precise client-side data for the paper trail
+    document.getElementById("jsTimestamp").value = new Date().toISOString();
+    document.getElementById("jsTimezone").value =
+        Intl.DateTimeFormat().resolvedOptions().timeZone;
+</script>
+{% endblock %}

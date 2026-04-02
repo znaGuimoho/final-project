@@ -1,12 +1,17 @@
+import os
 import smtplib
 import uuid
 from email.mime.text import MIMEText
 
 from app.config import AsyncSessionLocal
 from colorama import Fore, Style
+from cryptography.fernet import Fernet
+from dotenv import load_dotenv
 from fastapi import HTTPException, Request, Response
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+load_dotenv()
 
 
 async def set_user_data(
@@ -54,38 +59,76 @@ async def get_user_data(request: Request, db: AsyncSession):
     if not session_id:
         raise HTTPException(status_code=401, detail="Session not found")
 
-    # 2. Query to join sessions and users
+    # 2. Query to join sessions and users — fetch all user fields
     query = text("""
-        SELECT s.session_id, u.user_id, u.user_name
+        SELECT
+            s.session_id,
+            u.user_id,
+            u.user_name,
+            u.email,
+            u.phone_number,
+            u.nationality,
+            u.country,
+            u.city,
+            u.email_verified,
+            u.phone_verified,
+            u.id_verified,
+            u.account_verified,
+            u.is_host,
+            hv.id_photo_urls,
+            hv.selfie_photo_url,
+            hv.auth_type,
+            hv.auth_doc_urls,
+            hv.auth_verified,
+            hv.submitted_at
         FROM sessions s
         JOIN users u ON s.user_id = u.user_id
+        LEFT JOIN host_verifications hv ON hv.user_id = u.user_id
         WHERE s.session_id = :session_id
           AND s.expires_at > NOW()
           AND u.banned = false
         LIMIT 1
     """)
-
     result = await db.execute(query, {"session_id": session_id})
-    user_data = result.mappings().first()  # returns dict-like row
+    user_data = result.mappings().first()
 
     # 3. Validate session
     if not user_data:
         raise HTTPException(status_code=401, detail="Invalid or expired session")
 
-    # 4. Optionally refresh session expiration
-    refresh_query = text("""
-        UPDATE sessions
-        SET expires_at = NOW() + INTERVAL '1 hour'
-        WHERE session_id = :session_id
-    """)
-    await db.execute(refresh_query, {"session_id": session_id})
+    # 4. Refresh session expiration
+    await db.execute(
+        text("""
+            UPDATE sessions
+            SET expires_at = NOW() + INTERVAL '1 hour'
+            WHERE session_id = :session_id
+        """),
+        {"session_id": session_id},
+    )
     await db.commit()
 
-    # 5. Return user data as dict
+    # 5. Return all user data as dict
     return {
         "session_id": str(user_data["session_id"]),
         "user_id": user_data["user_id"],
         "user_name": user_data["user_name"],
+        "email": user_data["email"],
+        "phone_number": user_data["phone_number"],
+        "nationality": user_data["nationality"],
+        "country": user_data["country"],
+        "city": user_data["city"],
+        "email_verified": user_data["email_verified"],
+        "phone_verified": user_data["phone_verified"],
+        "id_verified": user_data["id_verified"],  # source of truth
+        "account_verified": user_data["account_verified"],
+        "is_host": user_data["is_host"],
+        # host verification details
+        "id_photo_urls": user_data["id_photo_urls"],
+        "selfie_photo_url": user_data["selfie_photo_url"],
+        "auth_type": user_data["auth_type"],
+        "auth_doc_urls": user_data["auth_doc_urls"],
+        "auth_verified": user_data["auth_verified"],
+        "submitted_at": user_data["submitted_at"],
     }
 
 
@@ -167,10 +210,20 @@ def send_email(to_email: str, verify_link: str):
     msg["From"] = "your@gmail.com"
     msg["To"] = to_email
 
-    import os
-
     EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
         smtp.login("dahhaouimohammed15@gmail.com", EMAIL_PASSWORD)
         smtp.send_message(msg)
+
+
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
+fernet = Fernet(ENCRYPTION_KEY.encode())
+
+
+def encrypt(value: str) -> str:
+    return fernet.encrypt(value.encode()).decode()
+
+
+def decrypt(value: str) -> str:
+    return fernet.decrypt(value.encode()).decode()

@@ -453,3 +453,166 @@ body {
   .alert-box { flex-direction: column; align-items: flex-start; }
   .btn-inline { margin-left: 0; width: 100%; text-align: center; }
 }
+
+/* ── File input ───────────────────────────────────────────── */
+input[type="file"] {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-elevated);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+input[type="file"]:hover {
+  border-color: var(--accent-dim);
+  background: var(--bg-hover);
+}
+
+input[type="file"]::file-selector-button {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  margin-right: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: #6ba3ff;
+}
+.integration-promo {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(145deg, var(--bg-surface), var(--bg-elevated));
+    border: 1px dashed var(--border-light);
+    border-radius: var(--radius);
+}
+
+.badge-new {
+    background: var(--accent-dim);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.integration-promo h3 {
+    font-family: var(--font-display);
+    margin: 8px 0;
+    font-size: 1rem;
+}
+
+.integration-promo p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* Buttons */
+.btn-submit {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-submit:hover {
+    background: var(--accent-dim);
+    transform: translateY(-1px);
+}
+
+.btn-inline {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.btn-inline:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+/* Scrollable Terms Box */
+.terms-scroll-container {
+    height: 180px;
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    overflow-y: auto;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.terms-scroll-container h3 {
+    color: var(--text-primary);
+    font-size: 14px;
+    margin: 16px 0 8px 0;
+    font-family: var(--font-display);
+}
+
+.terms-scroll-container h3:first-child {
+    margin-top: 0;
+}
+
+/* Custom Scrollbar for the Terms */
+.terms-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+.terms-scroll-container::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+}
+.terms-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 10px;
+}
+
+/* Declaration Layout */
+.legal-declaration-box {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.declaration-label {
+    font-size: 13px !important;
+    text-transform: none !important;
+    color: var(--text-primary) !important;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.declaration-label strong {
+    color: var(--accent);
+}

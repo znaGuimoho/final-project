@@ -1,0 +1,123 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/becomeHost.css" />
+{% endblock %} {% block content %}
+<div class="onboarding-wrapper">
+    <!-- Progress -->
+    <div class="progress-bar">
+        <div class="progress-track">
+            <div class="progress-fill" style="width: 50%"></div>
+        </div>
+        <span class="progress-label">Step 3 of 6 — Property Authorization</span>
+    </div>
+
+    <div class="onboarding-card">
+        <!-- Header -->
+        <div class="card-header">
+            <div class="step-badge">03</div>
+            <div>
+                <h1>Prove you can host this property</h1>
+                <p>Not all hosts are owners — choose your situation below.</p>
+            </div>
+        </div>
+
+        <!-- Status -->
+        {% if user_info.property_verified %}
+        <div class="verified-field">
+            <span>Property verified</span>
+            <span class="verified-tag">✓ Approved</span>
+        </div>
+        {% elif user_info.property_submitted %}
+        <div class="alert-box pending">⏳ Your documents are under review.</div>
+        {% endif %} {% if not user_info.property_verified %}
+        <form action="/become-host/step3" method="POST" enctype="multipart/form-data" class="onboarding-form">
+            <!-- Role selection -->
+            <div class="field-group">
+                <label for="host_role">
+                    Your role
+                    <span class="badge badge-required">Required</span>
+                </label>
+
+                <div class="input-with-icon select-wrapper">
+                    <select id="host_role" name="host_role" required onchange="updateUploadHint()">
+                        <option value="" disabled selected>Select your role…</option>
+                        <option value="owner">I am the owner</option>
+                        <option value="manager">I manage the property</option>
+                        <option value="subletter">I am subletting</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Upload -->
+            <div class="field-group">
+                <label for="proof_document">
+                    Proof document
+                    <span class="badge badge-required">Required</span>
+                </label>
+
+                <input type="file" id="proof_document" name="proof_document" accept="image/*,application/pdf"
+                    required />
+
+                <span id="upload-hint" class="field-hint">
+                    Select your role to see required document.
+                </span>
+            </div>
+
+            <!-- Warning -->
+            <div class="alert-box">
+                ⚠️ The name on your document must match your identity. Mismatches will
+                require manual review.
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-submit">
+                Submit for review
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                </svg>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- Steps -->
+    <div class="steps-overview">
+        <div class="step-dot done"><span>1</span><label>Info</label></div>
+        <div class="step-line"></div>
+
+        <div class="step-dot done"><span>2</span><label>Identity</label></div>
+        <div class="step-line"></div>
+
+        <div class="step-dot active"><span>3</span><label>Property</label></div>
+        <div class="step-line"></div>
+
+        <div class="step-dot"><span>4</span><label>Listing</label></div>
+        <div class="step-line"></div>
+
+        <div class="step-dot"><span>5</span><label>Payment</label></div>
+        <div class="step-line"></div>
+
+        <div class="step-dot"><span>6</span><label>Terms</label></div>
+    </div>
+</div>
+
+<script>
+    function updateUploadHint() {
+        const role = document.getElementById("host_role").value;
+        const hint = document.getElementById("upload-hint");
+
+        if (role === "owner") {
+            hint.textContent =
+                "Upload a utility bill or property tax document showing your name.";
+        } else if (role === "manager") {
+            hint.textContent =
+                "Upload a signed management agreement from the property owner.";
+        } else if (role === "subletter") {
+            hint.textContent =
+                "Upload your lease agreement showing subletting is allowed.";
+        }
+    }
+</script>
+
+{% endblock %}

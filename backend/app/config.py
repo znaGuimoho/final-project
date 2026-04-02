@@ -61,16 +61,20 @@ app.add_middleware(
 # Use absolute paths that work in Docker environments
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
-
+#
 # without docker
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
 
 UPLOADS_DIR = os.path.join(BASE_DIR, "static", "uploads")
+HOSTER_INFO_DIR = os.path.join(BASE_DIR, "static", "hosters-info")
+PROOF_DOC_DIR = os.path.join(BASE_DIR, "static", "proof-doc")
 
 # Create directories if they don't exist
 os.makedirs(FRONTEND_DIR, exist_ok=True)
 os.makedirs(UPLOADS_DIR, exist_ok=True)
+os.makedirs(HOSTER_INFO_DIR, exist_ok=True)
+os.makedirs(PROOF_DOC_DIR, exist_ok=True)
 
 # Only mount static files if directories exist
 if os.path.exists(FRONTEND_DIR):
@@ -90,6 +94,14 @@ if os.path.exists(FRONTEND_DIR):
 
 if os.path.exists(UPLOADS_DIR):
     app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+
+if os.path.exists(HOSTER_INFO_DIR):
+    app.mount(
+        "/hosters-info", StaticFiles(directory=HOSTER_INFO_DIR), name="hosters-info"
+    )
+
+if os.path.exists(PROOF_DOC_DIR):
+    app.mount("/proof-doc", StaticFiles(directory=PROOF_DOC_DIR), name="proof-doc")
 
 # Create ASGI app with Socket.IO - SINGLE DEFINITION
 app_sio = socketio.ASGIApp(

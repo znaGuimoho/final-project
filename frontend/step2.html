@@ -1,0 +1,136 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/becomeHost.css" />
+{% endblock %} {% block content %}
+<div class="onboarding-wrapper">
+    <!-- Progress bar -->
+    <div class="progress-bar">
+        <div class="progress-track">
+            <div class="progress-fill" style="width: 33.3%"></div>
+        </div>
+        <span class="progress-label">Step 2 of 6 — Identity Verification</span>
+    </div>
+
+    <!-- Card -->
+    <div class="onboarding-card">
+        <!-- Header -->
+        <div class="card-header">
+            <div class="step-badge">02</div>
+            <div>
+                <h1>Verify your identity</h1>
+                <p>We need to confirm you're a real person before you can host.</p>
+            </div>
+        </div>
+
+        <!-- Status -->
+        {% if user_info.id_verified %}
+        <div class="verified-field">
+            <span>Identity verified</span>
+            <span class="verified-tag">✓ Approved</span>
+        </div>
+        {% else %}
+        <div class="alert-box">
+            ⚠️ You haven’t submitted your identity documents yet.
+        </div>
+        <form action="/become-host/step2" method="POST" enctype="multipart/form-data" class="onboarding-form">
+            <!-- Instructions -->
+            <div class="field-group">
+                <label>What you need to upload</label>
+                <ul class="field-hint">
+                    <li>
+                        ✔ A government-issued ID (passport, national ID, or driver's
+                        license)
+                    </li>
+                    <li>✔ A selfie holding that ID</li>
+                    <li>✔ Make sure all details are clearly visible</li>
+                </ul>
+            </div>
+
+            <!-- ID Upload -->
+            <div class="field-group">
+                <label for="id_photo">
+                    Government ID
+                    <span class="badge badge-required">Required</span>
+                </label>
+
+                <input type="file" id="id_photo" name="id_photo" accept="image/*" multiple required />
+
+                <span class="field-hint">
+                    Upload a clear photo of your passport, ID card, or driver's license.
+                </span>
+            </div>
+
+            <!-- Selfie Upload -->
+            <div class="field-group">
+                <label for="selfie_photo">
+                    Selfie with ID
+                    <span class="badge badge-required">Required</span>
+                </label>
+
+                <input type="file" id="selfie_photo" name="selfie_photo" accept="image/*" required />
+
+                <span class="field-hint">
+                    Hold your ID next to your face. Your face and ID must be clearly
+                    visible.
+                </span>
+            </div>
+
+            <!-- Privacy note -->
+            <div class="field-group">
+                <div class="alert-box">
+                    🔒 We respect your privacy. Your documents are used only for
+                    verification and are not stored long-term.
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-submit">
+                Submit for verification
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                </svg>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- Step overview -->
+    <div class="steps-overview">
+        <div class="step-dot done">
+            <span>1</span>
+            <label>Info</label>
+        </div>
+        <div class="step-line"></div>
+
+        <div class="step-dot active">
+            <span>2</span>
+            <label>Identity</label>
+        </div>
+        <div class="step-line"></div>
+
+        <div class="step-dot">
+            <span>3</span>
+            <label>Property</label>
+        </div>
+        <div class="step-line"></div>
+
+        <div class="step-dot">
+            <span>4</span>
+            <label>Listing</label>
+        </div>
+        <div class="step-line"></div>
+
+        <div class="step-dot">
+            <span>5</span>
+            <label>Payment</label>
+        </div>
+        <div class="step-line"></div>
+
+        <div class="step-dot">
+            <span>6</span>
+            <label>Terms</label>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/becomeHost.css" />
+{% endblock %} {% block content %}
+<div class="onboarding-wrapper">
+    <!-- Progress -->
+    <div class="progress-bar">
+        <div class="progress-track">
+            <div id="progressFill" class="progress-fill" style="width: 66%"></div>
+        </div>
+        <span id="progressLabel" class="progress-label">
+            Step 4 of 6 — Property Basics
+        </span>
+    </div>
+
+    <div class="onboarding-card">
+        <!-- Header -->
+        <div class="card-header">
+            <div class="step-badge">04</div>
+            <div>
+                <h1>Create your listing</h1>
+                <p>Tell us about your property step by step.</p>
+            </div>
+        </div>
+
+        <form id="listingForm" action="/become-host/step4" method="POST" enctype="multipart/form-data"
+            class="onboarding-form">
+            <!-- ===================== -->
+            <!-- STEP 1 -->
+            <!-- ===================== -->
+            <div class="form-step active" data-step="1">
+                <div class="field-group">
+                    <label>Property Type</label>
+                    <div class="input-with-icon select-wrapper">
+                        <select name="property_type" required>
+                            <option value="" disabled selected>Select type…</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="house">House</option>
+                            <option value="villa">Villa</option>
+                            <option value="room">Private Room</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label>Country</label>
+                    <input type="text" name="country" placeholder="e.g. Japan" required />
+                </div>
+
+                <div class="field-group">
+                    <label>City</label>
+                    <input type="text" name="city" placeholder="e.g. Tokyo" required />
+                </div>
+
+                <div class="field-group">
+                    <label>Full Address</label>
+                    <input type="text" name="address" placeholder="Street, building, etc." required />
+                </div>
+            </div>
+            <div class="form-navigation">
+                <button type="button" id="prevBtn" class="btn-inline">Back</button>
+                <button type="button" id="nextBtn" class="btn-submit">Next</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const steps = document.querySelectorAll(".form-step");
+    const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
+
+    function showStep(step) {
+        steps.forEach((s) => s.classList.remove("active"));
+        document
+            .querySelector(`.form-step[data-step="${step}"]`)
+            .classList.add("active");
+
+        prevBtn.style.display = step === 1 ? "none" : "inline-block";
+        nextBtn.textContent = step === 3 ? "Submit" : "Next";
+
+        // progress UI
+        const percent = 66 + (step - 1) * 11;
+        document.getElementById("progressFill").style.width = percent + "%";
+
+        const labels = ["Property Basics", "Photos", "Details & Pricing"];
+        document.getElementById("progressLabel").textContent =
+            `Step 4 of 6 — ${labels[step - 1]}`;
+    }
+
+    nextBtn.addEventListener("click", () => {
+        if (currentStep < 3) {
+            currentStep++;
+            showStep(currentStep);
+        } else {
+            document.getElementById("listingForm").submit();
+        }
+    });
+
+    prevBtn.addEventListener("click", () => {
+        currentStep--;
+        showStep(currentStep);
+    });
+
+    showStep(currentStep);
+
+    /* IMAGE PREVIEW */
+    document
+        .querySelector('input[name="images"]')
+        .addEventListener("change", function (e) {
+            const container = document.getElementById("previewContainer");
+            container.innerHTML = "";
+
+            Array.from(e.target.files).forEach((file) => {
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(file);
+                container.appendChild(img);
+            });
+        });
+</script>
+
+{% endblock %}
