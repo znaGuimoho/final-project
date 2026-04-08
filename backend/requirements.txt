@@ -12,3 +12,4 @@ colorama
 fastapi==0.109.2
 starlette==0.36.3 # pin fastapi too since it depends on starlette
 cryptography      # your new addition
+resend

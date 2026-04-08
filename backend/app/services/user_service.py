@@ -196,24 +196,20 @@ async def get_user_id_from_cookie(environ):
 
 
 def send_email(to_email: str, verify_link: str):
-    # for debugging
     print(Fore.RED + "trying to send the email" + Style.RESET_ALL)
-    msg = MIMEText(f"""
-        Hi,
+    msg = MIMEText(f"""Hi,
 
-        Click the link below to verify your email address:
-        {verify_link}
+Click the link below to verify your email address:
+{verify_link}
 
-        This link expires in 1 hour.
-    """)
+This link expires in 1 hour.
+
+— HouseRent Team""")
     msg["Subject"] = "Verify your email — HouseRent"
-    msg["From"] = "your@gmail.com"
+    msg["From"] = "noreply@houserent.dev"
     msg["To"] = to_email
 
-    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login("dahhaouimohammed15@gmail.com", EMAIL_PASSWORD)
+    with smtplib.SMTP("localhost", 1025) as smtp:
         smtp.send_message(msg)
 
 

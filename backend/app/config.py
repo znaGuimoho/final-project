@@ -17,6 +17,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 ##########################################################################
 ################## Load environment variables from .env ##################
@@ -33,16 +34,23 @@ sio = socketio.AsyncServer(
         "http://localhost:8000",
         "http://127.0.0.1",
         "http://localhost",
+        "https://ddc1-120-195-201-194.ngrok-free.app",
     ],
     cors_credentials=True,
-    logger=True,  # Enable logging to see what's happening
+    logger=True,
     engineio_logger=True,
 )
+
 
 #############################################################
 ################## this is FastAPI set up ##################
 #############################################################
-app = FastAPI()
+IS_PROD = os.getenv("ENV", "development") == "production"
+app = FastAPI(
+    docs_url=None if IS_PROD else "/docs",
+    redoc_url=None if IS_PROD else "/redoc",
+    openapi_url=None if IS_PROD else "/openapi.json",
+)
 
 # Add CORS middleware BEFORE mounting Socket.IO
 app.add_middleware(
@@ -57,6 +65,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 # Use absolute paths that work in Docker environments
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

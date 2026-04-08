@@ -1,1 +1,89 @@
 {% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="/frontend/css/becomeHost.css" />
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-wrapper">
+
+    <!-- Card -->
+    <div class="onboarding-card" style="text-align: center; max-width: 520px;">
+
+        <!-- Icon -->
+        <div style="
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            background: var(--accent-glow);
+            border: 1px solid var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                style="color: var(--accent);">
+                <path d="M12 8v4l3 3"></path>
+                <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+        </div>
+
+        <!-- Title -->
+        <h1 style="
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        ">
+            Your listing is under review
+        </h1>
+
+        <!-- Subtitle -->
+        <p style="
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        ">
+            Thanks for submitting your property. Our team is reviewing it to ensure everything looks good.
+        </p>
+
+        <!-- Status box -->
+        <div class="alert-box pending" style="justify-content: center; margin-bottom: 24px;">
+            ⏳ Review time: usually within 24–48 hours
+        </div>
+
+        <!-- Info -->
+        <div style="
+            text-align: left;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 24px;
+        ">
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="margin-bottom: 8px;">✔ We check property details</li>
+                <li style="margin-bottom: 8px;">✔ We verify your documents</li>
+                <li>✔ We ensure listing quality & safety</li>
+            </ul>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            
+            <a href="/host/dashboard" class="btn-submit" style="text-decoration: none;">
+                Go to dashboard
+            </a>
+
+            <a href="/" class="btn-inline" style="text-decoration: none; text-align: center;">
+                Back to home
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
