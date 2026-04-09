@@ -39,9 +39,10 @@ A modern, full-stack house renting platform that connects property hosts with po
 ### Platform Features
 
 - 🔐 **Secure Auth** — UUID session-based login with cookie management
-- 📧 **Email Verification** — Token-based email confirmation via SMTP
+- 📧 **Email Verification** — Token-based email confirmation (Resend / Mailpit)
 - 💳 **Payment Info** — Encrypted bank account storage (Fernet)
 - 🔴 **Redis Messaging** — Persistent chat message storage
+- 🛡️ **Admin Dashboard** — Review and approve host applications with KYC document viewer
 - 🎨 **Dark Midnight UI** — Cohesive design system across all pages
 
 ---
@@ -59,6 +60,7 @@ A modern, full-stack house renting platform that connects property hosts with po
 | **Frontend**          | HTML5, CSS3, Vanilla JS, Jinja2  |
 | **Maps**              | Leaflet.js                       |
 | **Encryption**        | Fernet (cryptography library)    |
+| **Email**             | Resend API / Mailpit (dev)       |
 | **Deployment**        | Docker + Docker Compose          |
 
 ---
@@ -79,6 +81,7 @@ finalProject/
 │   │   │   ├── contact.py              # Chat room creation & messaging
 │   │   │   ├── favorites.py            # Save / remove favourites
 │   │   │   ├── profile.py              # User profile page
+│   │   │   ├── admin.py                # Admin review dashboard
 │   │   │   └── more.py                 # About, FAQ, Terms, Rental Tips
 │   │   ├── services/
 │   │   │   ├── user_service.py         # get_user_data, send_email, encryption
@@ -104,6 +107,8 @@ finalProject/
 │   ├── myprofile.html                  # User profile
 │   ├── favorites.html                  # Saved properties
 │   ├── pending.html                    # Awaiting host approval
+│   ├── admin/
+│   │   └── review.html                 # Admin host application dashboard
 │   ├── aboutUs.html / aboutMe.html     # Info pages
 │   ├── rentalTips.html                 # Renter guides
 │   ├── termsAndConditions.html         # Legal page
@@ -185,14 +190,15 @@ DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/houserent_db
 # Redis
 REDIS_URL=redis://redis:6379/0
 
-# Email (Gmail App Password)
-EMAIL_PASSWORD=your_gmail_app_password
+# Email — Resend API (resend.com)
+RESEND_API_KEY=re_your_key_here
 
-# Encryption (generate with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+# Encryption key for payment data
+# Generate: docker exec -it fastapi_app python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ENCRYPTION_KEY=your_fernet_key_here
 
-# Resend (optional - alternative to Gmail)
-RESEND_API_KEY=re_your_key_here
+# 'development' enables /docs and /openapi.json — 'production' disables them
+ENV=development
 ```
 
 **3. Launch**
@@ -204,7 +210,15 @@ docker-compose up --build
 **4. Open in browser**
 
 ```
-http://localhost:8000
+http://localhost:8000       ← Main app
+http://localhost:8025       ← Mailpit dev inbox (caught emails)
+```
+
+**5. Set yourself as admin**
+
+```bash
+docker-compose exec db psql -U postgres -d houserent_db \
+  -c "UPDATE users SET is_admin = TRUE WHERE email = 'your@email.com';"
 ```
 
 ---
@@ -218,7 +232,7 @@ docker-compose up
 # Start in background
 docker-compose up -d
 
-# Rebuild after code changes
+# Rebuild after dependency changes
 docker-compose up --build
 
 # Stop everything
@@ -230,48 +244,56 @@ docker-compose logs -f fastapi_app
 # Access the database
 docker-compose exec db psql -U postgres -d houserent_db
 
-# Run a command inside the app container
+# Open shell inside app container
 docker exec -it fastapi_app bash
+
+# Generate an encryption key
+docker exec -it fastapi_app python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 
 ---
 
 ## 📖 API Documentation
 
-Once running, visit:
+Available in development mode (`ENV=development`):
 
 - **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
+> ⚠️ Both are automatically disabled when `ENV=production`.
+
 ### Key Endpoints
 
-| Endpoint                 | Method   | Description             |
-| ------------------------ | -------- | ----------------------- |
-| `/register`              | POST     | Create new account      |
-| `/login`                 | POST     | User login              |
-| `/logout`                | POST     | User logout             |
-| `/home`                  | GET      | Browse all listings     |
-| `/house/{id}`            | GET      | Property detail page    |
-| `/host`                  | POST     | Upload new listing      |
-| `/become-host`           | GET      | Start host onboarding   |
-| `/become-host/step{1-6}` | GET/POST | Onboarding steps        |
-| `/contact/house/{id}`    | GET      | Open/create chat room   |
-| `/contact/{room_code}`   | GET      | View chat room          |
-| `/verify-email/send`     | POST     | Send email verification |
-| `/verify-email/confirm`  | GET      | Confirm email token     |
-| `/api/search`            | GET      | Search listings         |
+| Endpoint                     | Method   | Description                          |
+| ---------------------------- | -------- | ------------------------------------ |
+| `/register`                  | POST     | Create new account                   |
+| `/login`                     | POST     | User login                           |
+| `/logout`                    | POST     | User logout                          |
+| `/home`                      | GET      | Browse all listings                  |
+| `/house/{id}`                | GET      | Property detail page                 |
+| `/host`                      | POST     | Upload new listing                   |
+| `/become-host`               | GET      | Start host onboarding (auto-resumes) |
+| `/become-host/step{1-6}`     | GET/POST | Onboarding steps                     |
+| `/contact/house/{id}`        | GET      | Open/create chat room                |
+| `/contact/{room_code}`       | GET      | View chat room                       |
+| `/verify-email/send`         | POST     | Send email verification              |
+| `/verify-email/confirm`      | GET      | Confirm email token                  |
+| `/api/search`                | GET      | Search listings                      |
+| `/admin/review`              | GET      | Admin — pending host applications    |
+| `/admin/review/{id}/approve` | POST     | Admin — approve host                 |
+| `/admin/review/{id}/reject`  | POST     | Admin — reject with reason           |
 
 ---
 
 ## 🔧 Environment Variables Reference
 
-| Variable         | Description                   | Example                    |
-| ---------------- | ----------------------------- | -------------------------- |
-| `DATABASE_URL`   | PostgreSQL connection string  | `postgresql+asyncpg://...` |
-| `REDIS_URL`      | Redis connection string       | `redis://redis:6379/0`     |
-| `EMAIL_PASSWORD` | Gmail App Password            | `xxxx xxxx xxxx xxxx`      |
-| `ENCRYPTION_KEY` | Fernet key for payment data   | `generated_key=`           |
-| `RESEND_API_KEY` | Resend.com API key (optional) | `re_xxxxxxxx`              |
+| Variable         | Description                                | Required |
+| ---------------- | ------------------------------------------ | -------- |
+| `DATABASE_URL`   | PostgreSQL async connection string         | ✅ Yes   |
+| `REDIS_URL`      | Redis connection string                    | ✅ Yes   |
+| `RESEND_API_KEY` | Resend.com API key for transactional email | ✅ Yes   |
+| `ENCRYPTION_KEY` | Fernet key for encrypting payment data     | ✅ Yes   |
+| `ENV`            | `development` or `production`              | ✅ Yes   |
 
 ---
 
@@ -282,12 +304,13 @@ Once running, visit:
 - [x] Real-time chat (Socket.IO + Redis)
 - [x] Favourites system
 - [x] 6-step host onboarding with KYC
-- [x] Email verification
+- [x] Email verification (Resend + Mailpit dev inbox)
 - [x] Encrypted payment info storage
 - [x] Dark midnight UI design system
+- [x] Admin review dashboard with document viewer
+- [x] Security hardening (API docs disabled in production)
 - [ ] Booking system
 - [ ] Payment processing (Stripe)
-- [ ] Admin review dashboard
 - [ ] Push notifications
 - [ ] Review & rating system
 - [ ] Mobile app
