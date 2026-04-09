@@ -1,0 +1,234 @@
+{% extends 'base.html' %} {% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+<link rel="stylesheet" type="" href="/frontend/css/adminReview.css" />
+{% endblock %} {% block content %}
+<div class="admin-wrapper">
+    <!-- Header -->
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1>Host Applications</h1>
+            <p>Review and approve pending host verification requests</p>
+        </div>
+        <div class="admin-badge">
+            <div class="admin-badge-dot"></div>
+            {{ applicants | length }} Pending
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card pending">
+            <span class="stat-label">Pending Review</span>
+            <span class="stat-value">{{ applicants | length }}</span>
+        </div>
+        <div class="stat-card approved">
+            <span class="stat-label">Approved</span>
+            <span class="stat-value">{{ approved_count | default(0) }}</span>
+        </div>
+        <div class="stat-card rejected">
+            <span class="stat-label">Rejected</span>
+            <span class="stat-value">{{ rejected_count | default(0) }}</span>
+        </div>
+        <div class="stat-card total">
+            <span class="stat-label">Total Hosts</span>
+            <span class="stat-value">{{ total_hosts | default(0) }}</span>
+        </div>
+    </div>
+
+    <!-- Applicants -->
+    {% if applicants %}
+    <div class="applicants-list">
+        {% for a in applicants %}
+        <div class="applicant-card">
+            <!-- Card head -->
+            <div class="card-head">
+                <div class="user-identity">
+                    <div class="user-avatar">{{ a.user_name[0] | upper }}</div>
+                    <div>
+                        <div class="user-name">{{ a.user_name }}</div>
+                        <div class="user-email">{{ a.email }}</div>
+                    </div>
+                </div>
+                <div class="submitted-at">
+                    Submitted: {{ a.submitted_at.strftime('%b %d, %Y %H:%M') if
+                    a.submitted_at else 'Unknown' }}
+                </div>
+            </div>
+
+            <!-- Card body -->
+            <div class="card-body">
+                <!-- Left: User info -->
+                <div class="info-section">
+                    <h4>User Information</h4>
+
+                    <div class="info-row">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">{{ a.phone_number or '—' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Country</span>
+                        <span class="info-value">{{ a.country or '—' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">City</span>
+                        <span class="info-value">{{ a.city or '—' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email verified</span>
+                        <span class="vbadge {{ 'yes' if a.email_verified else 'no' }}">
+                            {{ '✓ Yes' if a.email_verified else '✗ No' }}
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Host role</span>
+                        {% if a.host_role %}
+                        <span class="role-badge {{ a.host_role }}">{{ a.host_role | capitalize }}</span>
+                        {% else %}
+                        <span class="info-value">—</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Right: Documents -->
+                <div class="docs-section">
+                    <h4>Submitted Documents</h4>
+                    <div class="doc-grid">
+                        <!-- ID photos -->
+                        {% if a.id_photo_urls %} {% for url in a.id_photo_urls %}
+                        <div class="doc-thumb" onclick="openLightbox('{{ url }}')">
+                            <img src="{{ url }}" alt="ID photo" />
+                            <div class="doc-thumb-label">ID Photo {{ loop.index }}</div>
+                        </div>
+                        {% endfor %} {% else %}
+                        <div class="doc-missing">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <path d="M3 9h18" />
+                            </svg>
+                            No ID
+                        </div>
+                        {% endif %}
+
+                        <!-- Selfie -->
+                        {% if a.selfie_photo_url %}
+                        <div class="doc-thumb" onclick="openLightbox('{{ a.selfie_photo_url }}')">
+                            <img src="{{ a.selfie_photo_url }}" alt="Selfie" />
+                            <div class="doc-thumb-label">Selfie</div>
+                        </div>
+                        {% else %}
+                        <div class="doc-missing">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                            </svg>
+                            No Selfie
+                        </div>
+                        {% endif %}
+
+                        <!-- Proof doc -->
+                    {% if a.proof_doc_url %}
+                      {% if a.proof_doc_url.endswith('.pdf') %}
+                      <a href="{{ a.proof_doc_url }}" target="_blank" class="doc-thumb doc-pdf">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.5"
+                             stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        <div class="doc-thumb-label">Proof Doc (PDF)</div>
+                      </a>
+                      {% else %}
+                      <div class="doc-thumb" onclick="openLightbox('{{ a.proof_doc_url }}')">
+                        <img src="{{ a.proof_doc_url }}" alt="Proof document" />
+                        <div class="doc-thumb-label">Proof Doc</div>
+                      </div>
+                      {% endif %}
+                    {% else %}
+                    <div class="doc-missing">...</div>
+                    {% endif %}
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card-actions">
+                <div class="reject-reason">
+                    <input type="text" id="reason-{{ a.user_id }}" placeholder="Rejection reason (optional)…" />
+                </div>
+
+                <form action="/admin/review/{{ a.user_id }}/reject" method="POST"
+                    onsubmit="injectReason(event, {{ a.user_id }})">
+                    <input type="hidden" name="reason" id="reason-input-{{ a.user_id }}" />
+                    <button type="submit" class="btn-reject">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                        Reject
+                    </button>
+                </form>
+
+                <form action="/admin/review/{{ a.user_id }}/approve" method="POST">
+                    <button type="submit" class="btn-approve">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Approve
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+        </svg>
+        <h3>All caught up!</h3>
+        <p>No pending host applications at the moment.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="Document preview" onclick="event.stopPropagation()" />
+</div>
+
+<script>
+    function openLightbox(url) {
+        document.getElementById("lightbox-img").src = url;
+        document.getElementById("lightbox").classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeLightbox() {
+        document.getElementById("lightbox").classList.remove("open");
+        document.body.style.overflow = "";
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeLightbox();
+    });
+
+    function injectReason(event, userId) {
+        const reason = document.getElementById(`reason-${userId}`).value;
+        document.getElementById(`reason-input-${userId}`).value = reason;
+    }
+</script>
+{% endblock %}

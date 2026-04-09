@@ -3,7 +3,8 @@ import secrets
 from pathlib import Path
 from typing import List
 
-from app.services.user_service import encrypt, get_user_data, send_email
+from app.services.auth_helper import _get_user_or_redirect
+from app.services.user_service import encrypt, send_email
 from fastapi import (
     BackgroundTasks,
     Depends,
@@ -18,19 +19,6 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-
-# ── Auth helper ─────────────────────────────────────────────────────────────
-
-
-async def _get_user_or_redirect(request: Request, db: AsyncSession):
-    """Returns user_info or None if unauthenticated."""
-    try:
-        return await get_user_data(request, db)
-    except HTTPException as e:
-        if e.status_code == 401:
-            return None
-        raise
-
 
 # ── Router ───────────────────────────────────────────────────────────────────
 

@@ -1,5 +1,6 @@
 from app.config import create_app
 from app.events.contact_events import register_socketio_handelers
+from app.routers.admin import admin_dashboard
 from app.routers.auth import auth_rout
 from app.routers.become_host import become_host
 from app.routers.contact import contact
@@ -22,6 +23,7 @@ routers = [
     favorite,
     profile,
     become_host,
+    admin_dashboard,
 ]
 
 for router in routers:

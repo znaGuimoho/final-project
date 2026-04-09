@@ -34,7 +34,6 @@ sio = socketio.AsyncServer(
         "http://localhost:8000",
         "http://127.0.0.1",
         "http://localhost",
-        "https://ddc1-120-195-201-194.ngrok-free.app",
     ],
     cors_credentials=True,
     logger=True,
