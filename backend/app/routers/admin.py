@@ -109,3 +109,8 @@ def admin_dashboard(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         )
         await db.commit()
         return RedirectResponse("/admin/review", status_code=303)
+
+    @app.get("/super_admin")
+    async def get_super_admin(request: Request, db: AsyncSession = Depends(get_db)):
+        user_info = await require_admin(request, db)
+        return {"superadmin": "hello admin"}

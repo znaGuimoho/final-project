@@ -6,7 +6,7 @@
   {% for house in houses %}
   <article class="house-card" data-category="{{ house.category }}">
     <img
-      src="{{ house.img_url or 'https://via.placeholder.com/400x200?text=No+Image' }}"
+      src="{{ house.img_url[0] or 'https://via.placeholder.com/400x200?text=No+Image' }}"
       alt="{{ house.title or 'House for rent' }}"
       class="house-image"
       loading="lazy" />
