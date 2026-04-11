@@ -71,7 +71,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         info = dict(row._mapping) if row else {}
 
         return templates.TemplateResponse(
-            "step1.html",
+            "steps/step1.html",
             {
                 "request": request,
                 "user_info": user_info,
@@ -118,7 +118,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             return RedirectResponse("/login", status_code=303)
 
         return templates.TemplateResponse(
-            "step2.html",
+            "steps/step2.html",
             {
                 "request": request,
                 "user_info": user_info,
@@ -174,7 +174,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         except Exception as e:
             print("Error while uploading:", e)
             return templates.TemplateResponse(
-                "become_host/step2.html",
+                "steps/step2.html",
                 {
                     "request": request,
                     "user_info": user_info,
@@ -196,7 +196,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             return RedirectResponse("/login", status_code=303)
 
         return templates.TemplateResponse(
-            "step3.html",
+            "steps/step3.html",
             {
                 "request": request,
                 "user_info": user_info,
@@ -240,7 +240,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         except Exception as e:
             print("Error while uploading proof document:", e)
             return templates.TemplateResponse(
-                "become_host/step3.html",
+                "steps/step3.html",
                 {
                     "request": request,
                     "user_info": user_info,
@@ -259,7 +259,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             return RedirectResponse("/login", status_code=303)
 
         return templates.TemplateResponse(
-            "step4.html",
+            "steps/step4.html",
             {
                 "request": request,
                 "user_info": user_info,
@@ -305,7 +305,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             return RedirectResponse("/login", status_code=303)
 
         return templates.TemplateResponse(
-            "step5.html",
+            "steps/step5.html",
             {
                 "request": request,
                 "user_info": user_info,
@@ -352,7 +352,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         except Exception as e:
             print("Error saving payment info:", e)
             return templates.TemplateResponse(
-                "become_host/step5.html",
+                "steps/step5.html",
                 {
                     "request": request,
                     "user_info": user_info,
@@ -371,7 +371,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             return RedirectResponse("/login", status_code=303)
 
         return templates.TemplateResponse(
-            "step6.html",
+            "steps/step6.html",
             {
                 "request": request,
                 "user_info": user_info,
@@ -405,7 +405,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             return RedirectResponse("/become-host/pending", status_code=303)
 
         return templates.TemplateResponse(
-            "step6.html",
+            "steps/step6.html",
             {
                 "error": "You can't continue withou agreed at the terms and conditions",
             },

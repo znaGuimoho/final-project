@@ -92,6 +92,10 @@ if os.path.exists(FRONTEND_DIR):
     css_dir = os.path.join(FRONTEND_DIR, "css")
     script_dir = os.path.join(FRONTEND_DIR, "script")
     imgs_dir = os.path.join(FRONTEND_DIR, "imgs")
+    admin_dir = os.path.join(FRONTEND_DIR, "admin")
+    auth_dir = os.path.join(FRONTEND_DIR, "auth")
+    steps_dir = os.path.join(FRONTEND_DIR, "steps")
+    more_dir = os.path.join(FRONTEND_DIR, "more")
 
     if os.path.exists(css_dir):
         app.mount("/css", StaticFiles(directory=css_dir), name="css")
@@ -99,6 +103,14 @@ if os.path.exists(FRONTEND_DIR):
         app.mount("/script", StaticFiles(directory=script_dir), name="script")
     if os.path.exists(imgs_dir):
         app.mount("/imgs", StaticFiles(directory=imgs_dir), name="imgs")
+    if os.path.exists(admin_dir):
+        app.mount("/admin_dir", StaticFiles(directory=admin_dir), name="admin_dir")
+    if os.path.exists(auth_dir):
+        app.mount("/auth", StaticFiles(directory=auth_dir), name="auth")
+    if os.path.exists(steps_dir):
+        app.mount("/steps", StaticFiles(directory=steps_dir), name="steps")
+    if os.path.exists(more_dir):
+        app.mount("/more", StaticFiles(directory=more_dir), name="more")
 
 if os.path.exists(UPLOADS_DIR):
     app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")

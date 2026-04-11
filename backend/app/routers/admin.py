@@ -15,8 +15,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 def admin_dashboard(app: FastAPI, templates: Jinja2Templates, get_db, sio):
+    print("called")
+
     @app.get("/admin/review")
     async def get_review(request: Request, db: AsyncSession = Depends(get_db)):
+        print("called")
         user_info = await require_admin(request, db)
         if not user_info:
             # don't reveal it exists — return 404 not 403
@@ -49,7 +52,7 @@ def admin_dashboard(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         )
 
         return templates.TemplateResponse(
-            "adminReview.html",
+            "admin_dir/adminReview.html",
             {
                 "request": request,
                 "user_info": user_info,

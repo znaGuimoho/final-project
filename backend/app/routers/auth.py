@@ -22,7 +22,7 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/register", response_class=HTMLResponse)
     async def get_login(request: Request):
         return templates.TemplateResponse(
-            "register.html",
+            "auth/register.html",
             {
                 "request": request,
                 "name": "",
@@ -45,14 +45,14 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         # chec that the user enter evrything
         if not name or not gmail or not passw or not pass1:
             return templates.TemplateResponse(
-                "register.html",
+                "auth/register.html",
                 {"request": request, "error": "Fill all the fields please!"},
             )
 
         # chec the password maches
         if passw != pass1:
             return templates.TemplateResponse(
-                "register.html",
+                "auth/register.html",
                 {"request": request, "error": "The passwords don't match!"},
             )
 
@@ -62,7 +62,7 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         )
         if result.first():
             return templates.TemplateResponse(
-                "register.html",
+                "auth/register.html",
                 {"request": request, "error": "User name already exists."},
             )
 
@@ -87,7 +87,7 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             await db.commit()
         except IntegrityError:
             return templates.TemplateResponse(
-                "register.html",
+                "auth/register.html",
                 {"request": request, "error": "This email is already registered."},
             )
 
@@ -96,7 +96,7 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
     @app.get("/login")
     async def get_login(request: Request):
         return templates.TemplateResponse(
-            "login.html",
+            "auth/login.html",
             {
                 "request": request,
             },
@@ -120,19 +120,22 @@ def auth_rout(app: FastAPI, templates: Jinja2Templates, get_db, sio):
 
         if not user:
             return templates.TemplateResponse(
-                "login.html", {"request": request, "error": "Invalid email or password"}
+                "auth/login.html",
+                {"request": request, "error": "Invalid email or password"},
             )
 
         if user.banned:
             return templates.TemplateResponse(
-                "login.html", {"request": request, "error": "This account is banned"}
+                "auth/login.html",
+                {"request": request, "error": "This account is banned"},
             )
 
         ok = verify_password(passw, user.salt, user.hashed_password)
 
         if not ok:
             return templates.TemplateResponse(
-                "login.html", {"request": request, "error": "Invalid email or password"}
+                "auth/login.html",
+                {"request": request, "error": "Invalid email or password"},
             )
 
         # Create redirect FIRST
