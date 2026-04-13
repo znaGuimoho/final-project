@@ -43,6 +43,8 @@ A modern, full-stack house renting platform that connects property hosts with po
 - 💳 **Payment Info** — Encrypted bank account storage (Fernet)
 - 🔴 **Redis Messaging** — Persistent chat message storage
 - 🛡️ **Admin Dashboard** — Review and approve host applications with KYC document viewer
+- 👑 **Super Admin Panel** — Full platform control: manage admins, users, listings, and platform rules
+- 🚨 **Global Error Handling** — Custom error pages for all HTTP exceptions
 - 🎨 **Dark Midnight UI** — Cohesive design system across all pages
 
 ---
@@ -81,18 +83,22 @@ finalProject/
 │   │   │   ├── contact.py              # Chat room creation & messaging
 │   │   │   ├── favorites.py            # Save / remove favourites
 │   │   │   ├── profile.py              # User profile page
-│   │   │   ├── admin.py                # Admin review dashboard
+│   │   │   ├── admin.py                # Admin review dashboard + super admin panel
+│   │   │   ├── errors.py               # Global HTTP exception handlers
 │   │   │   └── more.py                 # About, FAQ, Terms, Rental Tips
 │   │   ├── services/
+│   │   │   ├── auth_helper.py          # require_admin, require_super_admin guards
 │   │   │   ├── user_service.py         # get_user_data, send_email, encryption
 │   │   │   ├── contact_services.py     # Unique room code generation
 │   │   │   ├── redis_db.py             # Redis message read/write
+│   │   │   ├── stats.py                # Platform-wide stats queries
 │   │   │   └── Hash_password.py        # Password hashing with salt
 │   │   └── events/
 │   │       └── contact_events.py       # Socket.IO event handlers
 │   ├── static/
 │   │   ├── uploads/                    # House listing images
-│   │   └── hosters-info/               # KYC documents (ID, selfie, proof)
+│   │   ├── hosters-info/               # KYC documents (ID, selfie)
+│   │   └── proof-doc/                  # KYC proof of ownership documents
 │   ├── requirements.txt
 │   └── .env                            # Environment variables (not in git)
 │
@@ -102,17 +108,27 @@ finalProject/
 │   ├── house.html                      # House detail + image slider
 │   ├── host.html                       # Property upload form + map
 │   ├── contact.html                    # Real-time chat interface
-│   ├── step1.html – step6.html         # Host onboarding steps
-│   ├── login.html / register.html      # Auth pages
-│   ├── myprofile.html                  # User profile
 │   ├── favorites.html                  # Saved properties
-│   ├── pending.html                    # Awaiting host approval
-│   ├── admin/
-│   │   └── review.html                 # Admin host application dashboard
-│   ├── aboutUs.html / aboutMe.html     # Info pages
-│   ├── rentalTips.html                 # Renter guides
-│   ├── termsAndConditions.html         # Legal page
+│   ├── myprofile.html                  # User profile
 │   ├── uploadSucsess.html              # Post-upload confirmation
+│   ├── error.html                      # Global error page (all HTTP exceptions)
+│   ├── auth/
+│   │   ├── login.html                  # Login page
+│   │   └── register.html               # Register page
+│   ├── steps/
+│   │   ├── step1.html – step6.html     # Host onboarding steps
+│   │   └── pending.html                # Awaiting host approval
+│   ├── admin_dir/
+│   │   ├── adminReview.html            # Admin — pending host applications
+│   │   ├── superAdmin.html             # Super admin dashboard
+│   │   ├── admins.html                 # Super admin — manage admins
+│   │   ├── users.html                  # Super admin — manage users
+│   │   └── listings.html               # Super admin — manage listings
+│   ├── more/
+│   │   ├── aboutUs.html                # About the platform
+│   │   ├── aboutMe.html                # About the developer
+│   │   ├── rentalTips.html             # Renter guides
+│   │   └── termsAndConditions.html     # Legal page
 │   ├── css/                            # Per-page stylesheets
 │   ├── script/                         # Per-page JavaScript
 │   └── imgs/                           # Static assets
@@ -221,6 +237,13 @@ docker-compose exec db psql -U postgres -d houserent_db \
   -c "UPDATE users SET is_admin = TRUE WHERE email = 'your@email.com';"
 ```
 
+**6. Set yourself as super admin**
+
+```bash
+docker-compose exec db psql -U postgres -d houserent_db \
+  -c "UPDATE users SET is_super_admin = TRUE WHERE email = 'your@email.com';"
+```
+
 ---
 
 ## 🐳 Docker Commands
@@ -264,24 +287,35 @@ Available in development mode (`ENV=development`):
 
 ### Key Endpoints
 
-| Endpoint                     | Method   | Description                          |
-| ---------------------------- | -------- | ------------------------------------ |
-| `/register`                  | POST     | Create new account                   |
-| `/login`                     | POST     | User login                           |
-| `/logout`                    | POST     | User logout                          |
-| `/home`                      | GET      | Browse all listings                  |
-| `/house/{id}`                | GET      | Property detail page                 |
-| `/host`                      | POST     | Upload new listing                   |
-| `/become-host`               | GET      | Start host onboarding (auto-resumes) |
-| `/become-host/step{1-6}`     | GET/POST | Onboarding steps                     |
-| `/contact/house/{id}`        | GET      | Open/create chat room                |
-| `/contact/{room_code}`       | GET      | View chat room                       |
-| `/verify-email/send`         | POST     | Send email verification              |
-| `/verify-email/confirm`      | GET      | Confirm email token                  |
-| `/api/search`                | GET      | Search listings                      |
-| `/admin/review`              | GET      | Admin — pending host applications    |
-| `/admin/review/{id}/approve` | POST     | Admin — approve host                 |
-| `/admin/review/{id}/reject`  | POST     | Admin — reject with reason           |
+| Endpoint                           | Method   | Description                            |
+| ---------------------------------- | -------- | -------------------------------------- |
+| `/register`                        | POST     | Create new account                     |
+| `/login`                           | POST     | User login                             |
+| `/logout`                          | POST     | User logout                            |
+| `/home`                            | GET      | Browse all listings                    |
+| `/house/{id}`                      | GET      | Property detail page                   |
+| `/host`                            | POST     | Upload new listing                     |
+| `/become-host`                     | GET      | Start host onboarding (auto-resumes)   |
+| `/become-host/step{1-6}`           | GET/POST | Onboarding steps                       |
+| `/contact/house/{id}`              | GET      | Open/create chat room                  |
+| `/contact/{room_code}`             | GET      | View chat room                         |
+| `/verify-email/send`               | POST     | Send email verification                |
+| `/verify-email/confirm`            | GET      | Confirm email token                    |
+| `/api/search`                      | GET      | Search listings                        |
+| `/admin/review`                    | GET      | Admin — pending host applications      |
+| `/admin/review/{id}/approve`       | POST     | Admin — approve host                   |
+| `/admin/review/{id}/reject`        | POST     | Admin — reject with reason             |
+| `/super_admin`                     | GET      | Super admin dashboard                  |
+| `/super_admin/admins`              | GET      | Super admin — list all admins          |
+| `/super_admin/admins/promote/{id}` | POST     | Super admin — promote user to admin    |
+| `/super_admin/admins/demote/{id}`  | POST     | Super admin — demote admin to user     |
+| `/super_admin/users`               | GET      | Super admin — list all users           |
+| `/super_admin/users/ban/{id}`      | POST     | Super admin — ban user                 |
+| `/super_admin/users/unban/{id}`    | POST     | Super admin — unban user               |
+| `/super_admin/listings`            | GET      | Super admin — list all listings        |
+| `/super_admin/listings/{id}`       | DELETE   | Super admin — delete any listing       |
+| `/super_admin/settings`            | PATCH    | Super admin — update platform rules    |
+| `/super_admin/api/stats`           | GET      | Super admin — live platform stats JSON |
 
 ---
 
@@ -297,6 +331,20 @@ Available in development mode (`ENV=development`):
 
 ---
 
+## 🔐 Access Levels
+
+| Role            | Access                                                                |
+| --------------- | --------------------------------------------------------------------- |
+| **Visitor**     | Browse listings, view house details                                   |
+| **User**        | + Favourites, messaging, become-host onboarding                       |
+| **Host**        | + Upload and manage own listings                                      |
+| **Admin**       | + Review and approve/reject host KYC applications                     |
+| **Super Admin** | + Manage admins, ban users, delete any listing, change platform rules |
+
+> Super admin routes return `404` to non-super-admin users — the route's existence is never revealed.
+
+---
+
 ## 🛣️ Roadmap
 
 - [x] Secure session-based authentication
@@ -308,7 +356,9 @@ Available in development mode (`ENV=development`):
 - [x] Encrypted payment info storage
 - [x] Dark midnight UI design system
 - [x] Admin review dashboard with document viewer
-- [x] Security hardening (API docs disabled in production)
+- [x] Super admin panel (users, admins, listings, platform rules)
+- [x] Global HTTP error handling with custom error pages
+- [x] Security hardening (API docs disabled in production, 404 on unauthorized admin routes)
 - [ ] Booking system
 - [ ] Payment processing (Stripe)
 - [ ] Push notifications
