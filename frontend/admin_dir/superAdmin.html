@@ -1,0 +1,156 @@
+{% extends "base.html" %} {% block title %}Super Admin — Control Center{%
+endblock %} {% block head %}
+<link rel="stylesheet" href="/frontend/css/super_admin.css" />
+{% endblock %} {% block content %}
+<div class="sa-layout">
+    <!-- ── Sidebar ── -->
+    <nav class="sa-sidebar">
+        <div class="sa-logo">
+            <span class="sa-crown">👑</span>
+            <div>
+                <h1>Super Admin</h1>
+                <p>full system access</p>
+            </div>
+        </div>
+
+        <div class="sa-nav">
+            <span class="sa-nav-label">Overview</span>
+            <a href="#dashboard" class="sa-nav-item active">◈ Dashboard</a>
+            <a href="#revenue" class="sa-nav-item">◷ Revenue</a>
+
+            <span class="sa-nav-label">Manage</span>
+            <a href="/super_admin/admins" class="sa-nav-item">◆ Admins</a>
+            <a href="/super_admin/users" class="sa-nav-item">◇ Users</a>
+            <a href="/super_admin/listings" class="sa-nav-item">◈ Listings</a>
+            <a href="/super_admin/payments" class="sa-nav-item">◷ Payments</a>
+
+            <span class="sa-nav-label">System</span>
+            <a href="#settings" class="sa-nav-item">◎ Platform Rules</a>
+            <a href="#logs" class="sa-nav-item">◈ Audit Logs</a>
+
+            <!-- reuse admin link from existing nav -->
+            <span class="sa-nav-label">Admin</span>
+            <a href="/admin/review" class="sa-nav-item">← Back to Admin</a>
+        </div>
+
+        <div class="sa-sidebar-footer">
+            <p>Signed in as</p>
+            <strong>{{ user.email }}</strong>
+            <span class="sa-badge">SUPER ADMIN</span>
+        </div>
+    </nav>
+
+    <!-- ── Main content ── -->
+    <main class="sa-main">
+        <div class="sa-topbar">
+            <h2>Control Center</h2>
+            <span class="sa-badge">👑 SUPER ADMIN</span>
+        </div>
+
+        <div class="sa-content">
+            <!-- Stat cards -->
+            <section class="sa-stats" id="dashboard">
+                <div class="sa-stat-card sa-gold">
+                    <p class="sa-stat-label">Total Users</p>
+                    <p class="sa-stat-value">{{ stats.total_users }}</p>
+                    <p class="sa-stat-sub">{{ stats.banned_users }} banned</p>
+                </div>
+                <div class="sa-stat-card sa-blue">
+                    <p class="sa-stat-label">Active Listings</p>
+                    <p class="sa-stat-value">{{ stats.active_houses }}</p>
+                    <p class="sa-stat-sub">all properties</p>
+                </div>
+                <div class="sa-stat-card sa-green">
+                    <p class="sa-stat-label">Admins</p>
+                    <p class="sa-stat-value">{{ stats.total_admins }}</p>
+                    <p class="sa-stat-sub">below super admin</p>
+                </div>
+                <div class="sa-stat-card sa-red">
+                    <p class="sa-stat-label">Banned Users</p>
+                    <p class="sa-stat-value">{{ stats.banned_users }}</p>
+                    <p class="sa-stat-sub">enforced bans</p>
+                </div>
+            </section>
+
+            <!-- Quick actions -->
+            <section class="sa-panel" id="actions">
+                <div class="sa-panel-header">
+                    <h3>Quick Actions</h3>
+                    <span>super admin only</span>
+                </div>
+                <div class="sa-actions-grid">
+                    <a href="/super_admin/admins" class="sa-action sa-action-gold">
+                        <span>◆</span>
+                        <strong>Manage Admins</strong>
+                        <small>Promote or demote users</small>
+                    </a>
+                    <a href="/super_admin/users" class="sa-action sa-action-warn">
+                        <span>⊗</span>
+                        <strong>Ban / Unban</strong>
+                        <small>Any user or admin</small>
+                    </a>
+                    <a href="/super_admin/listings" class="sa-action sa-action-danger">
+                        <span>✕</span>
+                        <strong>Delete Listing</strong>
+                        <small>Remove any property</small>
+                    </a>
+                    <a href="/super_admin/payments" class="sa-action">
+                        <span>◷</span>
+                        <strong>Payments</strong>
+                        <small>Revenue & fees</small>
+                    </a>
+                    <a href="#settings" class="sa-action sa-action-gold">
+                        <span>◎</span>
+                        <strong>Platform Rules</strong>
+                        <small>Fees, limits, features</small>
+                    </a>
+                    <a href="#logs" class="sa-action">
+                        <span>◈</span>
+                        <strong>Audit Logs</strong>
+                        <small>Who did what</small>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Platform settings -->
+            <section class="sa-panel" id="settings">
+                <div class="sa-panel-header">
+                    <h3>Platform Rules</h3>
+                    <span>live changes</span>
+                </div>
+                <div class="sa-panel-body">
+                    <div class="sa-setting-row">
+                        <div>
+                            <label>Platform Fee (%)</label>
+                            <small>Charged on every completed transaction</small>
+                        </div>
+                        <input type="number" id="sa-fee" value="5" min="0" max="50" step="0.5" class="sa-input" />
+                    </div>
+                    <div class="sa-setting-row">
+                        <div>
+                            <label>Max Listings per User</label>
+                            <small>0 = unlimited</small>
+                        </div>
+                        <input type="number" id="sa-max-listings" value="20" min="0" class="sa-input" />
+                    </div>
+                    <div class="sa-setting-row">
+                        <div>
+                            <label>Allow New Registrations</label>
+                            <small>Disable to lock down the platform</small>
+                        </div>
+                        <label class="sa-toggle">
+                            <input type="checkbox" id="sa-allow-reg" checked />
+                            <span class="sa-toggle-track"></span>
+                        </label>
+                    </div>
+                    <button class="sa-save-btn" onclick="saveSettings()">
+                        Save Changes
+                    </button>
+                </div>
+            </section>
+        </div>
+        <!-- /sa-content -->
+    </main>
+</div>
+<script src="/frontend/script/super_admin.js"></script>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Listings — Super Admin{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/frontend/css/super_admin.css">
+<link rel="stylesheet" href="/frontend/css/admins.css">
+<link rel="stylesheet" href="/frontend/css/users.css">
+<link rel="stylesheet" href="/frontend/css/listings.css">
+{% endblock %}
+
+{% block content %}
+<div class="sa-layout">
+
+    <!-- ── Sidebar ── -->
+    <nav class="sa-sidebar">
+        <div class="sa-logo">
+            <span class="sa-crown">👑</span>
+            <div>
+                <h1>Super Admin</h1>
+                <p>full system access</p>
+            </div>
+        </div>
+        <div class="sa-nav">
+            <span class="sa-nav-label">Overview</span>
+            <a href="/super_admin" class="sa-nav-item">◈ Dashboard</a>
+
+            <span class="sa-nav-label">Manage</span>
+            <a href="/super_admin/admins" class="sa-nav-item">◆ Admins</a>
+            <a href="/super_admin/users" class="sa-nav-item">◇ Users</a>
+            <a href="/super_admin/listings" class="sa-nav-item active">◈ Listings</a>
+            <a href="/super_admin/payments" class="sa-nav-item">◷ Payments</a>
+
+            <span class="sa-nav-label">System</span>
+            <a href="/super_admin#settings" class="sa-nav-item">◎ Platform Rules</a>
+
+            <span class="sa-nav-label">Admin</span>
+            <a href="/admin/review" class="sa-nav-item">← Back to Admin</a>
+        </div>
+        <div class="sa-sidebar-footer">
+            <p>Signed in as</p>
+            <strong>{{ user_info.email }}</strong>
+            <span class="sa-badge">SUPER ADMIN</span>
+        </div>
+    </nav>
+
+    <!-- ── Main ── -->
+    <main class="sa-main">
+        <div class="sa-topbar">
+            <div class="adm-topbar-left">
+                <a href="/super_admin" class="adm-back">← Back</a>
+                <h2>Listings</h2>
+            </div>
+            <span class="sa-badge">{{ listings | length }} listing{{ 's' if listings | length != 1 }}</span>
+        </div>
+
+        <div class="sa-content">
+
+            <!-- Stats strip -->
+            <div class="usr-stats">
+                <div class="usr-stat">
+                    <p class="usr-stat-value">{{ total_count }}</p>
+                    <p class="usr-stat-label">Total</p>
+                </div>
+                <div class="usr-stat">
+                    <p class="usr-stat-value usr-green">{{ house_count }}</p>
+                    <p class="usr-stat-label">Houses</p>
+                </div>
+                <div class="usr-stat">
+                    <p class="usr-stat-value usr-blue">{{ hotel_count }}</p>
+                    <p class="usr-stat-label">Hotels</p>
+                </div>
+                <div class="usr-stat">
+                    <p class="usr-stat-value lst-amber">{{ hostel_count }}</p>
+                    <p class="usr-stat-label">Hostels</p>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="usr-toolbar">
+                <input type="text" id="lst-search" class="adm-search" placeholder="Search by location or host…"
+                    oninput="filterListings(this.value)">
+                <div class="usr-filters">
+                    <button class="usr-filter-btn active" onclick="setFilter('all',    this)">All</button>
+                    <button class="usr-filter-btn" onclick="setFilter('House',  this)">Houses</button>
+                    <button class="usr-filter-btn" onclick="setFilter('Hotel',  this)">Hotels</button>
+                    <button class="usr-filter-btn" onclick="setFilter('Hostel', this)">Hostels</button>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            {% if listings %}
+            <div class="lst-grid" id="lst-grid">
+                {% for listing in listings %}
+                <div class="lst-card" data-id="{{ listing.id }}"
+                    data-host="{{ listing.hoster_name | lower if listing.hoster_name else '' }}"
+                    data-location="{{ listing.location_name | lower if listing.location_name else '' }}"
+                    data-category="{{ listing.category }}">
+                    <!-- Image -->
+                    <div class="lst-img-wrap">
+                        {% if listing.img_url and listing.img_url | length > 0 %}
+                        <img src="{{ listing.img_url[0] }}" alt="Listing image" class="lst-img">
+                        {% else %}
+                        <div class="lst-img-placeholder">No Image</div>
+                        {% endif %}
+                        <span class="lst-category-badge">{{ listing.category or '—' }}</span>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="lst-body">
+
+                        <!-- Price + location -->
+                        <div class="lst-title-row">
+                            <p class="lst-location-name">{{ listing.location_name or '—' }}</p>
+                            <p class="lst-price">${{ listing.price }}<span>/night</span></p>
+                        </div>
+
+                        <!-- Description snippet -->
+                        {% if listing.house_details %}
+                        <p class="lst-desc">{{ listing.house_details | truncate(72) }}</p>
+                        {% endif %}
+
+                        <!-- Host row -->
+                        <div class="lst-meta-row">
+                            <div class="lst-host">
+                                <div class="lst-host-avatar">
+                                    {{ listing.hoster_name[0] | upper if listing.hoster_name else '?' }}
+                                </div>
+                                <span>{{ listing.hoster_name or 'Unknown host' }}</span>
+                            </div>
+                            <span class="adm-muted" style="font-size:11px">#{{ listing.id }}</span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="lst-actions">
+                            <a href="/house/{{ listing.id }}" target="_blank" class="adm-btn lst-btn-view">
+                                View
+                            </a>
+                            <button class="adm-btn adm-btn-danger"
+                                onclick="confirmDelete({{ listing.id }}, '{{ listing.location_name | replace("'", "\\'") if listing.location_name else 'this listing' }}')">
+                                Delete
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="adm-empty" id="lst-no-results" style="display:none">
+                <p>No listings match your search or filter.</p>
+            </div>
+
+            {% else %}
+            <div class="sa-panel">
+                <div class="adm-empty">
+                    <span class="adm-empty-icon">◈</span>
+                    <p>No listings found.</p>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+</div>
+
+<!-- ── Confirm modal ── -->
+<div class="adm-modal-backdrop" id="lst-modal" style="display:none">
+    <div class="adm-modal">
+        <h3>Delete Listing</h3>
+        <p id="lst-modal-body"></p>
+        <div class="adm-modal-actions">
+            <button class="adm-btn adm-btn-ghost" onclick="closeModal()">Cancel</button>
+            <button class="adm-btn adm-btn-confirm" id="lst-modal-confirm">Delete</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="/frontend/script/listings.js"></script>
+{% endblock %}

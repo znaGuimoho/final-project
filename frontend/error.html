@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block title %}{{ code }} — {{ title }}{% endblock
+%} {% block head %}
+<link rel="stylesheet" href="/frontend/css/erros.css" />
+{% endblock %} {% block content %}
+<div class="error-page">
+    <div class="error-glow error-glow-{{ '5' if code >= 500 else '4' if code >= 400 else '3' }}"></div>
+
+    <div class="error-card">
+        <div class="error-code">{{ code }}</div>
+
+        <div class="error-divider"></div>
+
+        <h1 class="error-title">{{ title }}</h1>
+        <p class="error-message">{{ message }}</p>
+
+        <div class="error-actions">
+            <a href="/" class="error-btn error-btn-primary">Go Home</a>
+            <a href="javascript:history.back()" class="error-btn error-btn-ghost">Go Back</a>
+        </div>
+    </div>
+
+    {% if code == 401 %}
+    <div class="error-hint">
+        <a href="/login">Sign in to your account →</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} {% block scripts %}
+<script src="/frontend/script/error.js"></script>
+{% endblock %}

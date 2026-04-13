@@ -1,0 +1,174 @@
+{% extends "base.html" %} {% block title %}Admins — Super Admin{% endblock %} {%
+block head %}
+<link rel="stylesheet" href="/frontend/css/super_admin.css" />
+<link rel="stylesheet" href="/frontend/css/admins.css" />
+{% endblock %} {% block content %}
+<div class="sa-layout">
+    <!-- ── Sidebar (reuse super admin sidebar) ── -->
+    <nav class="sa-sidebar">
+        <div class="sa-logo">
+            <span class="sa-crown">👑</span>
+            <div>
+                <h1>Super Admin</h1>
+                <p>full system access</p>
+            </div>
+        </div>
+        <div class="sa-nav">
+            <span class="sa-nav-label">Overview</span>
+            <a href="/super_admin" class="sa-nav-item">◈ Dashboard</a>
+
+            <span class="sa-nav-label">Manage</span>
+            <a href="/super_admin/admins" class="sa-nav-item active">◆ Admins</a>
+            <a href="/super_admin/users" class="sa-nav-item">◇ Users</a>
+            <a href="/super_admin/listings" class="sa-nav-item">◈ Listings</a>
+            <a href="/super_admin/payments" class="sa-nav-item">◷ Payments</a>
+
+            <span class="sa-nav-label">System</span>
+            <a href="/super_admin#settings" class="sa-nav-item">◎ Platform Rules</a>
+
+            <span class="sa-nav-label">Admin</span>
+            <a href="/admin/review" class="sa-nav-item">← Back to Admin</a>
+        </div>
+        <div class="sa-sidebar-footer">
+            <p>Signed in as</p>
+            <strong>{{ user_info.email }}</strong>
+            <span class="sa-badge">SUPER ADMIN</span>
+        </div>
+    </nav>
+
+    <!-- ── Main ── -->
+    <main class="sa-main">
+        <div class="sa-topbar">
+            <div class="adm-topbar-left">
+                <a href="/super_admin" class="adm-back">← Back</a>
+                <h2>Admins</h2>
+            </div>
+            <span class="sa-badge">{{ admins | length }} admin{{ 's' if admins | length != 1 }}</span>
+        </div>
+
+        <div class="sa-content">
+            <!-- Search bar -->
+            <div class="adm-search-row">
+                <input type="text" id="adm-search" class="adm-search" placeholder="Search by name or email…"
+                    oninput="filterAdmins(this.value)" />
+            </div>
+
+            <!-- Table -->
+            {% if admins %}
+            <div class="sa-panel">
+                <div class="sa-panel-header">
+                    <h3>All Admins</h3>
+                    <span>excludes super admins</span>
+                </div>
+
+                <div class="adm-table-wrap">
+                    <table class="adm-table" id="adm-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Location</th>
+                                <th>Verified</th>
+                                <th>Host</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for admin in admins %}
+                            <tr class="adm-row" data-name="{{ admin.user_name | lower }}"
+                                data-email="{{ admin.email | lower }}">
+                                <!-- User info -->
+                                <td>
+                                    <div class="adm-user-cell">
+                                        <div class="adm-avatar">
+                                            {{ admin.user_name[0] | upper }}
+                                        </div>
+                                        <div>
+                                            <p class="adm-name">{{ admin.user_name }}</p>
+                                            <p class="adm-email">{{ admin.email }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Location -->
+                                <td class="adm-muted">
+                                    {% if admin.city or admin.country %} {{ admin.city }}{% if
+                                    admin.city and admin.country %}, {% endif %}{{ admin.country
+                                    }} {% else %} — {% endif %}
+                                </td>
+
+                                <!-- Email verified -->
+                                <td>
+                                    {% if admin.email_verified %}
+                                    <span class="adm-pill adm-pill-green">Verified</span>
+                                    {% else %}
+                                    <span class="adm-pill adm-pill-muted">Unverified</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Is host -->
+                                <td>
+                                    {% if admin.is_host %}
+                                    <span class="adm-pill adm-pill-blue">Host</span>
+                                    {% else %}
+                                    <span class="adm-pill adm-pill-muted">No</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Actions -->
+                                <td>
+                                    <div class="adm-actions">
+                                        <button class="adm-btn adm-btn-danger"
+                                            onclick="confirmDemote({{ admin.user_id }}, '{{ admin.user_name }}')">
+                                            Demote
+                                        </button>
+                                        <button class="adm-btn adm-btn-warn"
+                                            onclick="confirmBan({{ admin.user_id }}, '{{ admin.user_name }}')">
+                                            Ban
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- empty state shown by JS when search has no results -->
+                <div class="adm-empty" id="adm-no-results" style="display: none">
+                    <p>No admins match your search.</p>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- no admins at all -->
+            <div class="sa-panel">
+                <div class="adm-empty">
+                    <span class="adm-empty-icon">◆</span>
+                    <p>No admins yet.</p>
+                    <small>Promote a user from the Users page.</small>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <!-- /sa-content -->
+    </main>
+</div>
+
+<!-- ── Confirm modal ── -->
+<div class="adm-modal-backdrop" id="adm-modal" style="display: none">
+    <div class="adm-modal">
+        <h3 id="adm-modal-title">Confirm Action</h3>
+        <p id="adm-modal-body"></p>
+        <div class="adm-modal-actions">
+            <button class="adm-btn adm-btn-ghost" onclick="closeModal()">
+                Cancel
+            </button>
+            <button class="adm-btn adm-btn-confirm" id="adm-modal-confirm">
+                Confirm
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/frontend/script/admins.js"></script>
+{% endblock %}

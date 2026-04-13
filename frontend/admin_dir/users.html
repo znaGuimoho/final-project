@@ -1,0 +1,228 @@
+{% extends "base.html" %} {% block title %}Users — Super Admin{% endblock %} {%
+block head %}
+<link rel="stylesheet" href="/frontend/css/super_admin.css" />
+<link rel="stylesheet" href="/frontend/css/admins.css" />
+<link rel="stylesheet" href="/frontend/css/users.css" />
+{% endblock %} {% block content %}
+<div class="sa-layout">
+    <!-- ── Sidebar ── -->
+    <nav class="sa-sidebar">
+        <div class="sa-logo">
+            <span class="sa-crown">👑</span>
+            <div>
+                <h1>Super Admin</h1>
+                <p>full system access</p>
+            </div>
+        </div>
+        <div class="sa-nav">
+            <span class="sa-nav-label">Overview</span>
+            <a href="/super_admin" class="sa-nav-item">◈ Dashboard</a>
+
+            <span class="sa-nav-label">Manage</span>
+            <a href="/super_admin/admins" class="sa-nav-item">◆ Admins</a>
+            <a href="/super_admin/users" class="sa-nav-item active">◇ Users</a>
+            <a href="/super_admin/listings" class="sa-nav-item">◈ Listings</a>
+            <a href="/super_admin/payments" class="sa-nav-item">◷ Payments</a>
+
+            <span class="sa-nav-label">System</span>
+            <a href="/super_admin#settings" class="sa-nav-item">◎ Platform Rules</a>
+
+            <span class="sa-nav-label">Admin</span>
+            <a href="/admin/review" class="sa-nav-item">← Back to Admin</a>
+        </div>
+        <div class="sa-sidebar-footer">
+            <p>Signed in as</p>
+            <strong>{{ user_info.email }}</strong>
+            <span class="sa-badge">SUPER ADMIN</span>
+        </div>
+    </nav>
+
+    <!-- ── Main ── -->
+    <main class="sa-main">
+        <div class="sa-topbar">
+            <div class="adm-topbar-left">
+                <a href="/super_admin" class="adm-back">← Back</a>
+                <h2>Users</h2>
+            </div>
+            <span class="sa-badge">{{ users | length }} user{{ 's' if users | length != 1 }}</span>
+        </div>
+
+        <div class="sa-content">
+            <!-- Stats strip -->
+            <div class="usr-stats">
+                <div class="usr-stat">
+                    <p class="usr-stat-value">{{ total_count }}</p>
+                    <p class="usr-stat-label">Total</p>
+                </div>
+                <div class="usr-stat">
+                    <p class="usr-stat-value usr-green">{{ verified_count }}</p>
+                    <p class="usr-stat-label">Verified</p>
+                </div>
+                <div class="usr-stat">
+                    <p class="usr-stat-value usr-blue">{{ host_count }}</p>
+                    <p class="usr-stat-label">Hosts</p>
+                </div>
+                <div class="usr-stat">
+                    <p class="usr-stat-value usr-red">{{ banned_count }}</p>
+                    <p class="usr-stat-label">Banned</p>
+                </div>
+            </div>
+
+            <!-- Filter + search row -->
+            <div class="usr-toolbar">
+                <input type="text" id="usr-search" class="adm-search" placeholder="Search by name, email or city…"
+                    oninput="filterUsers(this.value)" />
+                <div class="usr-filters">
+                    <button class="usr-filter-btn active" onclick="setFilter('all', this)">
+                        All
+                    </button>
+                    <button class="usr-filter-btn" onclick="setFilter('host', this)">
+                        Hosts
+                    </button>
+                    <button class="usr-filter-btn" onclick="setFilter('banned', this)">
+                        Banned
+                    </button>
+                    <button class="usr-filter-btn" onclick="setFilter('unverified', this)">
+                        Unverified
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            {% if users %}
+            <div class="sa-panel">
+                <div class="sa-panel-header">
+                    <h3>All Users</h3>
+                    <span>admins &amp; super admins excluded</span>
+                </div>
+
+                <div class="adm-table-wrap">
+                    <table class="adm-table" id="usr-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr class="adm-row" data-name="{{ user.user_name | lower }}"
+                                data-email="{{ user.email | lower }}"
+                                data-city="{{ user.city | lower if user.city else '' }}"
+                                data-host="{{ 'host' if user.is_host else '' }}"
+                                data-banned="{{ 'banned' if user.is_banned else '' }}"
+                                data-verified="{{ 'unverified' if not user.email_verified else '' }}">
+                                <!-- User -->
+                                <td>
+                                    <div class="adm-user-cell">
+                                        <div class="adm-avatar {% if user.is_banned %}adm-avatar-banned{% endif %}">
+                                            {{ user.user_name[0] | upper }}
+                                        </div>
+                                        <div>
+                                            <p class="adm-name">
+                                                {{ user.user_name }} {% if user.is_banned %}
+                                                <span class="adm-pill adm-pill-red"
+                                                    style="margin-left: 6px">Banned</span>
+                                                {% endif %}
+                                            </p>
+                                            <p class="adm-email">{{ user.email }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Location -->
+                                <td class="adm-muted">
+                                    {% if user.city or user.country %} {{ user.city }}{% if
+                                    user.city and user.country %}, {% endif %}{{ user.country }}
+                                    {% else %}—{% endif %}
+                                </td>
+
+                                <!-- Status -->
+                                <td>
+                                    {% if user.email_verified %}
+                                    <span class="adm-pill adm-pill-green">Verified</span>
+                                    {% else %}
+                                    <span class="adm-pill adm-pill-muted">Unverified</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Role -->
+                                <td>
+                                    {% if user.is_host %}
+                                    <span class="adm-pill adm-pill-blue">Host</span>
+                                    {% else %}
+                                    <span class="adm-pill adm-pill-muted">Renter</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Joined -->
+                                <td class="adm-muted usr-date">
+                                    {{ user.created_at.strftime('%b %d, %Y') if user.created_at
+                                    else '—' }}
+                                </td>
+
+                                <!-- Actions -->
+                                <td>
+                                    <div class="adm-actions">
+                                        <button class="adm-btn adm-btn-warn"
+                                            onclick="confirmPromote({{ user.user_id }}, '{{ user.user_name }}')">
+                                            Make Admin
+                                        </button>
+                                        {% if user.is_banned %}
+                                        <button class="adm-btn adm-btn-green"
+                                            onclick="confirmUnban({{ user.user_id }}, '{{ user.user_name }}')">
+                                            Unban
+                                        </button>
+                                        {% else %}
+                                        <button class="adm-btn adm-btn-danger"
+                                            onclick="confirmBan({{ user.user_id }}, '{{ user.user_name }}')">
+                                            Ban
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="adm-empty" id="usr-no-results" style="display: none">
+                    <p>No users match your search or filter.</p>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="sa-panel">
+                <div class="adm-empty">
+                    <span class="adm-empty-icon">◇</span>
+                    <p>No users found.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<!-- ── Confirm modal (reuse adm-modal pattern) ── -->
+<div class="adm-modal-backdrop" id="usr-modal" style="display: none">
+    <div class="adm-modal">
+        <h3 id="usr-modal-title">Confirm Action</h3>
+        <p id="usr-modal-body"></p>
+        <div class="adm-modal-actions">
+            <button class="adm-btn adm-btn-ghost" onclick="closeModal()">
+                Cancel
+            </button>
+            <button class="adm-btn adm-btn-confirm" id="usr-modal-confirm">
+                Confirm
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/frontend/script/users.js"></script>
+{% endblock %}

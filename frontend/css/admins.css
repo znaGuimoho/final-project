@@ -1,0 +1,168 @@
+/* admins.css */
+
+/* ── Topbar extras ───────────────────────────────────── */
+.adm-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.adm-back {
+  font-size: 13px;
+  color: #7070a0;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.adm-back:hover { color: #e8e8f0; }
+
+/* ── Search ──────────────────────────────────────────── */
+.adm-search-row { margin-bottom: 16px; }
+.adm-search {
+  width: 100%;
+  max-width: 340px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #e8e8f0;
+  font-size: 13px;
+  padding: 9px 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.adm-search::placeholder { color: #7070a0; }
+.adm-search:focus { border-color: rgba(255,255,255,0.25); }
+
+/* ── Table ───────────────────────────────────────────── */
+.adm-table-wrap { overflow-x: auto; }
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.adm-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #7070a0;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  white-space: nowrap;
+}
+.adm-table td {
+  padding: 13px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+.adm-table tbody tr:last-child td { border-bottom: none; }
+.adm-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ── User cell ───────────────────────────────────────── */
+.adm-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.adm-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(212,175,55,0.15);
+  color: #d4af37;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.adm-name  { font-size: 13px; font-weight: 600; color: #e8e8f0; margin: 0; }
+.adm-email { font-size: 11px; color: #7070a0; margin: 2px 0 0; }
+.adm-muted { color: #7070a0; font-size: 12px; }
+
+/* ── Pills ───────────────────────────────────────────── */
+.adm-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+.adm-pill-green { background: rgba(61,214,140,0.12); color: #3dd68c; }
+.adm-pill-blue  { background: rgba(91,156,246,0.12); color: #5b9cf6; }
+.adm-pill-muted { background: rgba(255,255,255,0.06); color: #7070a0; }
+
+/* ── Action buttons ──────────────────────────────────── */
+.adm-actions { display: flex; gap: 6px; }
+
+.adm-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  display: inline-block;
+}
+.adm-btn-danger {
+  background: rgba(224,85,85,0.12);
+  color: #e05555;
+  border-color: rgba(224,85,85,0.25);
+}
+.adm-btn-danger:hover { background: rgba(224,85,85,0.22); }
+
+.adm-btn-warn {
+  background: rgba(240,144,42,0.12);
+  color: #f0902a;
+  border-color: rgba(240,144,42,0.25);
+}
+.adm-btn-warn:hover { background: rgba(240,144,42,0.22); }
+
+.adm-btn-ghost {
+  background: transparent;
+  color: #7070a0;
+  border-color: rgba(255,255,255,0.1);
+}
+.adm-btn-ghost:hover { color: #e8e8f0; border-color: rgba(255,255,255,0.2); }
+
+.adm-btn-confirm {
+  background: rgba(224,85,85,0.15);
+  color: #e05555;
+  border-color: rgba(224,85,85,0.3);
+}
+.adm-btn-confirm:hover { background: rgba(224,85,85,0.25); }
+
+/* ── Empty state ─────────────────────────────────────── */
+.adm-empty {
+  padding: 48px 20px;
+  text-align: center;
+  color: #7070a0;
+}
+.adm-empty-icon { font-size: 28px; display: block; margin-bottom: 12px; opacity: 0.4; }
+.adm-empty p    { font-size: 14px; margin: 0 0 4px; }
+.adm-empty small{ font-size: 12px; }
+
+/* ── Confirm modal ───────────────────────────────────── */
+.adm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.adm-modal {
+  background: #18181f;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 28px 32px;
+  max-width: 360px;
+  width: 90%;
+}
+.adm-modal h3 { font-size: 16px; font-weight: 700; color: #e8e8f0; margin: 0 0 10px; }
+.adm-modal p  { font-size: 13px; color: #7070a0; margin: 0 0 24px; line-height: 1.6; }
+.adm-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }

@@ -1,0 +1,124 @@
+/* error.css — dark midnight design system */
+
+.error-page {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle background glow — colour changes by error class */
+.error-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.07;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+}
+.error-glow-5 { background: #e05555; } /* 5xx — red   */
+.error-glow-4 { background: #f0902a; } /* 4xx — amber */
+.error-glow-3 { background: #5b9cf6; } /* 3xx — blue  */
+
+/* card */
+.error-card {
+  position: relative;
+  background: var(--card-bg, #18181f);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 48px 52px;
+  text-align: center;
+  max-width: 460px;
+  width: 100%;
+  animation: errorFadeUp 0.4s ease both;
+}
+
+@keyframes errorFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* big code number */
+.error-code {
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.08);
+  letter-spacing: -4px;
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.error-divider {
+  width: 40px;
+  height: 2px;
+  background: rgba(255,255,255,0.12);
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+.error-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #e8e8f0;
+  margin: 0 0 10px;
+}
+
+.error-message {
+  font-size: 14px;
+  color: #7070a0;
+  line-height: 1.6;
+  margin: 0 0 32px;
+}
+
+/* action buttons */
+.error-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.error-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+
+.error-btn-primary {
+  background: #e8e8f0;
+  color: #0a0a0f;
+}
+.error-btn-primary:hover { opacity: 0.88; }
+
+.error-btn-ghost {
+  background: transparent;
+  color: #7070a0;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.error-btn-ghost:hover { color: #e8e8f0; border-color: rgba(255,255,255,0.2); }
+
+/* optional hint below card (e.g. login link on 401) */
+.error-hint {
+  margin-top: 20px;
+  font-size: 13px;
+}
+.error-hint a {
+  color: #7070a0;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.error-hint a:hover { color: #e8e8f0; }

@@ -122,6 +122,7 @@ async def get_user_data(request: Request, db: AsyncSession) -> dict:
             u.account_verified,
             u.is_host,
             u.is_admin,
+            u.is_super_admin,
             hv.id_photo_urls,
             hv.selfie_photo_url,
             hv.auth_type,
@@ -180,6 +181,7 @@ async def get_user_data(request: Request, db: AsyncSession) -> dict:
         "submitted_at": user_data["submitted_at"],
         # --- is user admin ---
         "is_admin": user_data["is_admin"],
+        "is_super_admin": user_data["is_super_admin"],
     }
 
 

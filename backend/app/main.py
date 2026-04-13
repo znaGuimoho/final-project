@@ -4,6 +4,7 @@ from app.routers.admin import admin_dashboard
 from app.routers.auth import auth_rout
 from app.routers.become_host import become_host
 from app.routers.contact import contact
+from app.routers.errors import register_exception_handlers
 from app.routers.favorites import favorite
 from app.routers.home import home
 from app.routers.hoster import hosting
@@ -31,6 +32,8 @@ for router in routers:
 
 # ── Socket.IO handlers ─────────────────────────────────────────────────────
 register_socketio_handelers(app, templates, get_db, app_sio, sio)
+# ── erros handlers ─────────────────────────────────────────────────────
+register_exception_handlers(app, templates)
 
 # ── Entry point ────────────────────────────────────────────────────────────
 if __name__ == "__main__":

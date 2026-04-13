@@ -1,0 +1,83 @@
+/* users.css — extends admins.css, only adds what's new */
+
+/* ── Stats strip ─────────────────────────────────────── */
+.usr-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.usr-stat {
+  flex: 1;
+  background: var(--card-bg, #18181f);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 14px 18px;
+  text-align: center;
+}
+.usr-stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #e8e8f0;
+  margin: 0 0 4px;
+  line-height: 1;
+}
+.usr-stat-label {
+  font-size: 11px;
+  color: #7070a0;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0;
+}
+.usr-green { color: #3dd68c; }
+.usr-blue  { color: #5b9cf6; }
+.usr-red   { color: #e05555; }
+
+/* ── Toolbar ─────────────────────────────────────────── */
+.usr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.usr-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.usr-filter-btn {
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: #7070a0;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.usr-filter-btn:hover  { color: #e8e8f0; border-color: rgba(255,255,255,0.2); }
+.usr-filter-btn.active { color: #e8e8f0; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+
+/* ── Extra pill colours ──────────────────────────────── */
+.adm-pill-red   { background: rgba(224,85,85,0.12);  color: #e05555; }
+.adm-btn-green  {
+  background: rgba(61,214,140,0.12);
+  color: #3dd68c;
+  border: 1px solid rgba(61,214,140,0.25);
+}
+.adm-btn-green:hover { background: rgba(61,214,140,0.22); }
+
+/* banned avatar tint */
+.adm-avatar-banned {
+  background: rgba(224,85,85,0.15);
+  color: #e05555;
+}
+
+/* date column — mono for alignment */
+.usr-date { font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 640px) {
+  .usr-stats { display: grid; grid-template-columns: 1fr 1fr; }
+  .usr-toolbar { flex-direction: column; align-items: flex-start; }
+  .adm-search  { max-width: 100%; width: 100%; }
+}
