@@ -420,7 +420,7 @@ def become_host(app: FastAPI, templates: Jinja2Templates, get_db, sio):
             return RedirectResponse("/login", status_code=303)
 
         return templates.TemplateResponse(
-            "pending.html",
+            "steps/pending.html",
             {
                 "request": request,
                 "user_info": user_info,

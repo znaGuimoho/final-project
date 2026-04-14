@@ -14,6 +14,9 @@ from app.routers.profile import profile
 # ── App setup ──────────────────────────────────────────────────────────────
 app_sio, sio, app, get_db, templates, redis = create_app()
 
+# ── Error handlers FIRST — before anything else wraps the app ──────────────
+register_exception_handlers(app, templates)
+
 # ── Register routers ───────────────────────────────────────────────────────
 routers = [
     auth_rout,
@@ -26,14 +29,11 @@ routers = [
     become_host,
     admin_dashboard,
 ]
-
 for router in routers:
     router(app, templates, get_db, sio)
 
 # ── Socket.IO handlers ─────────────────────────────────────────────────────
 register_socketio_handelers(app, templates, get_db, app_sio, sio)
-# ── erros handlers ─────────────────────────────────────────────────────
-register_exception_handlers(app, templates)
 
 # ── Entry point ────────────────────────────────────────────────────────────
 if __name__ == "__main__":

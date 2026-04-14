@@ -114,17 +114,17 @@ block head %}
                                 data-email="{{ user.email | lower }}"
                                 data-city="{{ user.city | lower if user.city else '' }}"
                                 data-host="{{ 'host' if user.is_host else '' }}"
-                                data-banned="{{ 'banned' if user.is_banned else '' }}"
+                                data-banned="{{ 'banned' if user.banned else '' }}"
                                 data-verified="{{ 'unverified' if not user.email_verified else '' }}">
                                 <!-- User -->
                                 <td>
                                     <div class="adm-user-cell">
-                                        <div class="adm-avatar {% if user.is_banned %}adm-avatar-banned{% endif %}">
+                                        <div class="adm-avatar {% if user.banned %}adm-avatar-banned{% endif %}">
                                             {{ user.user_name[0] | upper }}
                                         </div>
                                         <div>
                                             <p class="adm-name">
-                                                {{ user.user_name }} {% if user.is_banned %}
+                                                {{ user.user_name }} {% if user.banned %}
                                                 <span class="adm-pill adm-pill-red"
                                                     style="margin-left: 6px">Banned</span>
                                                 {% endif %}
@@ -172,7 +172,7 @@ block head %}
                                             onclick="confirmPromote({{ user.user_id }}, '{{ user.user_name }}')">
                                             Make Admin
                                         </button>
-                                        {% if user.is_banned %}
+                                        {% if user.banned %}
                                         <button class="adm-btn adm-btn-green"
                                             onclick="confirmUnban({{ user.user_id }}, '{{ user.user_name }}')">
                                             Unban

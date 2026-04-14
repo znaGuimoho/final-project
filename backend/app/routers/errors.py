@@ -1,5 +1,6 @@
 from fastapi import Request
-from fastapi.exceptions import HTTPException
+from fastapi.exceptions import HTTPException, RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # ── Error messages shown on the page ─────────────────────────────────────────
 ERROR_MESSAGES = {
@@ -22,12 +23,20 @@ ERROR_MESSAGES = {
 
 
 def register_exception_handlers(app, templates):
-    """
-    Call this in main.py after creating the FastAPI app:
-
-        from app.routers.errors import register_exception_handlers
-        register_exception_handlers(app)
-    """
+    # ← handles BOTH FastAPI and Starlette 404s (unknown routes)
+    @app.exception_handler(StarletteHTTPException)
+    async def starlette_exception_handler(
+        request: Request, exc: StarletteHTTPException
+    ):
+        code = exc.status_code
+        title, message = ERROR_MESSAGES.get(
+            code, ("Error", exc.detail or "An unexpected error occurred.")
+        )
+        return templates.TemplateResponse(
+            "error.html",
+            {"request": request, "code": code, "title": title, "message": message},
+            status_code=code,
+        )
 
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request: Request, exc: HTTPException):
@@ -35,21 +44,33 @@ def register_exception_handlers(app, templates):
         title, message = ERROR_MESSAGES.get(
             code, ("Error", exc.detail or "An unexpected error occurred.")
         )
+        return templates.TemplateResponse(
+            "error.html",
+            {"request": request, "code": code, "title": title, "message": message},
+            status_code=code,
+        )
 
+    @app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(
+        request: Request, exc: RequestValidationError
+    ):
         return templates.TemplateResponse(
             "error.html",
             {
                 "request": request,
-                "code": code,
-                "title": title,
-                "message": message,
+                "code": 422,
+                "title": "Unprocessable",
+                "message": "The request data couldn't be processed.",
             },
-            status_code=code,
+            status_code=422,
         )
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception):
-        """Catch-all for any unhandled Python exception — shows a clean 500."""
+        if isinstance(
+            exc, (HTTPException, StarletteHTTPException, RequestValidationError)
+        ):
+            raise exc
         return templates.TemplateResponse(
             "error.html",
             {
@@ -60,3 +81,4 @@ def register_exception_handlers(app, templates):
             },
             status_code=500,
         )
+

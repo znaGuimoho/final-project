@@ -228,7 +228,8 @@ def admin_dashboard(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         await require_super_admin(request, db)
 
         await db.execute(
-            text("UPDATE users SET is_banned = TRUE WHERE id = :id"), {"id": user_id}
+            text("UPDATE users SET banned = TRUE WHERE user_id = :id"),
+            {"id": user_id},
         )
         await db.commit()
         return {"detail": f"User {user_id} banned"}
@@ -242,7 +243,7 @@ def admin_dashboard(app: FastAPI, templates: Jinja2Templates, get_db, sio):
         await require_super_admin(request, db)
 
         await db.execute(
-            text("UPDATE users SET is_banned = FALSE WHERE id = :id"), {"id": user_id}
+            text("UPDATE users SET banned = FALSE WHERE user_id = :id"), {"id": user_id}
         )
         await db.commit()
         return {"detail": f"User {user_id} unbanned"}
